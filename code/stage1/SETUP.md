@@ -1,28 +1,39 @@
 # Setup
 
-One command, not a guide to follow by hand: once Docker is installed, run
-`scripts/verify_setup.py` and follow whatever it tells you. Everything below
-exists to support that script and to explain the failures it can report.
+Start to finish: clone the repo, install prerequisites, and run one script
+that tells you pass/fail in plain English. Everything after that section
+exists to support that script and explain the failures it can report.
 
-## Prerequisites (per OS)
+## 1. Prerequisites (per OS)
 
-**Linux / WSL2 (Windows):** Install Docker Engine (or Docker Desktop with
-the WSL2 backend). On native Windows, do everything from inside a WSL2
-terminal, not PowerShell/cmd -- this project is not tested outside WSL2 on
-Windows.
+- **Git** and **Python 3.12+** (check with `python3 --version`).
+- **Docker:**
+  - **Linux / WSL2 (Windows):** Install Docker Engine (or Docker Desktop
+    with the WSL2 backend). On native Windows, do everything from inside a
+    WSL2 terminal, not PowerShell/cmd -- this project is not tested outside
+    WSL2 on Windows.
+  - **Mac (Intel or Apple Silicon):** Install Docker Desktop.
+    - **Apple Silicon only:** the SITL image is `linux/amd64` (ArduPilot's
+      own dev-toolchain base image doesn't publish an arm64 build). Docker
+      Desktop runs it under Rosetta-accelerated emulation rather than raw
+      QEMU, which is fast enough for this course, but you must enable it
+      once: **Docker Desktop → Settings → General → "Use Rosetta for
+      x86_64/amd64 emulation on Apple Silicon."**
+    - Also bump Docker Desktop's CPU/memory resource limits from the
+      defaults (Settings → Resources) -- the out-of-the-box limits are
+      commonly too low for SITL.
 
-**Mac (Intel or Apple Silicon):** Install Docker Desktop.
-- **Apple Silicon only:** the SITL image is `linux/amd64` (ArduPilot's own
-  dev-toolchain base image doesn't publish an arm64 build). Docker Desktop
-  runs it under Rosetta-accelerated emulation rather than raw QEMU, which is
-  fast enough for this course, but you must enable it once: **Docker
-  Desktop → Settings → General → "Use Rosetta for x86_64/amd64 emulation on
-  Apple Silicon."**
-- Also bump Docker Desktop's CPU/memory resource limits from the defaults
-  (Settings → Resources) -- the out-of-the-box limits are commonly too low
-  for SITL.
+## 2. Clone the repo and go to the Stage 1 code
 
-## Quick start
+This project lives inside the course's monorepo, under `code/stage1/` --
+every command below is run from that directory, not the repo root.
+
+```
+git clone https://github.com/JaneClelandHuang/uav-native-ai.git
+cd uav-native-ai/code/stage1
+```
+
+## 3. Configure and verify
 
 ```
 cp .env.example .env
@@ -31,16 +42,51 @@ client/.venv/bin/pip install -r client/requirements.txt
 client/.venv/bin/python scripts/verify_setup.py
 ```
 
-If that prints `PASS`, start the viewer:
+This brings up Docker (Mosquitto + SITL + the backend), waits for real
+telemetry, and round-trips an arm command over MQTT. It should end with:
 
 ```
-MQTT_HOST=localhost client/.venv/bin/python client/matplotlib_view.py
+PASS: environment is fully working.
 ```
 
-To manually arm/change mode from the SITL side (rather than through the
-MQTT command channel) for testing: `docker compose attach sitl` gives you
+If it doesn't, it tells you exactly what failed and what to do about it --
+see the troubleshooting index below if you're still stuck.
+
+## 4. Run the viewer
+
+```
+source client/.venv/bin/activate
+python client/matplotlib_view.py
+```
+
+A window opens showing the vehicle's position (East/North) and altitude,
+both currently flat -- SITL is idle on the ground until something commands
+it to fly.
+
+## 5. Fly something
+
+In a **second terminal** (leave the viewer running in the first):
+
+```
+cd uav-native-ai/code/stage1
+source client/.venv/bin/activate
+python scripts/test_flight.py
+```
+
+This arms, takes off to 10m, flies a small square, and lands -- entirely
+over MQTT, the same contract any frontend uses. Watch the viewer window:
+the trail, heading triangle, and altitude gauge should all update live.
+
+To manually arm/change mode from the SITL side instead (rather than through
+the MQTT command channel): `docker compose attach sitl` gives you
 MAVProxy's plain command prompt. Detach without stopping the container with
-`Ctrl-p Ctrl-q`.
+`Ctrl-p Ctrl-q` -- **not** `Ctrl-C`, which kills the simulation.
+
+## 6. When you're done
+
+```
+docker compose down
+```
 
 ## Troubleshooting index
 
