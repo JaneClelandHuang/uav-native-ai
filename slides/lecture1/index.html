@@ -224,21 +224,24 @@
       <div class="chrome"><span class="tag">CSE 40701</span><span class="count">10 / 15</span></div>
       <div class="slide-body">
         <div class="eyebrow">Infrastructure</div>
-        <h2 class="headline">Why Docker — but not your Python code</h2>
-        <p class="lede">The obvious layout — backend on the host, SITL in Docker — was the original plan. It didn't survive contact with real networking.</p>
-        <div class="cols">
-          <div class="col-card" style="border-left: 2px solid var(--critical);">
-            <div class="col-label">What broke</div>
-            <div class="col-title">Host ↔ container UDP is genuinely ambiguous</div>
-            <p>MAVProxy's <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">--out</code> is client-mode (<code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">udpout</code>), pymavlink's bare <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">udp:</code> prefix has shifted bind/connect semantics across versions, and Docker Desktop vs. native Linux/WSL2 disagree about <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">host.docker.internal</code>.</p>
-          </div>
-          <div class="col-card accent-cool-card">
-            <div class="col-label">The fix</div>
-            <div class="col-title">Same Compose network, service-name DNS</div>
-            <p><code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">drone_backend</code> binds <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">udpin:0.0.0.0:14550</code> (listens). SITL launches with <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">--out=udpout:drone_backend:14550</code> (connects out, by name). No port published for this link at all — only MQTT crosses the host boundary.</p>
-          </div>
+        <h2 class="headline">Starting the infrastructure</h2>
+        <div class="diagram-frame" style="flex: 1 1 56%;">
+          <img src="docker-deployment-diagram.svg" alt="Deployment diagram: mosquitto, sitl, and drone_backend containers inside one Docker Compose network; matplotlib_view.py runs on the host and connects in over the only published port, MQTT on 1883.">
         </div>
-        <p class="body-text" style="margin-top:0.9em;"><b class="hl">General rule this leaves you with:</b> containerize infrastructure nobody needs to touch (version-pinned, reproducible — "does this work" reduces to "does Docker run"). Keep what you and Claude Code edit constantly — <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">drone_backend.py</code>'s source is bind-mounted, and your viewer runs straight on the host — so no rebuild-and-restart cycle gets added to routine editing.</p>
+        <div class="code-block" style="flex: 0 0 auto; margin-top:0.7em;">$ docker compose up -d
+<span class="c">Container ...-mosquitto-1      Started</span>
+<span class="c">Container ...-sitl-1           Started</span>
+<span class="c">Container ...-drone_backend-1  Started</span>
+
+$ docker compose ps
+<span class="k">NAME                    STATUS</span>
+...-mosquitto-1         <span class="s">Up</span>
+...-sitl-1              <span class="s">Up</span>
+...-drone_backend-1     <span class="s">Up</span>
+
+$ mosquitto_sub -h localhost -p 1883 -t <span class="s">'uav/#'</span> -v
+uav/1/home <span class="k">{"vehicle_id": "1", "lat": </span><span class="n">41.700</span><span class="k">, ...}</span>
+uav/1/telemetry <span class="k">{"vehicle_id": "1", "armed": </span><span class="n">false</span><span class="k">, ...}</span></div>
       </div>
     </section>
 
@@ -247,42 +250,18 @@
       <div class="chrome"><span class="tag">CSE 40701</span><span class="count">11 / 15</span></div>
       <div class="slide-body">
         <div class="eyebrow">This session</div>
-        <h2 class="headline">matplotlib_view.py — the viewer you're about to build</h2>
-        <div class="viewer-preview">
-          <div class="viewer-pane">
-            <span class="vp-label">POSITION (E/N)</span>
-            <div class="crosshair"></div>
-            <div class="trail-dot" style="left:44%; top:58%;"></div>
-            <div class="trail-dot" style="left:47%; top:54%;"></div>
-            <div class="trail-dot" style="left:49%; top:50%;"></div>
-            <div class="trail-dot" style="left:51%; top:47%;"></div>
-            <div class="heading-tri"></div>
+        <h2 class="headline">Start the viewer</h2>
+        <div class="cols" style="flex: 1 1 auto; min-height: 0;">
+          <div class="col" style="flex: 1 1 42%;">
+            <ol class="sequence">
+              <li><div><div class="step-title">Activate your venv</div><div class="step-detail"><code>source client/.venv/bin/activate</code></div></div></li>
+              <li><div><div class="step-title">Run the viewer</div><div class="step-detail"><code>python client/matplotlib_view.py</code></div></div></li>
+              <li><div><div class="step-title">In a second terminal, fly something</div><div class="step-detail"><code>python scripts/test_flight.py</code></div></div></li>
+              <li><div><div class="step-title">Watch it move</div><div class="step-detail">Trail, heading triangle, and altitude gauge all update live — this is real telemetry, not a mockup.</div></div></li>
+            </ol>
           </div>
-          <div class="viewer-pane alt">
-            <span class="vp-label">ALTITUDE</span>
-            <div class="gauge-line"></div>
-          </div>
-        </div>
-        <div class="spec-grid">
-          <div class="spec-item">
-            <div class="spec-label">Why a minimum view span</div>
-            <div class="spec-title">MIN_HALF_SPAN_M = 20</div>
-            <p>Raw autoscale fits tightly to whatever data exists — including a few centimeters of GPS/EKF noise while sitting still, which visually blows up into what looks like a wild flight. The floor only grows once the vehicle actually flies further.</p>
-          </div>
-          <div class="spec-item">
-            <div class="spec-label">Why a short trail</div>
-            <div class="spec-title">TRAIL_LENGTH = 20 (~5s @ 4Hz)</div>
-            <p>Reads as a comet-tail trailing the vehicle, not the whole mission's path slowly aging out over a full minute.</p>
-          </div>
-          <div class="spec-item">
-            <div class="spec-label">Why a triangle, not an arrow</div>
-            <div class="spec-title">heading_triangle() marker</div>
-            <p>Replaced an earlier circle + quiver-arrow combination — a single rotating shape reads heading faster at a glance.</p>
-          </div>
-          <div class="spec-item">
-            <div class="spec-label">Why one shared color constant</div>
-            <div class="spec-title">DRONE_COLOR</div>
-            <p>Marker, trail, and altitude gauge all pull from one constant — so a future second vehicle (Stage 6) reads as one consistent visual signature, not just a differently-colored dot.</p>
+          <div class="col" style="flex: 1 1 58%; align-items: center; justify-content: center; display: flex;">
+            <img src="viewer-screenshot.png" alt="Actual matplotlib_view.py output mid-flight: a curved orange trail turning a corner, a triangle marker pointing south, status readout showing mode GUIDED, armed True, alt_rel 10.0m, and the altitude gauge holding at 10m." style="max-width:100%; max-height:100%; border-radius:4px; border:1px solid var(--telemetry-dim); object-fit:contain;">
           </div>
         </div>
       </div>
