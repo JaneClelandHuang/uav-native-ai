@@ -45,27 +45,4 @@ Throughout the course, students practice accountable AI-assisted development and
 - Enrollment limited to students with a program in Computer Engineering, Computer Science, or Computer Science.
 - Enrollment limited to students in the Main campus.
 
-## Where to go next
 
-<div class="card-grid">
-  <a class="card" href="{{ '/syllabus.html' | relative_url }}">
-    <div class="card-eyebrow">Policies</div>
-    <div class="card-title">Syllabus</div>
-    <div class="card-desc">Grading, late work, academic integrity, accessibility.</div>
-  </a>
-  <a class="card" href="{{ '/schedule.html' | relative_url }}">
-    <div class="card-eyebrow">Aug – Dec 2026</div>
-    <div class="card-title">Schedule</div>
-    <div class="card-desc">Week-by-week calendar, linked to each lesson.</div>
-  </a>
-  <a class="card" href="{{ '/lessons/' | relative_url }}">
-    <div class="card-eyebrow">Lesson by lesson</div>
-    <div class="card-title">Lessons</div>
-    <div class="card-desc">Topics, readings, code downloads, and assignments.</div>
-  </a>
-  <a class="card" href="https://github.com/JaneClelandHuang/uav-native-ai/tree/main/code/stage1">
-    <div class="card-eyebrow">Runnable infra</div>
-    <div class="card-title">Code — Stage 1</div>
-    <div class="card-desc">ArduPilot SITL, MQTT backend, matplotlib viewer.</div>
-  </a>
-</div>
