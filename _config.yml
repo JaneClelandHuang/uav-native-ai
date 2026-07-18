@@ -1,0 +1,28 @@
+title: "CSE 40701"
+tagline: "Native AI Software and Systems Engineering for UAVs"
+description: "Course site: syllabus, schedule, and lesson-by-lesson materials for CSE 40701."
+baseurl: "/uav-native-ai"
+url: "https://janeclelandhuang.github.io"
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+plugins:
+  - jekyll-relative-links
+
+relative_links:
+  enabled: true
+  collections: false
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
