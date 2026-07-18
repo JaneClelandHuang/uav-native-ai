@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | truncate: 160 }}">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap site-header-inner">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <span class="brand-code">CSE 40701</span>
+        <span class="brand-tagline">{{ site.tagline }}</span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} class="active" aria-current="page"{% endif %}>Home</a>
+        <a href="{{ '/syllabus.html' | relative_url }}"{% if page.url contains 'syllabus' %} class="active" aria-current="page"{% endif %}>Syllabus</a>
+        <a href="{{ '/schedule.html' | relative_url }}"{% if page.url contains 'schedule' %} class="active" aria-current="page"{% endif %}>Schedule</a>
+        <a href="{{ '/lessons/' | relative_url }}"{% if page.url contains '/lessons/' %} class="active" aria-current="page"{% endif %}>Lessons</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap page-{{ page.url | slugify }}">
+    {{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>CSE 40701 · Native AI Software and Systems Engineering for UAVs</span>
+      <span class="sep">·</span>
+      <a href="https://github.com/JaneClelandHuang/uav-native-ai">Course repo</a>
+    </div>
+  </footer>
+</body>
+</html>

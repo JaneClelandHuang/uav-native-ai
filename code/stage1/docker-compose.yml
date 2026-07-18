@@ -1,0 +1,32 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+
+  sitl:
+    image: ${SITL_IMAGE:-uav-course-sitl:copter-4.6.3}
+    platform: linux/amd64
+    tty: true
+    stdin_open: true
+    command: >
+      ./Tools/autotest/sim_vehicle.py -v ArduCopter --no-rebuild -w
+      --custom-location=${SITL_LOCATION:--35.363261,149.165230,584,353}
+      --out=udpout:drone_backend:14550
+    depends_on:
+      - drone_backend
+
+  drone_backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    volumes:
+      - ./backend/drone_backend.py:/app/drone_backend.py:ro
+    environment:
+      VEHICLE_ID: ${VEHICLE_ID:-1}
+      MAVLINK_CONN: udpin:0.0.0.0:14550
+      MQTT_HOST: mosquitto
+    depends_on:
+      - mosquitto

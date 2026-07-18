@@ -1,0 +1,21 @@
+# ardupilot-dev-base already has the full SITL toolchain (waf, MAVProxy,
+# pymavlink, build deps) set up for root-context builds -- avoids fighting
+# install-prereqs-ubuntu.sh's assumptions about a non-root user.
+FROM ardupilot/ardupilot-dev-base:v0.2.0
+
+# Pinned so a semester's worth of `docker compose up` never silently drifts
+# onto a newer ArduPilot release mid-course. Override at build time to bump.
+ARG ARDUPILOT_TAG=Copter-4.6.3
+
+WORKDIR /ardupilot
+
+# ardupilot-dev-base has the waf/build toolchain but not MAVProxy itself.
+RUN pip3 install --no-cache-dir MAVProxy
+
+RUN git clone --recurse-submodules --shallow-submodules --depth 1 \
+        --branch ${ARDUPILOT_TAG} \
+        https://github.com/ArduPilot/ardupilot.git . \
+    && ./waf configure --board sitl \
+    && ./waf copter
+
+CMD ["./Tools/autotest/sim_vehicle.py", "-v", "ArduCopter", "--no-rebuild", "-w"]

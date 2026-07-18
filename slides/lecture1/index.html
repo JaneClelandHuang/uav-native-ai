@@ -1,0 +1,339 @@
+<title>CSE 40701 — Stage 1: UAV Infrastructure</title>
+<link rel="stylesheet" href="styles.css">
+
+<div class="deck">
+  <div class="stage">
+    <span class="reticle tl"></span><span class="reticle tr"></span>
+    <span class="reticle bl"></span><span class="reticle br"></span>
+
+    <!-- 1 -->
+    <section class="slide active title-slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">01 / 15</span></div>
+      <div class="slide-body">
+        <div class="coursecode">NATIVE AI SOFTWARE &amp; SYSTEMS ENGINEERING FOR UAVS</div>
+        <h1 class="title">UAV Infrastructure</h1>
+        <p class="subtitle">Stage&nbsp;1 — ArduPilot SITL, an MQTT contract, and your first drone frontend.</p>
+        <span class="stagetag">STAGE 1 OF 6 · pymavlink ↔ MQTT plumbing</span>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">02 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Foundations</div>
+        <h2 class="headline">What is ArduPilot?</h2>
+        <p class="lede">The open-source autopilot <b>firmware</b> that flies the aircraft — not a simulator, not a toy, the real flight-control stack.</p>
+        <ul class="points">
+          <li><b>Real flight-control firmware</b> — runs the actual control loop: attitude stabilization, navigation, failsafes. The exact binary you'll run in SITL this semester is what flies real aircraft.</li>
+          <li><b>Broad platform support</b> — multicopters, fixed-wing, rovers, submarines, all from one open-source project with a long track record (in active development since 2007).</li>
+          <li><b>Production-grade, not academic</b> — used across industry, research labs, and hobbyist communities worldwide, with a large contributor base and active safety-critical development.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">03 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">A deliberate choice</div>
+        <h2 class="headline">Why ArduPilot, not PX4?</h2>
+        <p class="lede">Both are excellent, mature, open-source autopilot stacks. The decision here isn't about which is "better."</p>
+        <div class="vs-row">
+          <div class="col-card accent-card" style="flex:1;">
+            <div class="col-label">The deciding factor</div>
+            <div class="col-title">Your real drones already fly ArduPilot</div>
+            <p>Code, MAVLink message handling, and workflows you build against SITL this semester carry over directly to the physical hardware later — same firmware family, same parameters, same behavior.</p>
+          </div>
+          <div class="vs-mid">→</div>
+          <div class="col-card" style="flex:1;">
+            <div class="col-label">Not a knock on PX4</div>
+            <div class="col-title">Deployment-target consistency wins</div>
+            <p>PX4 is a strong, actively developed alternative used widely in research. If your target hardware ran PX4, this course would too — the choice tracks the aircraft, not a technical preference.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">04 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Foundations</div>
+        <h2 class="headline">What is SITL?</h2>
+        <p class="lede"><b class="hl">Software-In-The-Loop:</b> the real ArduPilot flight-code binary, running against a simulated physics model instead of real motors and sensors.</p>
+        <ul class="points">
+          <li><b>No hardware, no risk</b> — safe to crash, safe to experiment, safe to make the mistakes you'll learn from.</li>
+          <li><b>Not a toy simulator</b> — it's the identical firmware that runs on the physical flight controller, just fed simulated sensor data instead of real ones.</li>
+          <li><b class="accent">Why not Gazebo?</b> Our SITL uses ArduPilot's own lightweight built-in physics model, not a 3D physics/rendering engine. That's a deliberate call, not an oversight — Gazebo needs real GPU-accelerated OpenGL, and in a prior run of this kind of exercise, that broke unpredictably across a room of student laptops (VMs, integrated graphics, locked-down university images). Failures were opaque — crashes, black windows, silent slowdowns — exactly what derails a live class session. ArduPilot's internal model is enough for GPS position, attitude, battery, and mission logic; Gazebo stays an opt-in choice for a team that specifically needs camera or collision simulation later.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">05 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">The real thing</div>
+        <h2 class="headline">Meet your (future) real hardware</h2>
+        <p class="lede">Everything this week runs in simulation. This is what your code eventually flies on.</p>
+        <div class="photo-frame">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <div class="ph-inner">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="14" cy="14" r="7"/><circle cx="50" cy="14" r="7"/><circle cx="14" cy="50" r="7"/><circle cx="50" cy="50" r="7"/>
+              <line x1="18.5" y1="18.5" x2="27" y2="27"/><line x1="45.5" y1="18.5" x2="37" y2="27"/>
+              <line x1="18.5" y1="45.5" x2="27" y2="37"/><line x1="45.5" y1="45.5" x2="37" y2="37"/>
+              <rect x="27" y="27" width="10" height="10" rx="2"/>
+            </svg>
+            <div class="ph-label">[ PHOTO: insert drone here ]</div>
+            <div class="ph-sub">Replace with a photo of the lab quadcopter model(s) students will fly later in the course.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">06 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Architecture</div>
+        <h2 class="headline">The big picture</h2>
+        <div class="diagram-frame">
+          <img src="architecture-diagram.svg" alt="System architecture: ArduPilot SITL and drone_backend.py inside the Docker Compose network, connected by pymavlink over UDP; drone_backend.py publishes to the Mosquitto broker over MQTT; matplotlib_view.py and the future new-gui.py run on the host and subscribe over MQTT, the only thing that crosses the host/container boundary.">
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">07 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Architecture</div>
+        <h2 class="headline">Why MQTT as the interface?</h2>
+        <p class="lede">The topic schema <b class="hl">is</b> the contract — a clean, concrete example of interface design, not just plumbing.</p>
+        <ul class="points">
+          <li><b>Multiple frontends, one shared contract</b> — many students or teams can build against the same documented topics without touching the backend.</li>
+          <li><b>Swappable by design</b> — replacing matplotlib with a real map-based GUI later (Stage 2) requires <b class="accent">zero</b> backend changes.</li>
+          <li><b>A lesson in its own right</b> — this decoupling is exactly the kind of interface-design decision you'll be asked to make and defend in real systems.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">08 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Architecture</div>
+        <h2 class="headline">The MQTT contract — real topics, real JSON</h2>
+        <div class="cols">
+          <div class="col">
+            <span class="topic-label">uav/1/telemetry</span>
+            <div class="code-block">{
+  <span class="k">"vehicle_id"</span>: <span class="s">"1"</span>,
+  <span class="k">"lat"</span>: <span class="n">41.700</span>, <span class="k">"lon"</span>: <span class="n">-86.239</span>,
+  <span class="k">"alt_rel"</span>: <span class="n">12.4</span>, <span class="k">"heading"</span>: <span class="n">87.3</span>,
+  <span class="k">"armed"</span>: <span class="n">true</span>, <span class="k">"mode"</span>: <span class="s">"GUIDED"</span>
+}</div>
+          </div>
+          <div class="col">
+            <span class="topic-label">uav/1/command</span>
+            <div class="code-block"><span class="c">// one of:</span>
+{<span class="k">"type"</span>: <span class="s">"arm"</span>}
+{<span class="k">"type"</span>: <span class="s">"takeoff"</span>, <span class="k">"alt"</span>: <span class="n">10</span>}
+{<span class="k">"type"</span>: <span class="s">"goto"</span>, <span class="k">"lat"</span>:…, <span class="k">"lon"</span>:…}
+{<span class="k">"type"</span>: <span class="s">"land"</span>}</div>
+          </div>
+          <div class="col">
+            <span class="topic-label retained">uav/1/home</span>
+            <div class="code-block">{
+  <span class="k">"vehicle_id"</span>: <span class="s">"1"</span>,
+  <span class="k">"lat"</span>: <span class="n">41.700</span>,
+  <span class="k">"lon"</span>: <span class="n">-86.239</span>,
+  <span class="k">"alt"</span>: <span class="n">225.1</span>
+}</div>
+            <p class="body-text" style="margin-top:0.4em;">Published once, <b class="hl">retained</b> by the broker — any client subscribing later still gets it immediately, including clients that join mid-flight.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">09 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">A subtlety in the contract</div>
+        <h2 class="headline">Coordinate frames: LLA vs. local ENU</h2>
+        <div class="cols">
+          <div class="col">
+            <div class="col-card accent-card">
+              <div class="col-label">On the wire</div>
+              <div class="col-title">LLA is canonical</div>
+              <p>Lat / lon / alt is the only frame that ever crosses a system boundary — it matches how MAVLink represents position natively, and stays stable as more clients join.</p>
+            </div>
+          </div>
+          <div class="col">
+            <div class="col-card accent-cool-card">
+              <div class="col-label">Inside one client</div>
+              <div class="col-title">Local ENU is private &amp; throwaway</div>
+              <p>Metres-from-an-origin math a client computes for its own use (e.g. a legible 2D plot). Never published, never shared truth between clients.</p>
+            </div>
+          </div>
+        </div>
+        <p class="body-text">Why it matters: two clients quietly disagreeing about where "local (0,0)" is produces a bug class that's miserable to debug — correct in one view, subtly wrong in another. The retained <span class="topic-label" style="font-size:0.85em; padding:0.1em 0.4em;">uav/&lt;id&gt;/home</span> topic fixes this — one shared origin, delivered to every client the moment it subscribes.</p>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">10 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Infrastructure</div>
+        <h2 class="headline">Why Docker — but not your Python code</h2>
+        <p class="lede">The obvious layout — backend on the host, SITL in Docker — was the original plan. It didn't survive contact with real networking.</p>
+        <div class="cols">
+          <div class="col-card" style="border-left: 2px solid var(--critical);">
+            <div class="col-label">What broke</div>
+            <div class="col-title">Host ↔ container UDP is genuinely ambiguous</div>
+            <p>MAVProxy's <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">--out</code> is client-mode (<code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">udpout</code>), pymavlink's bare <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">udp:</code> prefix has shifted bind/connect semantics across versions, and Docker Desktop vs. native Linux/WSL2 disagree about <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">host.docker.internal</code>.</p>
+          </div>
+          <div class="col-card accent-cool-card">
+            <div class="col-label">The fix</div>
+            <div class="col-title">Same Compose network, service-name DNS</div>
+            <p><code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">drone_backend</code> binds <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">udpin:0.0.0.0:14550</code> (listens). SITL launches with <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">--out=udpout:drone_backend:14550</code> (connects out, by name). No port published for this link at all — only MQTT crosses the host boundary.</p>
+          </div>
+        </div>
+        <p class="body-text" style="margin-top:0.9em;"><b class="hl">General rule this leaves you with:</b> containerize infrastructure nobody needs to touch (version-pinned, reproducible — "does this work" reduces to "does Docker run"). Keep what you and Claude Code edit constantly — <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">drone_backend.py</code>'s source is bind-mounted, and your viewer runs straight on the host — so no rebuild-and-restart cycle gets added to routine editing.</p>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">11 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">This session</div>
+        <h2 class="headline">matplotlib_view.py — the viewer you're about to build</h2>
+        <div class="viewer-preview">
+          <div class="viewer-pane">
+            <span class="vp-label">POSITION (E/N)</span>
+            <div class="crosshair"></div>
+            <div class="trail-dot" style="left:44%; top:58%;"></div>
+            <div class="trail-dot" style="left:47%; top:54%;"></div>
+            <div class="trail-dot" style="left:49%; top:50%;"></div>
+            <div class="trail-dot" style="left:51%; top:47%;"></div>
+            <div class="heading-tri"></div>
+          </div>
+          <div class="viewer-pane alt">
+            <span class="vp-label">ALTITUDE</span>
+            <div class="gauge-line"></div>
+          </div>
+        </div>
+        <div class="spec-grid">
+          <div class="spec-item">
+            <div class="spec-label">Why a minimum view span</div>
+            <div class="spec-title">MIN_HALF_SPAN_M = 20</div>
+            <p>Raw autoscale fits tightly to whatever data exists — including a few centimeters of GPS/EKF noise while sitting still, which visually blows up into what looks like a wild flight. The floor only grows once the vehicle actually flies further.</p>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Why a short trail</div>
+            <div class="spec-title">TRAIL_LENGTH = 20 (~5s @ 4Hz)</div>
+            <p>Reads as a comet-tail trailing the vehicle, not the whole mission's path slowly aging out over a full minute.</p>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Why a triangle, not an arrow</div>
+            <div class="spec-title">heading_triangle() marker</div>
+            <p>Replaced an earlier circle + quiver-arrow combination — a single rotating shape reads heading faster at a glance.</p>
+          </div>
+          <div class="spec-item">
+            <div class="spec-label">Why one shared color constant</div>
+            <div class="spec-title">DRONE_COLOR</div>
+            <p>Marker, trail, and altitude gauge all pull from one constant — so a future second vehicle (Stage 6) reads as one consistent visual signature, not just a differently-colored dot.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">12 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Before you fly</div>
+        <h2 class="headline">Known quirks worth knowing</h2>
+        <p class="lede">None of these are bugs in your code. They'll look like it if you don't know them going in.</p>
+        <div class="quirk-grid">
+          <div class="quirk">
+            <div class="quirk-icon">▲</div>
+            <div class="quirk-body"><b>"mode" doesn't reset after landing.</b><p>ArduCopter leaves <code>mode: "LAND"</code> reported indefinitely after touchdown and disarm — it only changes on the next explicit mode switch. Check <code>armed</code> too if "currently landing" matters.</p></div>
+          </div>
+          <div class="quirk">
+            <div class="quirk-icon">▲</div>
+            <div class="quirk-body"><b>Pre-arm checks can reject arm/takeoff for 30–60s after cold boot.</b><p>EKF/GPS not settled yet, or "Gyros inconsistent." Expected, not a bug — handle it with bounded retries, not by failing immediately.</p></div>
+          </div>
+          <div class="quirk">
+            <div class="quirk-icon">▲</div>
+            <div class="quirk-body"><b>DISARM_DELAY auto-disarms an idle armed vehicle (~10s).</b><p>Mainly bites during manual MAVProxy console testing — arm and issue your next command in one quick burst, or it disarms out from under you.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">13 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Infrastructure</div>
+        <h2 class="headline">Getting SITL without a 10–20 minute build</h2>
+        <p class="lede">ArduPilot builds from source by default. Nobody should have to sit through that on the first day of class.</p>
+        <ul class="points">
+          <li><b>Pre-built and pinned</b> — <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">Copter-4.6.3</code>, built once from <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">ardupilot-dev-base</code>, pushed to a public GHCR image. You run <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--telemetry);">docker compose pull</code>, not a source build.</li>
+          <li><b>Apple Silicon note</b> — the image is <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace; color:var(--caution);">linux/amd64</code> only (no arm64 build exists upstream). It runs fine under Docker Desktop's Rosetta-accelerated emulation — one-time setting, covered in SETUP.md.</li>
+          <li><b class="accent">Bumping the version later</b> is one script and one <code style="font-family:ui-monospace,'SF Mono','Cascadia Code','Roboto Mono',Consolas,monospace;">.env</code> line — nothing else in the repo changes.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 14 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">14 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">This session</div>
+        <h2 class="headline">What you'll actually do</h2>
+        <ol class="sequence">
+          <li><div><div class="step-title">Start SITL, then Mosquitto</div><div class="step-detail">Skip the built-in map GUI while debugging — one less window competing for attention.</div></div></li>
+          <li><div><div class="step-title">Build drone_backend.py, verify in isolation</div><div class="step-detail">Confirm telemetry with <code>mosquitto_sub -t 'uav/#' -v</code> before writing any client.</div></div></li>
+          <li><div><div class="step-title">Build matplotlib_view.py, confirm it moves</div><div class="step-detail">Fly SITL manually first to check the viewer reflects real telemetry.</div></div></li>
+          <li><div><div class="step-title">Wire up commands last</div><div class="step-detail">Arm/takeoff/goto/land over MQTT — isolating variables, one layer at a time.</div></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 15 -->
+    <section class="slide">
+      <div class="chrome"><span class="tag">CSE 40701</span><span class="count">15 / 15</span></div>
+      <div class="slide-body">
+        <div class="eyebrow">Getting started</div>
+        <h2 class="headline">Run one command</h2>
+        <p class="lede">Not a setup guide to follow by hand — a single script that tells you pass/fail in plain English.</p>
+        <div class="code-block" style="font-size:0.95em;">$ ./scripts/verify_setup.py
+
+<span class="c">PASS: Docker is installed and the daemon is running.</span>
+<span class="c">PASS: docker compose up succeeded.</span>
+<span class="c">PASS: telemetry flowing (...)</span>
+<span class="c">PASS: command round-trip works (arm command was obeyed).</span>
+
+<span class="k">PASS: environment is fully working.</span></div>
+        <p class="body-text">If it fails, it tells you exactly what broke and what to do next — not a stack trace. Stuck for more than a few minutes? Pair with your neighbor before flagging it down — most classroom setup failures are one of a small, known set.</p>
+        <p class="body-text" style="margin-top:0.6em;"><b class="hl">scripts/test_flight.py</b> runs the same idea end-to-end: arm → takeoff → small square → land, entirely over MQTT. Each command re-publishes every 8s until its telemetry-based success condition is met — so it self-heals against a dropped UDP command or the cold-start pre-arm flakiness above, instead of just failing once.</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="navbar">
+  <button id="prevBtn" aria-label="Previous slide">← Prev</button>
+  <span class="pos" id="posLabel">1 / 15</span>
+  <button id="nextBtn" aria-label="Next slide">Next →</button>
+</div>
+
+<script src="app.js"></script>
