@@ -30,23 +30,6 @@ The semester is organized around one structured team project, in three
 parts (see the [Schedule]({{ '/schedule.html' | relative_url }}) for exact
 weeks):
 
-<div class="card-grid">
-  <div class="card">
-    <div class="card-eyebrow">Part 1</div>
-    <div class="card-title">Engineer UAV software components</div>
-    <div class="card-desc">Telemetry, command-and-control, and the interfaces that connect them — built against ArduPilot SITL over MQTT.</div>
-  </div>
-  <div class="card">
-    <div class="card-eyebrow">Part 2</div>
-    <div class="card-title">Agentic decision-making layer</div>
-    <div class="card-desc">Design and integrate autonomous behavior on top of the Part 1 infrastructure.</div>
-  </div>
-  <div class="card">
-    <div class="card-eyebrow">Part 3</div>
-    <div class="card-title">Operator-facing application</div>
-    <div class="card-desc">Safe supervision and evaluation of autonomous operations.</div>
-  </div>
-</div>
 
 ## Required tools
 
