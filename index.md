@@ -8,18 +8,6 @@ title: Home
 
 <p class="lede">CSE 40701 prepares senior-level students to engineer software in an AI-assisted development environment, with an emphasis on cyber-physical systems (CPS) in the UAV domain.</p>
 
-<dl class="catalog-meta">
-  <div><dt>Credit Hours</dt><dd>3</dd></div>
-  <div><dt>Status</dt><dd>Active</dd></div>
-  <div><dt>Campus</dt><dd>Main (M)</dd></div>
-  <div><dt>Grade Mode</dt><dd>Standard Letter</dd></div>
-  <div><dt>Maximum Enrollment</dt><dd>25</dd></div>
-  <div><dt>Seats Available</dt><dd>16</dd></div>
-  <div><dt>Waitlist</dt><dd>Currently unavailable</dd></div>
-</dl>
-
-*Catalog data above pulled from the registrar as of July 18, 2026 — verify against [registrar.nd.edu](https://registrar.nd.edu/) before publishing to students, as enrollment/seat counts change.*
-
 ## Course Description
 
 This course prepares senior-level students to engineer software in an AI-assisted development environment (e.g., Claude), with an emphasis on cyber-physical systems (CPS) in the UAV domain. Students learn disciplined workflows for prompting, architecture design, testing and validation, and systematic review within AI-supported engineering processes.
@@ -45,27 +33,4 @@ Throughout the course, students practice accountable AI-assisted development and
 - Enrollment limited to students with a program in Computer Engineering, Computer Science, or Computer Science.
 - Enrollment limited to students in the Main campus.
 
-## Where to go next
 
-<div class="card-grid">
-  <a class="card" href="{{ '/syllabus.html' | relative_url }}">
-    <div class="card-eyebrow">Policies</div>
-    <div class="card-title">Syllabus</div>
-    <div class="card-desc">Grading, late work, academic integrity, accessibility.</div>
-  </a>
-  <a class="card" href="{{ '/schedule.html' | relative_url }}">
-    <div class="card-eyebrow">Aug – Dec 2026</div>
-    <div class="card-title">Schedule</div>
-    <div class="card-desc">Week-by-week calendar, linked to each lesson.</div>
-  </a>
-  <a class="card" href="{{ '/lessons/' | relative_url }}">
-    <div class="card-eyebrow">Lesson by lesson</div>
-    <div class="card-title">Lessons</div>
-    <div class="card-desc">Topics, readings, code downloads, and assignments.</div>
-  </a>
-  <a class="card" href="https://github.com/JaneClelandHuang/uav-native-ai/tree/main/code/stage1">
-    <div class="card-eyebrow">Runnable infra</div>
-    <div class="card-title">Code — Stage 1</div>
-    <div class="card-desc">ArduPilot SITL, MQTT backend, matplotlib viewer.</div>
-  </a>
-</div>
