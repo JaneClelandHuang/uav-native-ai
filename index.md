@@ -8,18 +8,6 @@ title: Home
 
 <p class="lede">CSE 40701 prepares senior-level students to engineer software in an AI-assisted development environment, with an emphasis on cyber-physical systems (CPS) in the UAV domain.</p>
 
-<dl class="catalog-meta">
-  <div><dt>Credit Hours</dt><dd>3</dd></div>
-  <div><dt>Status</dt><dd>Active</dd></div>
-  <div><dt>Campus</dt><dd>Main (M)</dd></div>
-  <div><dt>Grade Mode</dt><dd>Standard Letter</dd></div>
-  <div><dt>Maximum Enrollment</dt><dd>25</dd></div>
-  <div><dt>Seats Available</dt><dd>16</dd></div>
-  <div><dt>Waitlist</dt><dd>Currently unavailable</dd></div>
-</dl>
-
-*Catalog data above pulled from the registrar as of July 18, 2026 — verify against [registrar.nd.edu](https://registrar.nd.edu/) before publishing to students, as enrollment/seat counts change.*
-
 ## Course Description
 
 This course prepares senior-level students to engineer software in an AI-assisted development environment (e.g., Claude), with an emphasis on cyber-physical systems (CPS) in the UAV domain. Students learn disciplined workflows for prompting, architecture design, testing and validation, and systematic review within AI-supported engineering processes.
