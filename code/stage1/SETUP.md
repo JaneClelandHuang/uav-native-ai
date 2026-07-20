@@ -66,8 +66,6 @@ fallback (Codespaces or an equivalent Docker-in-Docker environment) instead.
 
 # Step 1 – Install Prerequisites
 
-## Why?
-
 Before running the course software, install the tools required to build and
 run the development environment.
 
@@ -98,10 +96,8 @@ run the development environment.
 
 # Step 2 – Download the Course Repository
 
-## Why?
-
-The course repository contains every lab, example, script, and configuration
-file used throughout the semester.
+The course repository will contain every lab, example, script, and configuration
+file used throughout the semester.  These will be updated each week prior to use.
 
 Clone the repository:
 
@@ -116,8 +112,6 @@ directory unless stated otherwise.
 ---
 
 # Step 3 – Create the Python Environment
-
-## Why?
 
 A Python virtual environment isolates the packages used in this course from
 other Python projects installed on your computer.
@@ -143,8 +137,6 @@ client/.venv/bin/pip install -r client/requirements.txt
 ---
 
 # Step 4 – Start the Development Environment
-
-## Why?
 
 Docker starts the software infrastructure required for the course.
 
@@ -190,8 +182,6 @@ running.
 
 # Step 5 – Run the Automated Health Check
 
-## Why?
-
 Professional software projects should verify that their environments are
 configured correctly rather than assuming everything is working. This
 script checks the environment you just started in Step 4 -- it does not
@@ -226,8 +216,6 @@ If a problem is detected, the script explains what failed and how to fix it.
 
 # Step 6 – Launch the Viewer
 
-## Why?
-
 The viewer provides a simple graphical display of the simulated UAV.
 
 Activate the virtual environment:
@@ -254,8 +242,6 @@ been sent.
 ---
 
 # Step 7 – Fly Your First Mission
-
-## Why?
 
 The final step confirms that the entire software stack is working correctly.
 
