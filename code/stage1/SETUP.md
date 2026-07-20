@@ -1,137 +1,366 @@
-# Setup
+# Native AI + UAV Systems
+# Lab 1 – Setting Up Your Development Environment
 
-Start to finish: clone the repo, install prerequisites, and run one script
-that tells you pass/fail in plain English. Everything after that section
-exists to support that script and explain the failures it can report.
+Welcome to the first lab for **Native AI + UAV Systems**.
 
-## 1. Prerequisites (per OS)
+In this lab you will install and configure the software environment used
+throughout the course. By the end of the lab you will have a complete UAV
+simulation environment running on your laptop, capable of executing
+autonomous flights and publishing live telemetry.
 
-- **Git** and **Python 3.12+** (check with `python3 --version`).
-- **Docker:**
-  - **Linux / WSL2 (Windows):** Install Docker Engine (or Docker Desktop
-    with the WSL2 backend). On native Windows, do everything from inside a
-    WSL2 terminal, not PowerShell/cmd -- this project is not tested outside
-    WSL2 on Windows.
-  - **Mac (Intel or Apple Silicon):** Install Docker Desktop.
-    - **Apple Silicon only:** the SITL image is `linux/amd64` (ArduPilot's
-      own dev-toolchain base image doesn't publish an arm64 build). Docker
-      Desktop runs it under Rosetta-accelerated emulation rather than raw
-      QEMU, which is fast enough for this course, but you must enable it
-      once: **Docker Desktop → Settings → General → "Use Rosetta for
-      x86_64/amd64 emulation on Apple Silicon."**
-    - Also bump Docker Desktop's CPU/memory resource limits from the
-      defaults (Settings → Resources) -- the out-of-the-box limits are
-      commonly too low for SITL.
+This is primarily a **one-time setup**. Once your environment is working,
+future labs will focus on building intelligent UAV applications rather than
+configuring software.
 
-## 2. Clone the repo and go to the Stage 1 code
+---
 
-This project lives inside the course's monorepo, under `code/stage1/` --
-every command below is run from that directory, not the repo root.
+# Learning Objectives
+
+By the end of this lab you will be able to:
+
+- Install the course software.
+- Run a complete UAV simulation environment.
+- Verify that all software components are communicating correctly.
+- Dispatch your first autonomous flight.
+- Observe live telemetry from the simulated UAV.
+
+---
+
+# What You Are Building
+
+Rather than installing a collection of unrelated programs, you are assembling
+a complete software ecosystem for UAV development.
 
 ```
+GitHub Repository
+        ↓
+Python Environment
+        ↓
+Backend Services (Docker)
+        ↓
+ArduPilot SITL
+        ↓
+Your UAV Applications
+```
+
+At the end of this lab you will have a simulated drone that can receive
+commands, publish telemetry, and execute autonomous missions.
+
+---
+
+# Before You Begin
+
+Estimated time: **20–30 minutes**
+
+You will need:
+
+- A reliable Internet connection
+- Administrator privileges on your computer
+- Approximately 5 GB of available disk space
+
+If you don't have administrator rights or virtualization is disabled in your
+BIOS, don't spend the class period fighting it -- switch to the cloud
+fallback (Codespaces or an equivalent Docker-in-Docker environment) instead.
+
+---
+
+# Step 1 – Install Prerequisites
+
+## Why?
+
+Before running the course software, install the tools required to build and
+run the development environment.
+
+### Required Software
+
+- Git
+- Python 3.12 or later (check with `python3 --version`)
+- Docker
+
+### Platform-specific notes
+
+- **Linux / WSL2 (Windows):** Install Docker Engine (or Docker Desktop with
+  the WSL2 backend). If you're on Windows, do everything from inside a
+  **WSL2 terminal** -- PowerShell and Command Prompt are not supported for
+  this course. If WSL2 itself isn't installed, run `wsl --install` from an
+  admin PowerShell first.
+- **Mac (Intel or Apple Silicon):** Install Docker Desktop.
+  - **Apple Silicon only:** the SITL image is `linux/amd64` (ArduPilot's own
+    dev-toolchain base image doesn't publish an arm64 build). Docker Desktop
+    runs it under Rosetta-accelerated emulation, which is fast enough for
+    this course, but you must enable it once: **Docker Desktop → Settings →
+    General → "Use Rosetta for x86_64/amd64 emulation on Apple Silicon."**
+    Also raise Docker Desktop's CPU/memory limits from the defaults
+    (Settings → Resources) -- the out-of-the-box limits are commonly too low
+    for SITL.
+
+---
+
+# Step 2 – Download the Course Repository
+
+## Why?
+
+The course repository contains every lab, example, script, and configuration
+file used throughout the semester.
+
+Clone the repository:
+
+```bash
 git clone https://github.com/JaneClelandHuang/uav-native-ai.git
 cd uav-native-ai/code/stage1
 ```
 
-## 3. Configure and verify
+All commands in this guide should be executed from the `code/stage1`
+directory unless stated otherwise.
 
-```
+---
+
+# Step 3 – Create the Python Environment
+
+## Why?
+
+A Python virtual environment isolates the packages used in this course from
+other Python projects installed on your computer.
+
+Copy the environment configuration:
+
+```bash
 cp .env.example .env
+```
+
+Create the virtual environment:
+
+```bash
 python3 -m venv client/.venv
+```
+
+Install the required Python packages:
+
+```bash
 client/.venv/bin/pip install -r client/requirements.txt
+```
+
+---
+
+# Step 4 – Start the Development Environment
+
+## Why?
+
+Docker starts the software infrastructure required for the course.
+
+This includes:
+
+- MQTT broker (Mosquitto)
+- Backend services
+- ArduPilot Software-in-the-Loop (SITL)
+
+These components run together as a reproducible development environment,
+independent of your operating system. You don't start them by hand -- the
+health check script in the next step brings them up for you.
+
+---
+
+# Step 5 – Run the Automated Health Check
+
+## Why?
+
+Professional software projects should verify that their environments are
+configured correctly rather than assuming everything is working.
+
+Run:
+
+```bash
 client/.venv/bin/python scripts/verify_setup.py
 ```
 
-This brings up Docker (Mosquitto + SITL + the backend), waits for real
-telemetry, and round-trips an arm command over MQTT. It should end with:
+The health check verifies that:
 
+| Component | Purpose |
+|-----------|---------|
+| Docker | Containers start successfully |
+| MQTT Broker | Message broker is reachable |
+| Backend | Backend service is running |
+| ArduPilot SITL | Simulator is operational |
+| Telemetry | Vehicle state is being published |
+| Commands | MQTT commands reach the simulator |
+
+A successful installation ends with:
+
+```text
+PASS: Environment is fully working.
 ```
-PASS: environment is fully working.
-```
 
-If it doesn't, it tells you exactly what failed and what to do about it --
-see the troubleshooting index below if you're still stuck.
+If a problem is detected, the script explains what failed and how to fix it.
 
-## 4. Run the viewer
+---
 
-```
+# Step 6 – Launch the Viewer
+
+## Why?
+
+The viewer provides a simple graphical display of the simulated UAV.
+
+Activate the virtual environment:
+
+```bash
 source client/.venv/bin/activate
+```
+
+Launch the viewer:
+
+```bash
 python client/matplotlib_view.py
 ```
 
-A window opens showing the vehicle's position (East/North) and altitude,
-both currently flat -- SITL is idle on the ground until something commands
-it to fly.
+You should see:
 
-## 5. Fly something
+- Vehicle position
+- Heading
+- Altitude
 
-In a **second terminal** (leave the viewer running in the first):
+Initially the vehicle will remain stationary because no commands have yet
+been sent.
 
-```
+---
+
+# Step 7 – Fly Your First Mission
+
+## Why?
+
+The final step confirms that the entire software stack is working correctly.
+
+Open a **second terminal** and run:
+
+```bash
 cd uav-native-ai/code/stage1
+
 source client/.venv/bin/activate
+
 python scripts/test_flight.py
 ```
 
-This arms, takes off to 10m, flies a small square, and lands -- entirely
-over MQTT, the same contract any frontend uses. Watch the viewer window:
-the trail, heading triangle, and altitude gauge should all update live.
+The mission automatically:
 
-To manually arm/change mode from the SITL side instead (rather than through
-the MQTT command channel): `docker compose attach sitl` gives you
-MAVProxy's plain command prompt. Detach without stopping the container with
-`Ctrl-p Ctrl-q` -- **not** `Ctrl-C`, which kills the simulation.
+1. Arms the vehicle
+2. Takes off
+3. Flies a small square
+4. Lands
 
-## 6. When you're done
+Watch the viewer window as telemetry updates in real time.
 
-```
+> **Optional:** to manually arm or change mode from the SITL side instead of
+> through the MQTT command channel, `docker compose attach sitl` gives you
+> MAVProxy's plain command prompt. Detach without stopping the container
+> with `Ctrl-p Ctrl-q` -- **not** `Ctrl-C`, which kills the simulation.
+
+---
+
+# Step 8 – Shut Down the Environment
+
+When you are finished:
+
+```bash
 docker compose down
 ```
 
-## Troubleshooting index
+This stops all Docker containers while preserving your configuration for
+future labs.
 
-Keyed to the actual failure, not diagnosed live each time:
+---
 
-- **Docker Desktop not installed** -- `verify_setup.py` catches this first
-  and tells you to install it.
-- **Docker daemon installed but not running** -- start Docker Desktop (or
-  `sudo systemctl start docker` on Linux) and wait for it to report
-  "running" before re-running the script.
-- **WSL2 not enabled (Windows)** -- Docker Desktop needs it as a backend;
-  enable it in Docker Desktop's settings, or `wsl --install` from an admin
-  PowerShell if WSL2 itself isn't installed at all.
-- **Apple Silicon: Rosetta emulation not enabled** -- see the Mac
-  prerequisite above; without it the SITL image either fails to run or runs
-  very slowly under plain QEMU emulation.
-- **Apple Silicon: Docker resource limits too low** -- raise CPU/memory in
-  Docker Desktop's settings.
-- **Corporate VPN/firewall blocking image pulls** -- `docker compose up`
-  will fail to pull `eclipse-mosquitto` or the SITL image; try a different
-  network, or ask IT to allowlist Docker Hub / GHCR.
-- **Port already in use** -- usually a leftover container from a previous
-  run. `docker compose down`, then re-run `verify_setup.py`.
-- **No admin rights / virtualization disabled in BIOS** -- not fixable in a
-  class period; use the cloud fallback (Codespaces or equivalent
-  Docker-in-Docker environment) instead of continuing to troubleshoot
-  locally.
-- **`verify_setup.py` fails the arm-command check right after a cold
-  start** -- this is very likely benign, not a real failure: ArduCopter
-  refuses to arm until its EKF/GPS pre-arm checks pass, which can take
-  30-60s after `docker compose up`. Wait a bit and re-run. If it still
-  fails, `docker compose logs sitl` will show a specific `PreArm` message.
-- **Nothing else works** -- pair with a neighbor whose setup is working
-  before escalating; most classroom failures are one of the above.
+# Troubleshooting
 
-## Instructor-only: publishing a pinned SITL image
+## Docker Desktop not installed
 
-Students should `docker pull`, never build ArduPilot from source in class
-(a source build takes 10-20 minutes). To build and publish the pinned image:
+`verify_setup.py` catches this first and tells you to install it.
 
-```
-GHCR_OWNER=your-org ./scripts/build_and_push_sitl.sh Copter-4.6.3
+---
+
+## Docker daemon not running
+
+Start Docker Desktop or run:
+
+```bash
+sudo systemctl start docker
 ```
 
-Then set `SITL_IMAGE=ghcr.io/your-org/uav-course-sitl:copter-4.6.3` in the
-`.env` file you distribute to students. Bumping the ArduPilot version for a
-later course run means re-running this script with a new tag and updating
-that one `.env` value -- nothing else in the repo needs to change.
+Wait until Docker reports that it is running before continuing.
+
+---
+
+## Windows
+
+Run the course entirely from a **WSL2 terminal**.
+
+PowerShell and Command Prompt are not supported for this course.
+
+---
+
+## Apple Silicon
+
+Enable Rosetta emulation in Docker Desktop and increase Docker's CPU and
+memory allocation if SITL performs poorly.
+
+---
+
+## Corporate VPN / firewall blocking image pulls
+
+`docker compose up` will fail to pull `eclipse-mosquitto` or the SITL image.
+Try a different network, or ask IT to allowlist Docker Hub / GHCR.
+
+---
+
+## Port already in use
+
+Stop any previous containers:
+
+```bash
+docker compose down
+```
+
+Then rerun the health check.
+
+---
+
+## No admin rights / virtualization disabled in BIOS
+
+This isn't fixable in a class period -- switch to the cloud fallback
+(Codespaces or equivalent Docker-in-Docker environment) instead of
+continuing to troubleshoot locally.
+
+---
+
+## Health check fails immediately after startup
+
+This is very likely benign, not a real failure: ArduCopter refuses to arm
+until its EKF/GPS pre-arm checks pass, which can take 30-60 seconds after
+startup.
+
+Wait approximately one minute and rerun:
+
+```bash
+python scripts/verify_setup.py
+```
+
+If it still fails, `docker compose logs sitl` will show a specific `PreArm`
+message.
+
+---
+
+## Still having problems?
+
+Before asking for instructor assistance:
+
+1. Read the error message carefully.
+2. Review this troubleshooting guide.
+3. Compare your setup with a nearby classmate.
+4. Ask a teaching assistant or instructor if the problem persists.
+
+---
+
+# Congratulations!
+
+You now have a fully functioning UAV development environment.
+
+From this point onward, the focus of the course shifts from configuring
+software to engineering intelligent autonomous UAV applications.
