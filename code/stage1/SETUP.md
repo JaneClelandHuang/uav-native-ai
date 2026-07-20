@@ -155,8 +155,36 @@ This includes:
 - ArduPilot Software-in-the-Loop (SITL)
 
 These components run together as a reproducible development environment,
-independent of your operating system. You don't start them by hand -- the
-health check script in the next step brings them up for you.
+independent of your operating system.
+
+First, pull the images:
+
+```bash
+docker compose pull
+```
+
+> **This step can take several minutes the first time.** The SITL image is
+> ~3.7 GB, so on a normal connection expect this to take a few minutes --
+> possibly longer on a slow or restricted network. This is a one-time cost:
+> once the image is pulled it's cached, and every future `docker compose`
+> command reuses it. Let it run to completion rather than assuming it has
+> hung.
+
+Then build and start the containers:
+
+```bash
+docker compose up -d
+```
+
+The first run also builds the backend image, which takes another moment.
+Confirm all three services are up:
+
+```bash
+docker compose ps
+```
+
+You should see `mosquitto`, `drone_backend`, and `sitl` all listed as
+running.
 
 ---
 
@@ -165,7 +193,9 @@ health check script in the next step brings them up for you.
 ## Why?
 
 Professional software projects should verify that their environments are
-configured correctly rather than assuming everything is working.
+configured correctly rather than assuming everything is working. This
+script checks the environment you just started in Step 4 -- it does not
+start anything itself.
 
 Run:
 
@@ -272,7 +302,8 @@ future labs.
 
 ## Docker Desktop not installed
 
-`verify_setup.py` catches this first and tells you to install it.
+`docker compose pull` in Step 4 will fail with a "command not found" style
+error. `verify_setup.py` also checks for this and tells you to install it.
 
 ---
 
@@ -305,8 +336,9 @@ memory allocation if SITL performs poorly.
 
 ## Corporate VPN / firewall blocking image pulls
 
-`docker compose up` will fail to pull `eclipse-mosquitto` or the SITL image.
-Try a different network, or ask IT to allowlist Docker Hub / GHCR.
+`docker compose pull` will fail (or hang) trying to reach `eclipse-mosquitto`
+or the SITL image on GHCR. Try a different network, or ask IT to allowlist
+Docker Hub / GHCR.
 
 ---
 
@@ -318,7 +350,7 @@ Stop any previous containers:
 docker compose down
 ```
 
-Then rerun the health check.
+Then re-run `docker compose up -d` (Step 4) and the health check.
 
 ---
 
