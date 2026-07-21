@@ -238,77 +238,101 @@ We only wish to specify a destination.
 
 # Understanding the Type Mask
 
-The destination message contains a **type mask**.
-
-The purpose of the mask is to tell ArduPilot which fields should be ignored.
-
-Imagine a packet containing
+The destination message, `SET_POSITION_TARGET_GLOBAL_INT`, has one field for
+every possible thing you might want to control. Each field has its own bit
+in a single 12-bit number:
 
 ```text
-Latitude
-Longitude
-Altitude
-Velocity
-Acceleration
-Yaw
-Yaw Rate
+bit  0  ->  X / latitude
+bit  1  ->  Y / longitude
+bit  2  ->  Z / altitude
+bit  3  ->  velocity X
+bit  4  ->  velocity Y
+bit  5  ->  velocity Z
+bit  6  ->  acceleration X
+bit  7  ->  acceleration Y
+bit  8  ->  acceleration Z
+bit  9  ->  force (rarely used)
+bit 10  ->  yaw
+bit 11  ->  yaw rate
 ```
 
-Our application only wants to control position.
-
-The type mask therefore tells ArduPilot
+That 12-bit number is the **type mask**. For every bit:
 
 ```text
-Ignore velocity.
-
-Ignore acceleration.
-
-Ignore yaw.
-
-Ignore yaw rate.
+0  ->  "use the value I put in this field"
+1  ->  "ignore this field completely"
 ```
 
-Only
-
-- latitude
-- longitude
-- altitude
-
-are actually used.
+A bit set to `1` does **not** mean "on" or "enabled." It means the opposite:
+"I am not telling you anything about this field -- don't read it." This
+trips people up the first time, so it's worth saying twice: `1` = ignore,
+`0` = use.
 
 ---
 
-# Why Use Bit Masks?
+# Building `goto()`'s Mask, Bit by Bit
 
-Each "ignore" option is represented by a single binary bit.
-
-For example
+`goto()` only wants to control **position** (latitude, longitude, altitude).
+Everything else should be ignored. So bits 0, 1, 2 stay `0`, and every other
+bit gets set to `1`:
 
 ```text
-Ignore Velocity X
-Ignore Velocity Y
-Ignore Velocity Z
-Ignore Yaw
-Ignore Yaw Rate
+bit:    11  10   9   8   7   6   5   4   3   2   1   0
+field:  yr  yaw  F   az  ay  ax  vz  vy  vx  Z   Y   X
+value:   1   1   0   1   1   1   1   1   1   0   0   0
 ```
 
-The library combines these bits using the bitwise OR operator.
+Read left to right, that's the binary number `110111111000`, which is
+`3576` in decimal (`0xdf8` in hex) -- exactly the value
+`mavlink_lib.py`'s `_GOTO_TYPE_MASK` computes.
+
+We never write `3576` directly in the code, because nobody could read it
+back and know what it means. Instead we build it out of named constants
+with the bitwise OR operator (`|`) -- one constant per bit we want to set to
+`1`:
 
 ```python
 _GOTO_TYPE_MASK = (
-    POSITION_TARGET_TYPEMASK_VX_IGNORE |
-    POSITION_TARGET_TYPEMASK_VY_IGNORE |
-    POSITION_TARGET_TYPEMASK_VZ_IGNORE |
-    ...
+    POSITION_TARGET_TYPEMASK_VX_IGNORE           # bit 3
+    | POSITION_TARGET_TYPEMASK_VY_IGNORE         # bit 4
+    | POSITION_TARGET_TYPEMASK_VZ_IGNORE         # bit 5
+    | POSITION_TARGET_TYPEMASK_AX_IGNORE         # bit 6
+    | POSITION_TARGET_TYPEMASK_AY_IGNORE         # bit 7
+    | POSITION_TARGET_TYPEMASK_AZ_IGNORE         # bit 8
+    | POSITION_TARGET_TYPEMASK_YAW_IGNORE        # bit 10
+    | POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE   # bit 11
 )
 ```
 
-The resulting integer is transmitted inside the MAVLink packet.
+Notice which three constants are **not** in that list:
+`X_IGNORE`, `Y_IGNORE`, `Z_IGNORE` (bits 0, 1, 2). Leaving them out is what
+leaves those bits at `0` -- which is exactly what tells ArduPilot "use the
+latitude/longitude/altitude I'm sending you."
 
-ArduPilot examines the bits to determine which fields should be ignored.
+This is also why the field values themselves matter: a `0` bit means
+ArduPilot *will* read that field, so if you ever OR in, say, velocity
+control by removing `VX_IGNORE`/`VY_IGNORE`/`VZ_IGNORE` from the mask, you
+must also put real numbers in the velocity arguments to
+`set_position_target_global_int_send` -- right now those are hardcoded to
+`0`, which would suddenly mean "fly at exactly zero velocity" instead of
+"I don't care about velocity."
 
-Fortunately, application developers rarely need to think about these details—
-our library hides them.
+---
+
+# Why Use Bit Masks Instead of, Say, a Dictionary?
+
+Bit masks are how MAVLink -- and most low-level binary protocols -- pack
+many independent yes/no flags into the smallest possible number of bytes on
+the wire. Twelve `True`/`False` flags fit into a single 16-bit integer on
+the wire instead of twelve separate fields.
+
+You'll see this same pattern elsewhere in MAVLink (for example, the
+"armed" bit inside a `HEARTBEAT` message's `base_mode` field, which
+`mavlink_lib.py`'s `arm()`/`disarm()` set via `MAV_CMD_COMPONENT_ARM_DISARM`
+rather than a raw bit -- but something on the ArduPilot side is still just
+flipping one bit). It's worth being able to read a mask like this one, even
+though `mavlink_lib.py` hides it from you in day-to-day use.
 
 ---
 
