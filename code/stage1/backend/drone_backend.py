@@ -10,6 +10,8 @@ import time
 import paho.mqtt.client as mqtt
 from pymavlink import mavutil
 
+import mavlink_lib
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("drone_backend")
 
@@ -54,8 +56,7 @@ class VehicleState:
 
 def connect_mavlink():
     log.info("Connecting to MAVLink at %s", MAVLINK_CONN)
-    conn = mavutil.mavlink_connection(MAVLINK_CONN)
-    conn.wait_heartbeat()
+    conn = mavlink_lib.connect(MAVLINK_CONN)
     log.info(
         "Heartbeat received from system %s component %s",
         conn.target_system, conn.target_component,
@@ -137,64 +138,20 @@ def handle_command(conn, payload):
     cmd_type = cmd.get("type")
     try:
         if cmd_type == "arm":
-            conn.mav.command_long_send(
-                conn.target_system, conn.target_component,
-                mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
-                0, 1, 0, 0, 0, 0, 0, 0,
-            )
+            mavlink_lib.arm(conn)
         elif cmd_type == "disarm":
-            conn.mav.command_long_send(
-                conn.target_system, conn.target_component,
-                mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
-                0, 0, 0, 0, 0, 0, 0, 0,
-            )
+            mavlink_lib.disarm(conn)
         elif cmd_type == "takeoff":
-            alt = float(cmd["alt"])
             # NAV_TAKEOFF is only honored in GUIDED mode and while armed --
-            # make "takeoff" a complete action so a command producer doesn't
-            # need its own mode/arm dance first (this is what manually
-            # switching to GUIDED in the MAVProxy console was standing in
-            # for during testing).
-            conn.set_mode("GUIDED")
-            time.sleep(0.1)
-            conn.mav.command_long_send(
-                conn.target_system, conn.target_component,
-                mavutil.mavlink.MAV_CMD_COMPONENT_ARM_DISARM,
-                0, 1, 0, 0, 0, 0, 0, 0,
-            )
-            time.sleep(0.1)
-            conn.mav.command_long_send(
-                conn.target_system, conn.target_component,
-                mavutil.mavlink.MAV_CMD_NAV_TAKEOFF,
-                0, 0, 0, 0, 0, 0, 0, alt,
-            )
+            # mavlink_lib.takeoff makes "takeoff" a complete action so a
+            # command producer doesn't need its own mode/arm dance first
+            # (this is what manually switching to GUIDED in the MAVProxy
+            # console was standing in for during testing).
+            mavlink_lib.takeoff(conn, float(cmd["alt"]))
         elif cmd_type == "goto":
-            lat, lon, alt = float(cmd["lat"]), float(cmd["lon"]), float(cmd["alt"])
-            conn.set_mode("GUIDED")
-            time.sleep(0.1)
-            type_mask = (
-                mavutil.mavlink.POSITION_TARGET_TYPEMASK_VX_IGNORE
-                | mavutil.mavlink.POSITION_TARGET_TYPEMASK_VY_IGNORE
-                | mavutil.mavlink.POSITION_TARGET_TYPEMASK_VZ_IGNORE
-                | mavutil.mavlink.POSITION_TARGET_TYPEMASK_AX_IGNORE
-                | mavutil.mavlink.POSITION_TARGET_TYPEMASK_AY_IGNORE
-                | mavutil.mavlink.POSITION_TARGET_TYPEMASK_AZ_IGNORE
-                | mavutil.mavlink.POSITION_TARGET_TYPEMASK_YAW_IGNORE
-                | mavutil.mavlink.POSITION_TARGET_TYPEMASK_YAW_RATE_IGNORE
-            )
-            conn.mav.set_position_target_global_int_send(
-                0, conn.target_system, conn.target_component,
-                mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT_INT,
-                type_mask,
-                int(lat * 1e7), int(lon * 1e7), alt,
-                0, 0, 0, 0, 0, 0, 0, 0,
-            )
+            mavlink_lib.goto(conn, float(cmd["lat"]), float(cmd["lon"]), float(cmd["alt"]))
         elif cmd_type == "land":
-            conn.mav.command_long_send(
-                conn.target_system, conn.target_component,
-                mavutil.mavlink.MAV_CMD_NAV_LAND,
-                0, 0, 0, 0, 0, 0, 0, 0,
-            )
+            mavlink_lib.land(conn)
         else:
             log.warning("Ignoring unknown command type: %r", cmd_type)
     except (KeyError, ValueError, TypeError) as exc:
