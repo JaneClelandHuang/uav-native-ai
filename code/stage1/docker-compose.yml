@@ -23,6 +23,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile.backend
     volumes:
+      - ./backend/mavlink_lib.py:/app/mavlink_lib.py:ro
       - ./backend/drone_backend.py:/app/drone_backend.py:ro
     environment:
       VEHICLE_ID: ${VEHICLE_ID:-1}

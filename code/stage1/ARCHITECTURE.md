@@ -145,6 +145,16 @@ console use during earlier testing. Fixing it in the backend means the MQTT
 command channel is fully self-sufficient — no frontend needs its own
 mode-switching logic.
 
+The actual `arm`/`disarm`/`takeoff`/`goto`/`land` MAVLink calls (including
+the GUIDED-mode dance above) live in `backend/mavlink_lib.py`, not inline in
+`handle_command` — `scripts/simple_flight.py` (a no-MQTT, direct-pymavlink
+teaching script; see its own docstring) fires the same command vocabulary,
+so the build-and-send logic is shared rather than duplicated. `mavlink_lib.py`
+is bind-mounted into the container the same way `drone_backend.py` is.
+Only *waiting/polling* for a command's effect stays separate per caller —
+`drone_backend.py` has no such concept (it fires commands as MQTT messages
+arrive), while `simple_flight.py` has its own local resend/poll loop.
+
 The initial `mqtt_client.connect()` is wrapped in a bounded retry loop
 (`connect_mqtt_with_retry`, 30s timeout). Compose's `depends_on` only orders
 container *starts*, not readiness, so all three containers starting
