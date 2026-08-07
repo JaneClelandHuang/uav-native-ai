@@ -25,6 +25,15 @@ MQTT_PORT = int(os.environ.get("MQTT_PORT", "1883"))
 TELEMETRY_TOPIC = f"uav/{VEHICLE_ID}/telemetry"
 COMMAND_TOPIC = f"uav/{VEHICLE_ID}/command"
 
+# docker-compose.override.yml (written by scripts/generate_fleet.py) runs
+# one sitl_N/drone_backend_N pair per vehicle -- these are just the pair
+# VEHICLE_ID points at, for log hints.
+SITL_SERVICE = f"sitl_{VEHICLE_ID}"
+BACKEND_SERVICE = f"drone_backend_{VEHICLE_ID}"
+
+STAGE1_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OVERRIDE_PATH = os.path.join(STAGE1_DIR, "docker-compose.override.yml")
+
 COMPOSE_UP_TIMEOUT = 90
 TELEMETRY_TIMEOUT = 60
 ARM_ROUNDTRIP_TIMEOUT = 20
@@ -55,8 +64,19 @@ def check_docker():
     print("PASS: Docker is installed and the daemon is running.")
 
 
+def check_fleet_generated():
+    if not os.path.exists(OVERRIDE_PATH):
+        fail(
+            "docker-compose.override.yml doesn't exist yet.",
+            "Run `python scripts/generate_fleet.py` first -- it computes "
+            "your fleet (CENTER_LOCATION/NUM_DRONES in .env) and writes "
+            "that file. docker-compose.yml alone only defines the broker.",
+        )
+    print("PASS: fleet config found (docker-compose.override.yml).")
+
+
 def compose_up():
-    print("Starting docker compose (mosquitto + sitl + drone_backend)...")
+    print("Starting docker compose (mosquitto + fleet from docker-compose.override.yml)...")
     result = subprocess.run(
         ["docker", "compose", "up", "-d"],
         capture_output=True, text=True, timeout=COMPOSE_UP_TIMEOUT,
@@ -116,10 +136,10 @@ def wait_for_telemetry():
         fail(
             f"No telemetry arrived on {TELEMETRY_TOPIC} within "
             f"{TELEMETRY_TIMEOUT}s.",
-            "Check `docker compose logs sitl` for a MAVProxy heartbeat and "
-            "`docker compose logs drone_backend` for a 'Heartbeat received' "
-            "line. If sitl is still starting up on first run, give it "
-            "another minute and re-run this script.",
+            f"Check `docker compose logs {SITL_SERVICE}` for a MAVProxy "
+            f"heartbeat and `docker compose logs {BACKEND_SERVICE}` for a "
+            "'Heartbeat received' line. If sitl is still starting up on "
+            "first run, give it another minute and re-run this script.",
         )
     print(f"PASS: telemetry flowing ({received['payload']}).")
     return client
@@ -153,8 +173,8 @@ def check_command_roundtrip(client):
             "This can be a false failure if SITL just booted -- ArduCopter "
             "refuses to arm until its EKF/GPS pre-arm checks pass, which "
             "can take 30-60s after a cold start. Wait a bit and re-run. If "
-            "it persists, check `docker compose logs sitl` for a specific "
-            "PreArm message.",
+            f"it persists, check `docker compose logs {SITL_SERVICE}` for a "
+            "specific PreArm message.",
         )
     print("PASS: command round-trip works (arm command was obeyed).")
 
@@ -162,6 +182,7 @@ def check_command_roundtrip(client):
 def main():
     start = time.time()
     check_docker()
+    check_fleet_generated()
     compose_up()
     client = wait_for_telemetry()
     check_command_roundtrip(client)
