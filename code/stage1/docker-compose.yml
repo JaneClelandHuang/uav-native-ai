@@ -29,5 +29,10 @@ services:
       VEHICLE_ID: ${VEHICLE_ID:-1}
       MAVLINK_CONN: udpin:0.0.0.0:14550
       MQTT_HOST: mosquitto
+      # Optional, unset by default -- see drone_backend.py's UPDATE_DRONE
+      # comment. Set in .env (e.g. UPDATE_DRONE=update_drone) to also
+      # publish DroneResponse's UPDATE_DRONE message; leave unset for the
+      # normal student path.
+      UPDATE_DRONE: ${UPDATE_DRONE:-}
     depends_on:
       - mosquitto

@@ -184,13 +184,26 @@ running.
 
 Professional software projects should verify that their environments are
 configured correctly rather than assuming everything is working. This
-script checks the environment you just started in Step 4 -- it does not
-start anything itself.
+script also runs `docker compose up -d` itself (harmless to repeat -- the
+containers from Step 4 are already up, so it's a no-op there), then waits
+for telemetry and does an arm round-trip.
+
+Step 4 stays a separate step on purpose: on a first run, pulling/building
+the ~3.7GB SITL image can take long enough that running it inside this
+script's bounded timeouts caused false failures. Doing it as its own step
+first gives you visibility into that pull/build progress instead of it
+looking like a hang.
+
+Activate the virtual environment:
+
+```bash
+source client/.venv/bin/activate
+```
 
 Run:
 
 ```bash
-client/.venv/bin/python scripts/verify_setup.py
+python scripts/verify_setup.py
 ```
 
 The health check verifies that:
@@ -218,11 +231,8 @@ If a problem is detected, the script explains what failed and how to fix it.
 
 The viewer provides a simple graphical display of the simulated UAV.
 
-Activate the virtual environment:
-
-```bash
-source client/.venv/bin/activate
-```
+The virtual environment should still be active from Step 5. If you opened a
+new terminal, activate it again first: `source client/.venv/bin/activate`.
 
 Launch the viewer:
 

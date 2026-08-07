@@ -102,7 +102,7 @@ This gives us several software engineering benefits:
 
 # The Public API
 
-The current library provides six high-level operations.
+The current library provides eight high-level operations.
 
 ```python
 connect(connection_string)
@@ -115,11 +115,24 @@ takeoff(connection, altitude)
 
 goto(connection, latitude, longitude, altitude)
 
+circle_point(connection, center_latitude, center_longitude, altitude, radius, bearing)
+
+interrupt(connection)
+
 land(connection)
 ```
 
 Notice how these functions describe **what** we want the UAV to do rather than
 **how** MAVLink messages are constructed.
+
+`circle_point` is a little different from the rest: ArduPilot has no
+"circle around this point" command of its own to call, so it isn't a
+complete action the way `takeoff` or `land` is. It computes and sends a
+single point on a circle; something else has to call it repeatedly, on a
+timer, as the target bearing advances, to actually trace an arc. In this
+course that caller is `drone_backend.py`'s `circle_tick()` — see
+`ARCHITECTURE.md` for why that's a per-tick check folded into an existing
+loop rather than a dedicated background thread.
 
 ---
 

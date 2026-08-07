@@ -23,10 +23,12 @@ TELEMETRY_TOPIC = f"uav/{VEHICLE_ID}/telemetry"
 EARTH_RADIUS_M = 6378137.0
 TRAIL_LENGTH = 20  # ~5s of history at 4Hz telemetry -- a short comet-tail,
                    # not the whole mission's path
-# Floors, not fixed sizes -- both views auto-expand past these once there's
-# real movement/altitude, but GPS/EKF noise on the ground shouldn't be able
-# to shrink the view enough to make noise look like flight.
-MIN_HALF_SPAN_M = 20.0  # position plot always shows at least this far from home
+# Position plot: a fixed-size window that slides to follow the vehicle
+# rather than growing -- see the view-center panning logic in update().
+VIEW_HALF_SPAN_M = 50.0
+# Altitude gauge: a floor, not a fixed size -- auto-expands past this once
+# there's real altitude, but GPS/EKF noise on the ground shouldn't be able
+# to shrink it enough to make noise look like flight.
 MIN_ALT_CEILING_M = 5.0
 
 # One color per vehicle -- shared by its trail, marker, and altitude
@@ -130,8 +132,11 @@ def main():
 
     # Shared state written by the MQTT thread (via the queue) and read only
     # from the animation callback -- redraws never happen off the MQTT
-    # callback thread.
-    state = {"origin": None, "latest": None}
+    # callback thread. view_cx/view_cy are the position-plot window's
+    # center, in local ENU -- starts at home (0, 0) and only slides away
+    # from it when the vehicle would otherwise leave the fixed-size window
+    # (see update()), not on every frame.
+    state = {"origin": None, "latest": None, "view_cx": 0.0, "view_cy": 0.0}
 
     def update():
         while True:
@@ -161,24 +166,33 @@ def main():
 
         trail_line.set_data(trail_x, trail_y)
 
-        ax.relim()
-        ax.autoscale_view()
+        # Window is a fixed +/-VIEW_HALF_SPAN_M square that slides to keep
+        # the vehicle in view, rather than growing to fit it -- GPS/EKF
+        # noise on the ground can't shrink or move the window (it only ever
+        # reacts to the vehicle actually leaving the current one), and
+        # unlike an always-home-centered window, flying far in one
+        # direction doesn't waste half the view on empty space behind you.
+        # Slides just enough to put the vehicle back at the edge, not
+        # snapped to center, so it reads as the camera catching up rather
+        # than jumping around; it stays wherever it last slid to otherwise
+        # (it doesn't drift back toward home on its own).
+        if x > state["view_cx"] + VIEW_HALF_SPAN_M:
+            state["view_cx"] = x - VIEW_HALF_SPAN_M
+        elif x < state["view_cx"] - VIEW_HALF_SPAN_M:
+            state["view_cx"] = x + VIEW_HALF_SPAN_M
+        if y > state["view_cy"] + VIEW_HALF_SPAN_M:
+            state["view_cy"] = y - VIEW_HALF_SPAN_M
+        elif y < state["view_cy"] - VIEW_HALF_SPAN_M:
+            state["view_cy"] = y + VIEW_HALF_SPAN_M
 
-        # View is always centered on home (0,0), showing at least
-        # +/-MIN_HALF_SPAN_M in every direction -- grows past that only if
-        # the vehicle actually flies further out, so GPS/EKF noise on the
-        # ground can't shrink the view enough to make noise look like
-        # flight.
-        xlim, ylim = ax.get_xlim(), ax.get_ylim()
-        half_span = max(MIN_HALF_SPAN_M, abs(xlim[0]), abs(xlim[1]), abs(ylim[0]), abs(ylim[1]))
-        ax.set_xlim(-half_span, half_span)
-        ax.set_ylim(-half_span, half_span)
+        ax.set_xlim(state["view_cx"] - VIEW_HALF_SPAN_M, state["view_cx"] + VIEW_HALF_SPAN_M)
+        ax.set_ylim(state["view_cy"] - VIEW_HALF_SPAN_M, state["view_cy"] + VIEW_HALF_SPAN_M)
 
         # Triangle size as a fraction of the current view so it stays a
         # sensible size regardless of zoom level; heading defaults to 0
         # (north) if not yet known rather than skipping the marker.
         heading = t.get("heading") or 0.0
-        size = TRIANGLE_SIZE_FRACTION * (2 * half_span)
+        size = TRIANGLE_SIZE_FRACTION * (2 * VIEW_HALF_SPAN_M)
         drone_marker.set_xy(heading_triangle(x, y, heading, size))
 
         alt_rel = t.get("alt_rel")
