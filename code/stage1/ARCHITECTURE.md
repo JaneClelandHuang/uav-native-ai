@@ -123,8 +123,9 @@ without a rebuild). Binds `udpin:0.0.0.0:14550` and listens for SITL.
 
 A **single** reader thread (`mavlink_reader`) handles everything read from
 the connection: `HEARTBEAT` → armed/mode, `GLOBAL_POSITION_INT` →
-lat/lon/alt_rel/heading, `VFR_HUD` → groundspeed, `SYS_STATUS` → battery,
-and `HOME_POSITION` capture. This is deliberate, not incidental — an earlier
+lat/lon/alt_rel/alt_amsl/heading, `VFR_HUD` → groundspeed, `SYS_STATUS` →
+battery_voltage/battery_level, and `HOME_POSITION` capture. This is
+deliberate, not incidental — an earlier
 version used two threads (one blocking on `HOME_POSITION` before starting
 telemetry, one reading everything else), both calling `pymavlink`'s
 `recv_match` on the same connection. That's a real race (two threads reading
@@ -145,15 +146,87 @@ console use during earlier testing. Fixing it in the backend means the MQTT
 command channel is fully self-sufficient — no frontend needs its own
 mode-switching logic.
 
-The actual `arm`/`disarm`/`takeoff`/`goto`/`land` MAVLink calls (including
-the GUIDED-mode dance above) live in `backend/mavlink_lib.py`, not inline in
-`handle_command` — `scripts/simple_flight.py` (a no-MQTT, direct-pymavlink
-teaching script; see its own docstring) fires the same command vocabulary,
-so the build-and-send logic is shared rather than duplicated. `mavlink_lib.py`
-is bind-mounted into the container the same way `drone_backend.py` is.
-Only *waiting/polling* for a command's effect stays separate per caller —
-`drone_backend.py` has no such concept (it fires commands as MQTT messages
-arrive), while `simple_flight.py` has its own local resend/poll loop.
+**`circle` has no ArduCopter command to hook into, so it's built from the
+same primitive as `goto`.** There's no working "circle around this point"
+command in this pinned firmware: ArduCopter's GUIDED mode has no circle
+submode (checked directly against the `Copter-4.6.3` source — `ModeGuided`'s
+only submodes are `TakeOff`/`WP`/`Pos`/`Accel`/`VelAccel`/`PosVelAccel`/
+`Angle`), and `MAV_CMD_DO_ORBIT`, the more commonly documented "orbit a
+point" command, isn't even present in this pinned `pymavlink==2.4.41`/
+ArduPilotMega dialect. (An earlier version of this used the ArduPilot-custom
+`MAV_CMD_SET_GUIDED_SUBMODE_CIRCLE` message, which *is* in the dialect but
+turned out not to be handled by this firmware version either — confirmed
+against source before it shipped, not assumed, but worth remembering that
+"the message exists in the dialect" and "the firmware acts on it" are
+different claims.)
+
+So `circle` is built the way you'd fly one by hand: `mavlink_lib.circle_point()`
+computes one lat/lon on the circle at a given compass bearing from the
+center and sends it as one `SET_POSITION_TARGET_GLOBAL_INT` — the same
+message `goto` sends, just recomputed as bearing advances. One call traces
+one point; tracing an arc means calling it repeatedly over time.
+
+**That timing loop lives in `drone_backend.py`, not as a new thread, but
+folded into the loop `main()` already runs.** `main()`'s existing loop ticks
+once per `TELEMETRY_HZ` period to publish telemetry; `circle_tick()` runs
+once per that same tick, ahead of the publish. If a circle is active (an
+`ActiveCircle` instance — a lock-protected dict, the same shape
+`VehicleState` already uses for telemetry, not a new synchronization idiom),
+it computes how many degrees have been swept from elapsed wall-clock time
+(`angular_rate_deg_s = degrees(speed_mps / radius_m)`, not a fixed per-tick
+step, so a late tick doesn't throw off the total), sends the next
+`circle_point()`, and auto-clears itself once the requested `degrees` is
+reached. A dedicated thread per active circle was the first design
+considered and rejected: every vehicle already runs a reader thread plus
+paho's own network thread, and a third thread type — with its own
+start/cancel/join lifecycle — was judged not worth the added concurrency
+surface when the existing telemetry loop already ticks at a usable rate.
+
+**`interrupt` cancels an outstanding `goto` or `circle`.** Neither uses
+ArduCopter's built-in AUTO/mission-waypoint system — both stay in GUIDED
+mode, so there's no queued waypoint or mission state to clear, and no
+MAVLink "cancel" message for either. For `goto`, `interrupt` alone is
+enough: switching to `LOITER` takes the vehicle out of GUIDED and holds its
+position. For `circle`, `interrupt` additionally has to stop `circle_tick()`
+from continuing to fire new `circle_point()` calls, or they'd fight the mode
+switch — so `handle_command` clears the active circle (`circle.stop()`) for
+*any* incoming command that isn't itself a new `circle`, not just
+`interrupt`. That also means a `goto`/`takeoff`/`land` sent mid-circle
+implicitly cancels it, which is deliberate: leaving a stale circle running
+underneath a new command would be a confusing bug, not a feature.
+
+**`circle` always starts at bearing 0 (due north of center).** There's no
+tracking of where the vehicle actually is relative to the center when the
+command arrives, so starting anywhere else means a sudden jump onto the
+circle rather than a smooth entry. `scripts/test_circle.py` handles this by
+flying to the bearing-0 point itself before sending `circle`, rather than to
+the center.
+
+**`fly_home` is `goto()` against a remembered position, not a new MAVLink
+primitive.** `mavlink_reader`'s `HOME_POSITION` handler already captures
+lat/lon (and now `alt`, AMSL) once per boot for the retained `uav/<id>/home`
+topic; `fly_home` just also stashes that lat/lon on `VehicleState`
+(`home_lat`/`home_lon` — not part of the telemetry snapshot, home doesn't
+change tick to tick) so `handle_command` has something to read. It transits
+at `max(current alt_rel, FLY_HOME_MIN_ALT_M)` — high enough not to drag the
+vehicle home skimming the ground if it was flying low, but not forcing an
+unnecessary climb if it was already higher. Same as any other `goto`, this
+stays in GUIDED and doesn't land on its own — `land` is a deliberate,
+separate follow-up command, same pattern as after any other `goto`. If
+`home_lat`/`home_lon` haven't been captured yet, the command is logged and
+ignored rather than flying toward `(0, 0)`.
+
+The actual `arm`/`disarm`/`takeoff`/`goto`/`circle_point`/`interrupt`/`land`
+MAVLink calls (including the GUIDED-mode dance above) live in
+`backend/mavlink_lib.py`, not inline in `handle_command` — `scripts/simple_flight.py` (a no-MQTT, direct-pymavlink
+teaching script; see its own docstring) fires the same one-shot command
+vocabulary (`circle`'s timing loop is MQTT-path-only, not part of
+`simple_flight.py`), so the build-and-send logic is shared rather than
+duplicated. `mavlink_lib.py` is bind-mounted into the container the same way
+`drone_backend.py` is. Beyond `circle_tick()`, waiting/polling for a
+command's effect stays separate per caller — `drone_backend.py` otherwise
+fires commands as MQTT messages arrive, while `simple_flight.py` has its own
+local resend/poll loop.
 
 The initial `mqtt_client.connect()` is wrapped in a bounded retry loop
 (`connect_mqtt_with_retry`, 30s timeout). Compose's `depends_on` only orders
@@ -174,11 +247,18 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 - **Layout**: two panels side by side — a position plot (East/North) and a
   current-altitude gauge (a thick horizontal line at the current value, not
   a filled bar from ground level).
-- **View**: always centered on home `(0,0)`, showing at least ±20m in every
-  direction (`MIN_HALF_SPAN_M`), growing only if the vehicle actually flies
-  further. Without this floor, `autoscale_view()` fits tightly to whatever
-  data is present — including a few centimeters of GPS/EKF noise while
-  sitting still, which visually blows up into what looks like a wild flight.
+- **View**: a fixed ±50m window (`VIEW_HALF_SPAN_M`) that starts centered on
+  home `(0,0)` and slides — independently on each of N/S/E/W — only when the
+  vehicle would otherwise leave it, stopping just enough to put the vehicle
+  back at the edge rather than snapping to center. This replaced an earlier
+  design that grew the window to fit the data (via `relim`/`autoscale_view`)
+  while always staying centered on home: flying far in one direction forced
+  the *whole* window to expand symmetrically around `(0,0)`, wasting most of
+  the view on empty space behind the vehicle, and a raw `autoscale_view()`
+  with no floor at all fits tightly enough to make a few centimeters of
+  GPS/EKF noise while sitting still look like a wild flight. The window
+  never shrinks or grows now — just pans — so neither problem applies; it
+  also doesn't drift back toward home on its own once it's slid away.
 - **Trail**: a short (`TRAIL_LENGTH = 20`, ~5s at 4Hz) rolling window, so it
   reads as a comet-tail trailing the vehicle rather than the whole mission's
   path slowly aging out over a full minute.
@@ -201,18 +281,59 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 | Topic | Direction | Retained? | Purpose |
 |---|---|---|---|
 | `uav/<id>/telemetry` | backend → clients | no | Full vehicle state, published at `TELEMETRY_HZ` |
-| `uav/<id>/command` | clients → backend | no | Arm/disarm/takeoff/goto/land requests |
+| `uav/<id>/command` | clients → backend | no | Arm/disarm/takeoff/goto/circle/fly_home/interrupt/land requests |
 | `uav/<id>/home` | backend → clients | **yes** | Shared local-frame origin, published once |
 
 ```json
 // uav/1/telemetry
 {
   "vehicle_id": "1", "timestamp": 1737000000.123,
-  "lat": 41.700, "lon": -86.239, "alt_rel": 12.4, "heading": 87.3,
-  "groundspeed": 3.2, "battery_voltage": 12.1,
-  "armed": true, "mode": "GUIDED"
+  "lat": 41.700, "lon": -86.239,
+  "alt_rel": 12.4, "alt_amsl": 237.5, "heading": 87.3,
+  "groundspeed": 3.2, "battery_voltage": 12.1, "battery_level": 0.83,
+  "armed": true, "mode": "GUIDED", "activity": "flying"
 }
 ```
+
+`activity` is one of `idle` / `taking_off` / `flying` / `circling` /
+`landing` — the vehicle's current flight phase, set explicitly by
+`handle_command` (and `circle_tick` when a circle finishes sweeping on its
+own) as each command is issued, not inferred from other telemetry fields.
+That's a deliberate choice, not the simpler option: `mode` alone can't
+distinguish these, since `takeoff`/`goto`/`circle`/`fly_home` all report
+`mode: "GUIDED"` — a consumer trying to infer "is this circling or just
+flying straight" from telemetry alone would need fragile heuristics
+(heading-rate, climb-rate) with real false-positive/negative cases, when
+`drone_backend.py` already knows exactly which command it just executed.
+`armed == False` always forces `activity` back to `idle` regardless of
+what was last commanded (in `mavlink_reader`'s `HEARTBEAT` handling) — this
+is a deliberate safety net, not redundant with the per-command sets above:
+it self-corrects an optimistic `taking_off` if an arm attempt is actually
+rejected by pre-arm checks, and is what marks a completed landing as
+`idle` once the vehicle actually disarms, without `land`'s handler needing
+to know when touchdown happens.
+
+`alt_rel` (relative to home) and `alt_amsl` (above mean sea level) are both
+published, from the same `GLOBAL_POSITION_INT` message's `relative_alt` and
+`alt` fields respectively — not a second MAVLink request. `alt_rel` stays
+canonical for "did I reach my target altitude" mission logic (what
+`test_flight.py`/`test_circle.py`'s arrival checks use); `alt_amsl` is there
+for terrain/elevation work, where relative-to-launch-point is the wrong
+frame — a launch point on a hillside vs. a valley gives the same `alt_rel`
+for very different real elevations. `heading` deliberately stays in
+degrees, not radians: it matches `GLOBAL_POSITION_INT.hdg`'s native MAVLink
+representation (no conversion at the source), and every other bearing
+convention already in this codebase (`circle`'s compass bearing, the
+matplotlib heading-triangle marker) is degrees too. A consumer that
+specifically needs radians (e.g. for quaternion/rotation composition, not
+just display) should convert at its own boundary, not push the conversion
+back into the canonical telemetry.
+
+`battery_level` (0.0-1.0) comes from `SYS_STATUS.battery_remaining`
+(0-100%, or -1 if the autopilot doesn't know yet, e.g. right after boot) —
+again the same message already read for `battery_voltage`, not a new
+request. Published as `null` (`None`) while unknown rather than a
+misleading `-1` or `0`.
 
 ```json
 // uav/1/command -- one of:
@@ -220,6 +341,9 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 {"type": "disarm"}
 {"type": "takeoff", "alt": 10}
 {"type": "goto", "lat": 41.701, "lon": -86.238, "alt": 10}
+{"type": "circle", "lat": 41.701, "lon": -86.238, "alt": 10, "radius": 15, "degrees": 720, "speed": 3}
+{"type": "fly_home"}
+{"type": "interrupt"}
 {"type": "land"}
 ```
 
@@ -328,6 +452,56 @@ uav-course-infra/
     test_flight.py
     build_and_push_sitl.sh
 ```
+
+## Optional: DroneResponse `UPDATE_DRONE` integration
+
+Not course content — instructor/research tooling, off by default, doesn't
+touch anything students see. Set `UPDATE_DRONE` (e.g. in a local `.env`,
+never committed to `.env.example`) to the topic name to also publish a
+translated message on every tick, alongside the normal `TELEMETRY_TOPIC`
+publish — `drone_backend.py`'s `update_drone_payload()`. Left unset, none
+of this runs. Named after the DroneResponse message contract/topic itself
+(lowercase `update_drone` is the actual topic string — must match exactly
+what the consuming GUI subscribes to, MQTT topics are case-sensitive), not
+after any particular consumer program — `drone_backend.py` doesn't know or
+care who's subscribed. The current known consumer is `new-gui.py`, which is
+what the specifics below are checked against, but nothing here is coupled
+to that program specifically.
+
+This used to be a separate bridge process (a standalone script in the
+`new-gui` repo translating `uav/1/telemetry` into `update_drone`) but folding
+it into `drone_backend.py` directly means one fewer process to run — the
+`uav/<id>/telemetry` contract itself is completely unchanged either way, so
+`matplotlib_view.py`/`test_flight.py`/`test_circle.py` don't know or care
+whether this is enabled.
+
+Things worth knowing if this needs touching again:
+- `new-gui.py`'s field is named `heading_rad`, but every place that actually
+  renders it (`tile_map.py`, `drone_panel.py`, `camera_manager.py`) treats
+  the value as **degrees** — confirmed by reading those call sites, not the
+  field name. Converting Stage 1's degrees to radians here was a real bug
+  in an earlier version: the drone never visibly faced its direction of
+  travel.
+- The flashing drone icon during takeoff/landing isn't driven by
+  `status`/`state_type` — it's `onboard_pilot`, checked case-insensitively
+  in `tile_map.py`'s `_is_flashing()` for exactly `"takeoff"` or `"land"`.
+  Despite the name, it's not a person — `drone.py`'s own comment gives
+  `"ReceiveMission"`/`"Takeoff"` as example values, i.e. the onboard
+  autonomy's current named task, which Stage 1's `activity` already tracks
+  and `UPDATE_DRONE_ACTIVITY_MAP` maps onto directly.
+- `uavid` has to be an HTML/CSS color name, not Stage 1's own numeric
+  `VEHICLE_ID` — confirmed via `tile_map.py`: a live drone's marker color is
+  `fill_color = QColor(d.name.lower())` (`d.name` is `uavid`) with no
+  meaningful fallback if that string isn't a valid color name (`QColor(...)
+  .isValid()` is `False`, silently renders flat gray). `UPDATE_DRONE_COLORS`
+  (`Fuchsia`, `Navy`, `Purple`, `Aqua`, `Lime`, `Orange`, `Yellow`) maps
+  `VEHICLE_ID` to a color 1-indexed into that list; `VEHICLE_ID="1"` sends
+  `uavid: "Fuchsia"`. Stage 1's own `vehicle_id` field (in
+  `uav/<id>/telemetry`) and MQTT topic names (`uav/1/...`) are untouched —
+  this mapping exists only inside `update_drone_payload`. Running more
+  vehicles than the list has colors (Stage 6, multi-vehicle) falls back to
+  the raw numeric ID rather than crashing, which renders gray the same way
+  an unmapped ID always would have.
 
 ## Not yet in scope (future stages)
 
