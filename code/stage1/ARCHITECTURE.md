@@ -9,26 +9,36 @@ the final design itself.
 ## System diagram
 
 ```
-ArduPilot SITL (container)
-      |  pymavlink over UDP
-      |  SITL connects OUT: --out=udpout:drone_backend:14550
+ArduPilot SITL x N (containers: sitl_1 .. sitl_N, N = NUM_DRONES)
+      |  pymavlink over UDP, one pair per vehicle
+      |  each SITL connects OUT: --out=udpout:drone_backend_N:14550
       v
-drone_backend.py (container)
-  binds udpin:0.0.0.0:14550        <- the only pymavlink speaker in the stack
+drone_backend.py x N (containers: drone_backend_1 .. _N, VEHICLE_ID 1..N)
+  each binds its own udpin:0.0.0.0:14550   <- own container network
+  namespace per pair, so the port never collides across vehicles
       |
-      |  MQTT publish/subscribe (paho-mqtt)
+      |  MQTT publish/subscribe (paho-mqtt), topics prefixed uav/<id>/...
       v
 Mosquitto broker (container, port 1883 published to host)
       |
       |  MQTT subscribe (paho-mqtt)
       v
 matplotlib_view.py (host process, your own Python venv)
-  -- and any other frontend built against the same topics --
+  -- shows one vehicle (VEHICLE_ID) at a time; new-gui is the multi-vehicle
+  frontend, subscribing across all N --
 ```
 
 Everything above the broker runs in Docker, on one Compose network. Only
 MQTT (a published TCP port) crosses the host/container boundary — nothing
-else needs to.
+else needs to. Each `sitl_N`/`drone_backend_N` pair is fully independent:
+no shared state or synchronization between vehicles, just N copies of the
+same one-pymavlink-speaker pattern below.
+
+**N is not fixed in `docker-compose.yml`.** That file only defines
+`mosquitto` — `scripts/generate_fleet.py` writes the `sitl_N`/
+`drone_backend_N` pairs into `docker-compose.override.yml` (gitignored,
+regenerated on demand), which Compose auto-merges. See "Fleet generation"
+below.
 
 ## Why this shape
 
@@ -58,7 +68,7 @@ policy](#coordinate-frame-policy) below.
 broker are containerized because they're infrastructure nobody needs to
 touch, version-pinned so "does this work" reduces to "does Docker run."
 `drone_backend.py`'s source is bind-mounted into its container
-(`docker compose restart drone_backend` picks up edits — no image rebuild
+(`docker compose restart drone_backend_1` picks up edits — no image rebuild
 unless `requirements.txt` changes), and `matplotlib_view.py` runs on the host
 entirely. Neither gets a rebuild-and-restart cycle added to routine editing.
 
@@ -94,18 +104,22 @@ RUN git clone --recurse-submodules --shallow-submodules --depth 1 \
     && ./waf configure --board sitl && ./waf copter
 ```
 
-The compose service runs:
+Each `sitl_N` service runs the same command, parameterized per vehicle
+(shown here for vehicle 1 at a single-vehicle `NUM_DRONES=1`; see "Fleet
+generation" below for how `_2..N` and their `--custom-location`s are
+derived):
 
 ```
 ./Tools/autotest/sim_vehicle.py -v ArduCopter --no-rebuild -w
-  --custom-location=${SITL_LOCATION:--35.363261,149.165230,584,353}
-  --out=udpout:drone_backend:14550
+  --custom-location=41.6985750,-86.2370550,225,0
+  --out=udpout:drone_backend_1:14550
 ```
 
-`--custom-location` (lat,lon,alt,heading) defaults to the Notre Dame area
-via `.env`, overriding ArduPilot's own default (CMAC, Canberra). `tty: true`
-and `stdin_open: true` are set so `docker compose attach sitl` gives access
-to MAVProxy's plain command prompt for manual arm/mode testing — no
+`--custom-location` (lat,lon,alt,heading) is computed by
+`scripts/generate_fleet.py`, overriding ArduPilot's own default (CMAC,
+Canberra). `tty: true` and `stdin_open: true` are set so `docker compose
+attach sitl_1` gives access to MAVProxy's plain command prompt for manual
+arm/mode testing — no
 `--console`/`--map` GUI, so no X11 forwarding needed. **Detach with
 `Ctrl-p Ctrl-q`, never `Ctrl-C`** — since you're attached to the container's
 actual foreground process, `Ctrl-C` sends SIGINT straight to MAVProxy/SITL
@@ -118,7 +132,7 @@ emulation — see `SETUP.md` for the one-time setting.
 ### 3. `drone_backend.py`
 
 Containerized (`docker/Dockerfile.backend`, thin `python:3.12-slim`, source
-bind-mounted so edits apply on `docker compose restart drone_backend`
+bind-mounted so edits apply on `docker compose restart drone_backend_1`
 without a rebuild). Binds `udpin:0.0.0.0:14550` and listens for SITL.
 
 A **single** reader thread (`mavlink_reader`) handles everything read from
@@ -375,6 +389,58 @@ client converts against the same origin, delivered immediately even to
 clients that subscribe late (that's what MQTT's retained-message flag is
 for).
 
+## Fleet generation
+
+`docker-compose.yml` deliberately doesn't know how many vehicles exist —
+Compose's YAML has no loops or arithmetic, so it can't turn a single
+`NUM_DRONES` integer into N service blocks by itself. `scripts/
+generate_fleet.py` does that work once, on the host, before you ever run
+`docker compose`:
+
+1. Reads `CENTER_LOCATION`, `CENTER_HEADING`, `NUM_DRONES`, and
+   `DRONE_SPACING_M` from `.env`. Unlike Compose (which loads `.env`
+   automatically for its own `${VAR}` substitution), this and every other
+   host-side script has no automatic `.env` loading — `load_dotenv()` in
+   this script is a small hand-rolled `KEY=VALUE` parser for that reason,
+   not a stand-in for a shell `source .env`. Each of the four also has a
+   matching CLI flag (`--location`, `--num-drones`, `--heading`,
+   `--spacing`) for a one-off run without touching `.env` — precedence is
+   flag > shell env var > `.env` > built-in default, e.g.
+   `generate_fleet.py --location CMAC --num-drones 3` leaves `.env` alone.
+2. Looks up `CENTER_LOCATION` (a nickname, e.g. `ND`) in `locations.json`
+   for its lat/lon/alt. There's deliberately no raw-lat/lon fallback in
+   `.env` — every flight center has to be a saved favorite, so there's one
+   place (`locations.json`) that defines what a location *is*, not two.
+3. Computes where each vehicle starts. `NUM_DRONES=1` places that one
+   vehicle exactly at the looked-up center — this is what every earlier
+   lab already assumed, so it stays a strict special case, not "a ring of
+   one." `NUM_DRONES>1` arranges all N vehicles evenly spaced on a ring
+   around the center instead (nothing sits exactly on the typed coordinate
+   once there's more than one vehicle), with the ring radius solved from
+   `DRONE_SPACING_M` via the regular-polygon chord formula
+   (`chord = 2 * R * sin(pi / N)`) so adjacent vehicles end up that many
+   meters apart regardless of N.
+4. Writes `docker-compose.override.yml` — one `sitl_N`/`drone_backend_N`
+   pair per vehicle, `VEHICLE_ID` 1..N, each with its own computed
+   `--custom-location`. Compose auto-merges a file by that exact name
+   sitting next to `docker-compose.yml`, so nothing downstream needs a
+   `-f` flag to pick it up.
+
+This script only writes that file — it never calls `docker compose`
+itself. Bringing the fleet up/down (and back up again after re-running the
+generator) is a separate, explicit step; see `SETUP.md`. One consequence
+worth knowing: if you lower `NUM_DRONES` and regenerate, Compose won't
+know to stop the containers for vehicles that disappeared from the file
+until you say so explicitly — `docker compose up -d --remove-orphans`, or
+`docker compose down` first.
+
+`locations.json` is git-tracked and seeded with a couple of entries (`ND`,
+`CMAC` — ArduPilot's own upstream default, kept as a reference point far
+from campus). It's not secret or machine-specific like `.env`, so add your
+own favorites to it directly; each entry needs `name`, `nickname`, `lat`,
+`lon`, and `alt` (AMSL, matching the `alt_amsl` telemetry field, not
+`alt_rel`). Nicknames must be unique — the generator fails immediately, before writing anything, if they collide or a required field is missing.
+
 ## Version pinning
 
 - ArduPilot: `Copter-4.6.3`, built from source, pushed to
@@ -392,11 +458,19 @@ Bumping the ArduPilot version for a later course run: re-run
 | Variable | Default | Controls |
 |---|---|---|
 | `SITL_IMAGE` | `uav-course-sitl:copter-4.6.3` (local build tag) | Which SITL image `docker compose` pulls/runs |
-| `VEHICLE_ID` | `1` | MQTT topic prefix (`uav/<id>/...`); Stage 6 bumps this for a second vehicle |
-| `SITL_LOCATION` | Notre Dame area | SITL start location: `lat,lon,alt(m),heading(deg)` |
+| `VEHICLE_ID` | `1` | Which vehicle single-vehicle host tools (`matplotlib_view.py`, `test_flight.py`, `test_circle.py`, `disarm.sh`, `verify_setup.py`) point at — does not affect which vehicles `docker compose` starts, see below |
+| `CENTER_LOCATION` | `ND` | Nickname of a `locations.json` entry — read by `scripts/generate_fleet.py`, not by `docker compose` directly |
+| `CENTER_HEADING` | `0` | Starting heading (deg) for every vehicle, also read by `generate_fleet.py` |
+| `NUM_DRONES` | `1` | How many vehicles `generate_fleet.py` writes into `docker-compose.override.yml`, 1-7 |
+| `DRONE_SPACING_M` | `15` | Target distance (m) between adjacent vehicles on the ring, only used when `NUM_DRONES>1` |
 
 ## Scripts
 
+- **`scripts/generate_fleet.py`** — writes `docker-compose.override.yml`
+  from `CENTER_LOCATION`/`CENTER_HEADING`/`NUM_DRONES`/`DRONE_SPACING_M` in
+  `.env` plus `locations.json`. See "Fleet generation" above. Run this
+  before `docker compose pull`/`up` (or after changing any of those `.env`
+  values) — it never runs `docker compose` itself.
 - **`scripts/verify_setup.py`** — one-command health check: Docker
   installed/running, `docker compose up`, telemetry flowing, arm-command
   round-trip. Plain-English PASS or a specific failure + remediation line,
@@ -433,7 +507,9 @@ Bumping the ArduPilot version for a later course run: re-run
 ```
 uav-course-infra/
   docker-compose.yml
+  docker-compose.override.yml  <- generated by generate_fleet.py, gitignored
   .env / .env.example
+  locations.json            <- saved flight-center favorites (name/nickname/lat/lon/alt)
   ARCHITECTURE.md          <- this file
   SETUP.md                 <- per-OS install notes, troubleshooting index
   docker/
@@ -447,9 +523,11 @@ uav-course-infra/
     matplotlib_view.py
     requirements.txt
   scripts/
+    generate_fleet.py
     verify_setup.py
     disarm.sh
     test_flight.py
+    test_circle.py
     build_and_push_sitl.sh
 ```
 
@@ -509,6 +587,10 @@ Things worth knowing if this needs touching again:
 - Stage 3: click-to-goto
 - Stage 4: mission upload / geofence
 - Stage 5: log replay
-- Stage 6: multi-vehicle — `VEHICLE_ID` and `DRONE_COLOR` are already
-  structured with this in mind (per-vehicle topic prefix, per-vehicle color
-  scheme), but nothing runs two vehicles concurrently yet.
+- Stage 6: multi-vehicle is now infrastructure, not future scope —
+  `scripts/generate_fleet.py` + `docker compose up` starts 1-7 independent
+  `sitl_N`/`drone_backend_N` pairs (`VEHICLE_ID` 1..N, each with its own
+  MQTT topic prefix, scattered around a `locations.json` favorite, and,
+  when `UPDATE_DRONE` is set, its own `DRONE_COLOR`). `matplotlib_view.py`
+  deliberately stays single-vehicle (`VEHICLE_ID` picks which one it shows)
+  since multi-vehicle *display* is `new-gui`'s job, not this stage's.

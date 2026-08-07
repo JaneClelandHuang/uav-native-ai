@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Notre Dame Stadium",
+    "nickname": "ND",
+    "lat": 41.698575,
+    "lon": -86.237055,
+    "alt": 225
+  },
+  {
+    "name": "ArduPilot default (CMAC, Canberra)",
+    "nickname": "CMAC",
+    "lat": -35.363261,
+    "lon": 149.165230,
+    "alt": 584
+  }
+]

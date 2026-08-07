@@ -149,7 +149,29 @@ This includes:
 These components run together as a reproducible development environment,
 independent of your operating system.
 
-First, pull the images:
+First, generate your fleet configuration. `docker-compose.yml` doesn't fix
+how many vehicles run or where they start -- that's computed by a script
+from settings in `.env`:
+
+```bash
+python3 scripts/generate_fleet.py
+```
+
+The defaults (`CENTER_LOCATION=ND`, `NUM_DRONES=1`) start a single vehicle
+at Notre Dame, matching every command in the rest of this lab. To fly
+somewhere else or with more vehicles, edit `.env`: `CENTER_LOCATION` picks
+a saved spot from `locations.json` by nickname (add your own entries there
+-- each needs `name`, `nickname`, `lat`, `lon`, `alt`), and `NUM_DRONES`
+(1-7) scatters that many vehicles around it. Re-run this script any time
+you change either value -- it only rewrites `docker-compose.override.yml`,
+it does not itself start or stop anything.
+
+For a one-off run without editing `.env`, pass flags instead:
+`python3 scripts/generate_fleet.py --location CMAC --num-drones 3`
+(`--help` lists all of them). Flags only affect that run -- `.env` is left
+untouched either way.
+
+Then pull the images:
 
 ```bash
 docker compose pull
@@ -169,14 +191,19 @@ docker compose up -d
 ```
 
 The first run also builds the backend image, which takes another moment.
-Confirm all three services are up:
+Confirm the services from `generate_fleet.py`'s output are up:
 
 ```bash
 docker compose ps
 ```
 
-You should see `mosquitto`, `drone_backend`, and `sitl` all listed as
-running.
+With the default `NUM_DRONES=1` you should see three containers:
+`mosquitto`, `sitl_1`, and `drone_backend_1`. If you raised `NUM_DRONES`,
+you'll see a `sitl_N`/`drone_backend_N` pair for each additional vehicle.
+This lab only ever exercises vehicle 1 (`VEHICLE_ID=1` in `.env`) --
+additional vehicles are there for multi-vehicle frontends (e.g. `new-gui`)
+to connect to; `matplotlib_view.py` itself only ever shows one vehicle at a
+time.
 
 ---
 
@@ -211,6 +238,7 @@ The health check verifies that:
 | Component | Purpose |
 |-----------|---------|
 | Docker | Containers start successfully |
+| Fleet config | `docker-compose.override.yml` exists (from Step 4's `generate_fleet.py`) |
 | MQTT Broker | Message broker is reachable |
 | Backend | Backend service is running |
 | ArduPilot SITL | Simulator is operational |
@@ -275,7 +303,7 @@ The mission automatically:
 Watch the viewer window as telemetry updates in real time.
 
 > **Optional:** to manually arm or change mode from the SITL side instead of
-> through the MQTT command channel, `docker compose attach sitl` gives you
+> through the MQTT command channel, `docker compose attach sitl_1` gives you
 > MAVProxy's plain command prompt. Detach without stopping the container
 > with `Ctrl-p Ctrl-q` -- **not** `Ctrl-C`, which kills the simulation.
 
@@ -370,7 +398,7 @@ Wait approximately one minute and rerun:
 python scripts/verify_setup.py
 ```
 
-If it still fails, `docker compose logs sitl` will show a specific `PreArm`
+If it still fails, `docker compose logs sitl_1` will show a specific `PreArm`
 message.
 
 ---
