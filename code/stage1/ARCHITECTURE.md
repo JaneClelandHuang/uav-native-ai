@@ -531,14 +531,17 @@ uav-course-infra/
     build_and_push_sitl.sh
 ```
 
-## Optional: DroneResponse `UPDATE_DRONE` integration
+## DroneResponse `UPDATE_DRONE` integration
 
-Not course content — instructor/research tooling, off by default, doesn't
-touch anything students see. Set `UPDATE_DRONE` (e.g. in a local `.env`,
-never committed to `.env.example`) to the topic name to also publish a
-translated message on every tick, alongside the normal `TELEMETRY_TOPIC`
-publish — `drone_backend.py`'s `update_drone_payload()`. Left unset, none
-of this runs. Named after the DroneResponse message contract/topic itself
+Required for the `new-gui` viewer, off by default for the plain Stage 1 path
+(`matplotlib_view.py`/`test_flight.py`/`test_circle.py` don't need it).
+`.env-copy` (the working config students copy to `.env` -- see SETUP.md
+Step 3) sets it already; `.env.example` intentionally leaves it out since
+that file is a from-scratch reference, not a copy-and-go config. Set
+`UPDATE_DRONE` to the topic name to also publish a translated message on
+every tick, alongside the normal `TELEMETRY_TOPIC` publish —
+`drone_backend.py`'s `update_drone_payload()`. Left unset, none of this
+runs. Named after the DroneResponse message contract/topic itself
 (lowercase `update_drone` is the actual topic string — must match exactly
 what the consuming GUI subscribes to, MQTT topics are case-sensitive), not
 after any particular consumer program — `drone_backend.py` doesn't know or
@@ -583,7 +586,9 @@ Things worth knowing if this needs touching again:
 
 ## Not yet in scope (future stages)
 
-- Stage 2: tile-based map / `new-gui.py`
+- Stage 2: tile-based map / `new-gui.py` is now infrastructure, not future
+  scope — it's the multi-vehicle viewer in the separate `new-gui` repo, and
+  needs `UPDATE_DRONE` set (see above) to receive telemetry from this repo.
 - Stage 3: click-to-goto
 - Stage 4: mission upload / geofence
 - Stage 5: log replay

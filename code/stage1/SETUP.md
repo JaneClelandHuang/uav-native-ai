@@ -116,10 +116,13 @@ directory unless stated otherwise.
 A Python virtual environment isolates the packages used in this course from
 other Python projects installed on your computer.
 
-Copy the environment configuration:
+Copy the environment configuration. Use `.env-copy`, not `.env.example` --
+it's a tracked, working config (including `UPDATE_DRONE`, required for the
+`new-gui` viewer) meant to be copied as-is after cloning. `.env.example` is
+just an annotated reference for hand-building your own from scratch.
 
 ```bash
-cp .env.example .env
+cp .env-copy .env
 ```
 
 Create the virtual environment:
