@@ -32,10 +32,10 @@ import os
 import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-STAGE1_DIR = os.path.dirname(SCRIPT_DIR)
-ENV_PATH = os.path.join(STAGE1_DIR, ".env")
-LOCATIONS_PATH = os.path.join(STAGE1_DIR, "locations.json")
-OVERRIDE_PATH = os.path.join(STAGE1_DIR, "docker-compose.override.yml")
+LAB_DIR = os.path.dirname(SCRIPT_DIR)
+ENV_PATH = os.path.join(LAB_DIR, ".env")
+LOCATIONS_PATH = os.path.join(LAB_DIR, "locations.json")
+OVERRIDE_PATH = os.path.join(LAB_DIR, "docker-compose.override.yml")
 
 EARTH_RADIUS_M = 6378137.0
 MAX_DRONES = 7  # UPDATE_DRONE_COLORS in drone_backend.py has 7 entries
@@ -79,7 +79,7 @@ def load_locations():
         fail(
             f"locations.json not found at {LOCATIONS_PATH}.",
             "This file ships with the repo -- if it's missing, check you're "
-            "running from code/stage1 and haven't deleted it.",
+            "running from lab/ and haven't deleted it.",
         )
     try:
         with open(LOCATIONS_PATH) as f:

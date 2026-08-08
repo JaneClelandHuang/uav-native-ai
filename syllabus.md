@@ -40,7 +40,7 @@ weeks):
 - **Git / GitHub** — course code and assignments.
 
 No prior UAV or simulation experience assumed. Setup happens in class,
-Lesson 1 — see [`code/stage1/SETUP.md`](https://github.com/JaneClelandHuang/uav-native-ai/blob/main/code/stage1/SETUP.md).
+Lesson 1 — see [`lab/SETUP.md`](https://github.com/JaneClelandHuang/uav-native-ai/blob/main/lab/SETUP.md).
 
 <div class="callout placeholder">
 <p><strong>Grading</strong></p>

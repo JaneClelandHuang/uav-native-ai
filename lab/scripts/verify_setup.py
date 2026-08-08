@@ -31,8 +31,8 @@ COMMAND_TOPIC = f"uav/{VEHICLE_ID}/command"
 SITL_SERVICE = f"sitl_{VEHICLE_ID}"
 BACKEND_SERVICE = f"drone_backend_{VEHICLE_ID}"
 
-STAGE1_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OVERRIDE_PATH = os.path.join(STAGE1_DIR, "docker-compose.override.yml")
+LAB_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OVERRIDE_PATH = os.path.join(LAB_DIR, "docker-compose.override.yml")
 
 COMPOSE_UP_TIMEOUT = 90
 TELEMETRY_TIMEOUT = 60
