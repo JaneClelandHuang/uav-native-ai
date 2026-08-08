@@ -116,10 +116,22 @@ directory unless stated otherwise.
 A Python virtual environment isolates the packages used in this course from
 other Python projects installed on your computer.
 
-Copy the environment configuration. Use `.env-copy`, not `.env.example` --
-it's a tracked, working config (including `UPDATE_DRONE`, required for the
-`new-gui` viewer) meant to be copied as-is after cloning. `.env.example` is
-just an annotated reference for hand-building your own from scratch.
+Copy the environment configuration. `.env` itself is gitignored -- it's your
+local config, kept out of git so your edits never conflict with the weekly
+repo updates -- so it isn't something the clone can hand you directly.
+Instead, two ready-to-use starting points are tracked in the repo, each
+meant to be copied as-is:
+
+- `.env-copy` -- single drone (`NUM_DRONES=1`), matching every command in
+  this lab. Use this one now.
+- `.env-copy-multi` -- three drones (`NUM_DRONES=3`), matching
+  `scripts/fleet_demo/run_fleet_demo.py`. Come back to this later, once
+  you're past this lab and want a multi-vehicle fleet, by copying it over
+  `.env` the same way.
+
+Both include `UPDATE_DRONE`, required for the `new-gui` viewer. `.env.example`
+is a third, separate file -- an annotated reference for hand-building your
+own `.env` from scratch -- not something to copy directly.
 
 ```bash
 cp .env-copy .env
