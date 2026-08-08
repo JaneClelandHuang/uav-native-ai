@@ -15,7 +15,7 @@ a shell script, so this behaves identically on WSL2 and macOS without any
 OS-specific logic.
 
 Requires paho-mqtt in whichever interpreter `sys.executable` resolves to
-(same client/.venv every other script here uses).
+(same repo-root .venv every other script here uses).
 """
 import subprocess
 import sys

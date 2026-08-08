@@ -16,11 +16,12 @@ uav-native-ai/
   index.md, syllabus.md, schedule.md   <- course site pages (Jekyll source)
   lessons/                             <- one page per lesson
   _layouts/, _config.yml, assets/      <- site scaffolding/theme
-  code/
-    stage1/                            <- Stage 1 UAV infrastructure
+  .venv/                               <- course-wide Python venv, see lab/SETUP.md Step 3
+  lab/                                 <- runnable UAV infrastructure
                                            (ArduPilot SITL, MQTT backend,
-                                           matplotlib viewer) -- see
-                                           code/stage1/ARCHITECTURE.md
+                                           matplotlib viewer), added to as
+                                           the course proceeds -- see
+                                           lab/ARCHITECTURE.md
 ```
 
 ## Local development (site)
@@ -29,6 +30,6 @@ uav-native-ai/
 bundle exec jekyll serve
 ```
 
-## Local development (Stage 1 infra)
+## Local development (lab infra)
 
-See `code/stage1/SETUP.md` and `code/stage1/ARCHITECTURE.md`.
+See `lab/SETUP.md` and `lab/ARCHITECTURE.md`.

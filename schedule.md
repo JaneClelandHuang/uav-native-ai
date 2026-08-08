@@ -15,7 +15,7 @@ title: Schedule
   <td>TBD</td>
   <td>Lecture 1 — UAV Simulation Environment Setup<br>(ArduPilot SITL, the MQTT contract, your first drone frontend)</td>
   <td><a href="slides/lecture1/index.html">Slides</a></td>
-  <td><a href="https://github.com/JaneClelandHuang/uav-native-ai/blob/main/code/stage1/SETUP.md">Setup instructions</a></td>
+  <td><a href="https://github.com/JaneClelandHuang/uav-native-ai/blob/main/lab/SETUP.md">Setup instructions</a></td>
 </tr>
 <tr>
   <td>TBD</td>

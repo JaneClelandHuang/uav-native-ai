@@ -102,18 +102,31 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/JaneClelandHuang/uav-native-ai.git
-cd uav-native-ai/code/stage1
+cd uav-native-ai
 ```
-
-All commands in this guide should be executed from the `code/stage1`
-directory unless stated otherwise.
 
 ---
 
 # Step 3 – Create the Python Environment
 
 A Python virtual environment isolates the packages used in this course from
-other Python projects installed on your computer.
+other Python projects installed on your computer. It's created once, at the
+top level of the repo (not inside `lab/`), because it's meant to last the
+whole semester -- future weeks add to the same `lab/` directory rather than
+creating new ones, so there's no reason to also create a new venv each time.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Now move into the lab directory -- all remaining commands in this guide,
+this week and in future weeks, should be executed from `lab/` with this
+virtual environment active, unless stated otherwise:
+
+```bash
+cd lab
+```
 
 Copy the environment configuration. `.env` itself is gitignored -- it's your
 local config, kept out of git so your edits never conflict with the weekly
@@ -136,16 +149,11 @@ own `.env` from scratch -- not something to copy directly.
 cp .env-copy .env
 ```
 
-Create the virtual environment:
+Install the required Python packages into the virtual environment activated
+in the previous step:
 
 ```bash
-python3 -m venv client/.venv
-```
-
-Install the required Python packages:
-
-```bash
-client/.venv/bin/pip install -r client/requirements.txt
+pip install -r client/requirements.txt
 ```
 
 ---
@@ -235,10 +243,10 @@ script's bounded timeouts caused false failures. Doing it as its own step
 first gives you visibility into that pull/build progress instead of it
 looking like a hang.
 
-Activate the virtual environment:
+Activate the virtual environment (it lives one level up, at the repo root):
 
 ```bash
-source client/.venv/bin/activate
+source ../.venv/bin/activate
 ```
 
 Run:
@@ -274,7 +282,8 @@ If a problem is detected, the script explains what failed and how to fix it.
 The viewer provides a simple graphical display of the simulated UAV.
 
 The virtual environment should still be active from Step 5. If you opened a
-new terminal, activate it again first: `source client/.venv/bin/activate`.
+new terminal, activate it again first: `source ../.venv/bin/activate` (run
+from `lab/`).
 
 Launch the viewer:
 
@@ -300,9 +309,9 @@ The final step confirms that the entire software stack is working correctly.
 Open a **second terminal** and run:
 
 ```bash
-cd uav-native-ai/code/stage1
+cd uav-native-ai/lab
 
-source client/.venv/bin/activate
+source ../.venv/bin/activate
 
 python scripts/test_flight.py
 ```
