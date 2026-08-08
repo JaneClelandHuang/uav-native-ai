@@ -56,11 +56,10 @@ You will need:
 
 - A reliable Internet connection
 - Administrator privileges on your computer
+- Hardware virtualization (Intel VT-x / AMD-V) enabled in your BIOS/UEFI --
+  on by default on most machines, but see the Troubleshooting section below
+  if Docker complains about it
 - Approximately 5 GB of available disk space
-
-If you don't have administrator rights or virtualization is disabled in your
-BIOS, don't spend the class period fighting it -- switch to the cloud
-fallback (Codespaces or an equivalent Docker-in-Docker environment) instead.
 
 ---
 
@@ -393,11 +392,23 @@ Then re-run `docker compose up -d` (Step 4) and the health check.
 
 ---
 
-## No admin rights / virtualization disabled in BIOS
+## Virtualization disabled in BIOS
 
-This isn't fixable in a class period -- switch to the cloud fallback
-(Codespaces or equivalent Docker-in-Docker environment) instead of
-continuing to troubleshoot locally.
+Docker Desktop (or `docker info` on Linux/WSL2) will report this explicitly
+-- on Windows it usually shows up as a WSL2 install failure or a "Hardware
+assisted virtualization and data execution protection must be enabled"
+message. It's almost always just off by default rather than actually
+unavailable:
+
+1. Reboot and enter BIOS/UEFI setup (commonly `F2`, `F10`, `Del`, or `Esc`
+   at boot -- check your manufacturer if none of those work).
+2. Find the virtualization setting -- named **Intel VT-x**, **AMD-V**,
+   **SVM Mode**, or generically **Virtualization Technology**, usually under
+   a CPU or Advanced/Security menu.
+3. Enable it, save, and exit (often `F10`).
+4. On Windows, also make sure the WSL2 and Virtual Machine Platform features
+   are turned on: `wsl --install` from an admin PowerShell (see Step 1)
+   enables both.
 
 ---
 
