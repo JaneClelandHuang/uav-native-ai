@@ -69,40 +69,45 @@ def horizontal_distance_m(lat1, lon1, lat2, lon2):
     return math.hypot(dx, dy)
 
 
-def wait_for(key, predicate, timeout, description, on_tick=None):
-    """Poll telemetry/home for `predicate`, optionally calling `on_tick`
-    every RESEND_INTERVAL_S. execute_command() passes an `on_tick` that
-    resends its command -- that resend makes execute_command() self-heal
-    against a dropped UDP command or a transient pre-arm-check rejection
-    right after a cold start -- the same class of flakiness verify_setup.py
-    documents, rather than a one-shot send that just fails.
-    """
+def wait_for(key, predicate, timeout, description):
     print(f"Waiting up to {timeout:.0f}s: {description}")
     deadline = time.time() + timeout
-    next_tick = 0.0
+
     while time.time() < deadline:
-        if on_tick is not None and time.time() >= next_tick:
-            on_tick()
-            next_tick = time.time() + RESEND_INTERVAL_S
         value = _latest.get(key)
+
         if value is not None and predicate(value):
             return value
+
         time.sleep(0.5)
+
     print(f"FAIL: timed out waiting for: {description}")
     print("  Check `docker compose logs sitl` and `docker compose logs drone_backend`.")
     sys.exit(1)
 
 
 def execute_command(key, predicate, timeout, description, command, client):
-    """Publish `command` to COMMAND_TOPIC and wait for `predicate` to hold,
-    resending `command` every RESEND_INTERVAL_S until it does -- see
-    wait_for()'s docstring for why the resend is needed.
-    """
-    def send():
-        client.publish(COMMAND_TOPIC, json.dumps(command))
-        print(f"  -> sent {command}")
+    print(f"Waiting up to {timeout:.0f}s: {description}")
 
-    return wait_for(key, predicate, timeout, description, on_tick=send)
+    deadline = time.time() + timeout
+    next_send = 0.0
+
+    while time.time() < deadline:
+        if time.time() >= next_send:
+            client.publish(COMMAND_TOPIC, json.dumps(command))
+            print(f"  -> sent {command}")
+            next_send = time.time() + RESEND_INTERVAL_S
+
+        value = _latest.get(key)
+
+        if value is not None and predicate(value):
+            return value
+
+        time.sleep(0.5)
+
+    print(f"FAIL: timed out waiting for: {description}")
+    print("  Check `docker compose logs sitl` and `docker compose logs drone_backend`.")
+    sys.exit(1)
 
 
 def main():
