@@ -23,12 +23,8 @@ implementation agent's proposed solution.
 
 ## 1. Identifying the Design Smell
 
-### User
-
-> Why is `circle` required in every `handle_command`?
->
-> That seems clumsy.
-\n\nThe original code that triggered the question was:
+### Developer:
+Why is `circle` required in every `handle_command`?  That seems clumsy, because most commands don't have anything to do with the circle? Here is the code:
 
 ```python
 def handle_command(conn, payload, circle, state):
@@ -120,6 +116,7 @@ def on_message(client, userdata, msg):
     )
 ```
 
+### ChatGPT
 Notice that `on_message()` passes `userdata["circle"]` into the generic `handle_command()` path for **every** incoming command, regardless of whether the command itself is a circle command.
 
 
@@ -291,7 +288,7 @@ threading another maneuver-specific parameter through `main()`, MQTT
 
 ## 3. Turning the Critique into a Request for the Coding Agent
 
-### User
+### Developer
 
 > Can you please write this complaint in a way I can hand over to Claude
 > Code?
@@ -478,7 +475,7 @@ small and the code is intended to remain understandable to students.
 
 ## 5. Independent Review of Claude's Proposal
 
-### User
+### Developer
 
 > I think this proposed design is better. What do you think?
 
