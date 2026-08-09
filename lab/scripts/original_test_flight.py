@@ -69,21 +69,21 @@ def horizontal_distance_m(lat1, lon1, lat2, lon2):
     return math.hypot(dx, dy)
 
 
-def wait_for(key, predicate, timeout, description, on_tick=None):
-    """Poll telemetry/home for `predicate`, optionally calling `on_tick`
-    every RESEND_INTERVAL_S. execute_command() passes an `on_tick` that
-    resends its command -- that resend makes execute_command() self-heal
+def wait_for(key, predicate, timeout, description, command=None, client=None):
+    """Poll telemetry/home for `predicate`, optionally re-publishing
+    `command` every RESEND_INTERVAL_S. That resend makes this self-heal
     against a dropped UDP command or a transient pre-arm-check rejection
     right after a cold start -- the same class of flakiness verify_setup.py
     documents, rather than a one-shot send that just fails.
     """
     print(f"Waiting up to {timeout:.0f}s: {description}")
     deadline = time.time() + timeout
-    next_tick = 0.0
+    next_send = 0.0
     while time.time() < deadline:
-        if on_tick is not None and time.time() >= next_tick:
-            on_tick()
-            next_tick = time.time() + RESEND_INTERVAL_S
+        if command is not None and time.time() >= next_send:
+            client.publish(COMMAND_TOPIC, json.dumps(command))
+            print(f"  -> sent {command}")
+            next_send = time.time() + RESEND_INTERVAL_S
         value = _latest.get(key)
         if value is not None and predicate(value):
             return value
@@ -91,18 +91,6 @@ def wait_for(key, predicate, timeout, description, on_tick=None):
     print(f"FAIL: timed out waiting for: {description}")
     print("  Check `docker compose logs sitl` and `docker compose logs drone_backend`.")
     sys.exit(1)
-
-
-def execute_command(key, predicate, timeout, description, command, client):
-    """Publish `command` to COMMAND_TOPIC and wait for `predicate` to hold,
-    resending `command` every RESEND_INTERVAL_S until it does -- see
-    wait_for()'s docstring for why the resend is needed.
-    """
-    def send():
-        client.publish(COMMAND_TOPIC, json.dumps(command))
-        print(f"  -> sent {command}")
-
-    return wait_for(key, predicate, timeout, description, on_tick=send)
 
 
 def main():
@@ -116,7 +104,7 @@ def main():
     origin_lat, origin_lon = home["lat"], home["lon"]
 
     print(f"\n=== Takeoff to {TAKEOFF_ALT_M}m ===")
-    execute_command(
+    wait_for(
         "telemetry",
         lambda t: t.get("armed") and (t.get("alt_rel") or 0) > TAKEOFF_ALT_M * 0.9,
         60, f"armed and within 90% of {TAKEOFF_ALT_M}m",
@@ -132,7 +120,7 @@ def main():
         (origin_lat, origin_lon),
     ]
     for lat, lon in waypoints:
-        execute_command(
+        wait_for(
             "telemetry",
             lambda t, lat=lat, lon=lon: (
                 t.get("lat") is not None
@@ -144,7 +132,7 @@ def main():
         print(f"  reached ({lat:.6f}, {lon:.6f})")
 
     print("\n=== Landing ===")
-    execute_command(
+    wait_for(
         "telemetry", lambda t: not t.get("armed"),
         60, "landed and disarmed",
         command={"type": "land"}, client=client,
