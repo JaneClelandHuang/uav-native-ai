@@ -6,7 +6,7 @@ This example illustrates a design-analysis activity that should happen
 *while code is being developed*, not only after implementation is
 complete.
 
-The workflow uses two AI agents in different roles:
+The workflow uses two AI agents in different roles as well as involving the developer
 
 -   **Claude Code** works directly with the codebase and
     proposes/implements changes.
