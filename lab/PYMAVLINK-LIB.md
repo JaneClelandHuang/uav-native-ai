@@ -130,7 +130,8 @@ Notice how these functions describe **what** we want the UAV to do rather than
 complete action the way `takeoff` or `land` is. It computes and sends a
 single point on a circle; something else has to call it repeatedly, on a
 timer, as the target bearing advances, to actually trace an arc. In this
-course that caller is `drone_backend.py`'s `circle_tick()` — see
+course that caller is `drone_backend.py`'s `maneuver_tick()` (via
+`CircleManeuver.tick()`) — see
 `ARCHITECTURE.md` for why that's a per-tick check folded into an existing
 loop rather than a dedicated background thread.
 

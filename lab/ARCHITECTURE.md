@@ -182,32 +182,40 @@ one point; tracing an arc means calling it repeatedly over time.
 
 **That timing loop lives in `drone_backend.py`, not as a new thread, but
 folded into the loop `main()` already runs.** `main()`'s existing loop ticks
-once per `TELEMETRY_HZ` period to publish telemetry; `circle_tick()` runs
-once per that same tick, ahead of the publish. If a circle is active (an
-`ActiveCircle` instance — a lock-protected dict, the same shape
-`VehicleState` already uses for telemetry, not a new synchronization idiom),
-it computes how many degrees have been swept from elapsed wall-clock time
+once per `TELEMETRY_HZ` period to publish telemetry; `maneuver_tick()` runs
+once per that same tick, ahead of the publish. It just advances whatever
+maneuver is currently active — it has no circle-specific knowledge itself.
+The active maneuver, if any, lives in an `ActiveManeuver` instance (a
+lock-protected single slot, the same synchronization idiom `VehicleState`
+already uses for telemetry) holding a `CircleManeuver` object. That object
+computes how many degrees have been swept from elapsed wall-clock time
 (`angular_rate_deg_s = degrees(speed_mps / radius_m)`, not a fixed per-tick
-step, so a late tick doesn't throw off the total), sends the next
-`circle_point()`, and auto-clears itself once the requested `degrees` is
-reached. A dedicated thread per active circle was the first design
-considered and rejected: every vehicle already runs a reader thread plus
-paho's own network thread, and a third thread type — with its own
-start/cancel/join lifecycle — was judged not worth the added concurrency
-surface when the existing telemetry loop already ticks at a usable rate.
+step, so a late tick doesn't throw off the total) and sends the next
+`circle_point()`; `maneuver_tick()` clears the slot once the object reports
+the sweep complete. `ActiveManeuver`/`maneuver_tick()` aren't circle-specific
+by design — `handle_command` only ever calls `active_maneuver.stop()` or
+`active_maneuver.start(some_maneuver)`, so a future persistent behavior
+(survey, follow, ...) plugs in as another maneuver object rather than a new
+parameter threaded through the dispatcher. A dedicated thread per active
+maneuver was the first design considered and rejected: every vehicle already
+runs a reader thread plus paho's own network thread, and a third thread type
+— with its own start/cancel/join lifecycle — was judged not worth the added
+concurrency surface when the existing telemetry loop already ticks at a
+usable rate.
 
 **`interrupt` cancels an outstanding `goto` or `circle`.** Neither uses
 ArduCopter's built-in AUTO/mission-waypoint system — both stay in GUIDED
 mode, so there's no queued waypoint or mission state to clear, and no
 MAVLink "cancel" message for either. For `goto`, `interrupt` alone is
 enough: switching to `LOITER` takes the vehicle out of GUIDED and holds its
-position. For `circle`, `interrupt` additionally has to stop `circle_tick()`
+position. For `circle`, `interrupt` additionally has to stop `maneuver_tick()`
 from continuing to fire new `circle_point()` calls, or they'd fight the mode
-switch — so `handle_command` clears the active circle (`circle.stop()`) for
-*any* incoming command that isn't itself a new `circle`, not just
-`interrupt`. That also means a `goto`/`takeoff`/`land` sent mid-circle
-implicitly cancels it, which is deliberate: leaving a stale circle running
-underneath a new command would be a confusing bug, not a feature.
+switch — so `handle_command` clears the active maneuver
+(`active_maneuver.stop()`) for *any* incoming command that isn't itself a
+new `circle`, not just `interrupt`. That also means a `goto`/`takeoff`/`land`
+sent mid-circle implicitly cancels it, which is deliberate: leaving a stale
+circle running underneath a new command would be a confusing bug, not a
+feature.
 
 **`circle` always starts at bearing 0 (due north of center).** There's no
 tracking of where the vehicle actually is relative to the center when the
@@ -237,7 +245,7 @@ teaching script; see its own docstring) fires the same one-shot command
 vocabulary (`circle`'s timing loop is MQTT-path-only, not part of
 `simple_flight.py`), so the build-and-send logic is shared rather than
 duplicated. `mavlink_lib.py` is bind-mounted into the container the same way
-`drone_backend.py` is. Beyond `circle_tick()`, waiting/polling for a
+`drone_backend.py` is. Beyond `maneuver_tick()`, waiting/polling for a
 command's effect stays separate per caller — `drone_backend.py` otherwise
 fires commands as MQTT messages arrive, while `simple_flight.py` has its own
 local resend/poll loop.
@@ -311,7 +319,7 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 
 `activity` is one of `idle` / `taking_off` / `flying` / `circling` /
 `landing` — the vehicle's current flight phase, set explicitly by
-`handle_command` (and `circle_tick` when a circle finishes sweeping on its
+`handle_command` (and `maneuver_tick` when a circle finishes sweeping on its
 own) as each command is issued, not inferred from other telemetry fields.
 That's a deliberate choice, not the simpler option: `mode` alone can't
 distinguish these, since `takeoff`/`goto`/`circle`/`fly_home` all report
