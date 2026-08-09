@@ -125,8 +125,9 @@ def circle_point(conn, center_lat, center_lon, alt_rel_m, radius_m, bearing_deg)
     isn't in this pymavlink/ArduPilotMega dialect at all. So tracing an arc
     means calling this repeatedly as bearing advances, same as manually
     flying a circle by eye. This function is one point, one send -- the
-    caller owns the timing loop; drone_backend.py's circle_tick() is that
-    loop for the MQTT path (see ARCHITECTURE.md).
+    caller owns the timing loop; drone_backend.py's maneuver_tick() (via
+    CircleManeuver.tick()) is that loop for the MQTT path (see
+    ARCHITECTURE.md).
 
     Unlike goto(), this does NOT set GUIDED mode or sleep before sending --
     a circle calls this many times a second, and repeating goto()'s one-time
@@ -144,7 +145,7 @@ def interrupt(conn):
     # any of that, so abandoning it is a mode change: LOITER takes the
     # vehicle out of GUIDED and holds its current position. This alone stops
     # a goto(); stopping a circle also requires the caller to stop calling
-    # circle_point() -- see drone_backend.py's ActiveCircle/circle_tick.
+    # circle_point() -- see drone_backend.py's ActiveManeuver/maneuver_tick.
     conn.set_mode("LOITER")
 
 

@@ -152,7 +152,7 @@ class VehicleState:
         self.battery_level = None
         self.armed = False
         self.mode = None
-        # Flight-phase, set explicitly by handle_command/circle_tick as
+        # Flight-phase, set explicitly by handle_command/maneuver_tick as
         # commands are issued, not inferred from other telemetry fields --
         # takeoff/goto/circle/fly_home all report mode "GUIDED", so mode
         # alone can't distinguish them. armed==False always forces this
@@ -195,70 +195,93 @@ class VehicleState:
             }
 
 
-class ActiveCircle:
-    """Command-in-progress state for `circle` -- written by the MQTT
-    callback thread (start/stop), read once per tick by the main loop
-    (circle_tick). Protected the same way VehicleState protects telemetry:
-    a plain lock around a plain dict, not a thread of its own. There's at
-    most one circle active at a time; starting a new one (or any other
-    command -- see handle_command) replaces/clears it.
+class CircleManeuver:
+    """One `circle` command's parameters plus its own per-tick advance
+    logic. Always starts at bearing 0 (due north of center) -- there's no
+    tracking of the vehicle's actual position on the circle at start, so a
+    smooth entry means positioning at that point yourself first (see
+    scripts/test_circle.py) rather than wherever you happen to be.
+    """
+
+    # VehicleState.activity while this maneuver is running -- maneuver_tick
+    # uses this to reset activity back to "flying" on completion, but only
+    # if nothing else already changed it (see maneuver_tick).
+    activity = "circling"
+
+    def __init__(self, center_lat, center_lon, alt_rel_m, radius_m, degrees, speed_mps):
+        self.center_lat = center_lat
+        self.center_lon = center_lon
+        self.alt_rel_m = alt_rel_m
+        self.radius_m = radius_m
+        self.degrees = degrees
+        # rad/s = m/s / m; deg/s = degrees(rad/s).
+        self.angular_rate_deg_s = math.degrees(speed_mps / radius_m)
+        self.start_time = time.time()
+
+    def tick(self, conn):
+        """Advance by how much wall-clock time has actually elapsed since
+        the maneuver started, not by a fixed per-tick step, so it stays
+        correct even if a tick runs late. Returns False once the sweep is
+        complete, signaling the caller to drop this maneuver.
+        """
+        swept_deg = (time.time() - self.start_time) * self.angular_rate_deg_s
+        if swept_deg >= self.degrees:
+            return False
+        mavlink_lib.circle_point(
+            conn, self.center_lat, self.center_lon,
+            self.alt_rel_m, self.radius_m, swept_deg,
+        )
+        return True
+
+
+class ActiveManeuver:
+    """Holds at most one ongoing, multi-tick maneuver -- written by the
+    MQTT callback thread (start/stop), read once per tick by the main loop
+    (maneuver_tick). Protected the same way VehicleState protects
+    telemetry: a plain lock around a plain slot, not a thread of its own.
+    Starting a new maneuver (or any other command -- see handle_command)
+    replaces/clears whatever was active; there's never more than one.
+
+    Not specific to circles or any other maneuver type -- a maneuver object
+    just needs a `tick(conn) -> bool` method (return False once it's done)
+    and an `activity` attribute (the VehicleState activity name it
+    corresponds to). See CircleManeuver.
     """
 
     def __init__(self):
         self.lock = threading.Lock()
-        self.params = None
+        self._maneuver = None
 
-    def start(self, center_lat, center_lon, alt_rel_m, radius_m, degrees, speed_mps):
+    def start(self, maneuver):
         with self.lock:
-            self.params = {
-                "center_lat": center_lat,
-                "center_lon": center_lon,
-                "alt_rel_m": alt_rel_m,
-                "radius_m": radius_m,
-                "degrees": degrees,
-                # rad/s = m/s / m; deg/s = degrees(rad/s).
-                "angular_rate_deg_s": math.degrees(speed_mps / radius_m),
-                "start_time": time.time(),
-            }
+            self._maneuver = maneuver
 
     def stop(self):
         with self.lock:
-            self.params = None
+            self._maneuver = None
 
-    def snapshot(self):
+    def current(self):
         with self.lock:
-            return dict(self.params) if self.params else None
+            return self._maneuver
 
 
-def circle_tick(conn, circle, state):
+def maneuver_tick(conn, active_maneuver, state):
     """Called once per main-loop iteration, same cadence as telemetry
-    publishing. Advances the active circle (if any) by how much wall-clock
-    time has actually elapsed since it started, not by a fixed per-tick
-    step, so it stays correct even if a tick runs late.
-
-    Always starts at bearing 0 (due north of center) -- there's no tracking
-    of the vehicle's actual position on the circle at start, so a smooth
-    entry means positioning at that point yourself first (see
-    scripts/test_circle.py) rather than wherever you happen to be.
+    publishing. Advances whatever maneuver is currently active, if any.
     """
-    params = circle.snapshot()
-    if params is None:
+    maneuver = active_maneuver.current()
+    if maneuver is None:
         return
-    swept_deg = (time.time() - params["start_time"]) * params["angular_rate_deg_s"]
-    if swept_deg >= params["degrees"]:
-        circle.stop()
-        with state.lock:
-            # Only if still actually circling -- a command that arrived
-            # since (interrupt/goto/land/...) already stopped this circle
-            # and set its own activity; don't stomp it with a stale
-            # "flying" if the circle merely finishes sweeping afterward.
-            if state.activity == "circling":
-                state.activity = "flying"
+    if maneuver.tick(conn):
         return
-    mavlink_lib.circle_point(
-        conn, params["center_lat"], params["center_lon"],
-        params["alt_rel_m"], params["radius_m"], swept_deg,
-    )
+    active_maneuver.stop()
+    with state.lock:
+        # Only if state.activity still matches this maneuver -- a command
+        # that arrived since (interrupt/goto/land/...) already stopped it
+        # and set its own activity; don't stomp it with a stale value if
+        # the maneuver merely finishes sweeping afterward.
+        if state.activity == maneuver.activity:
+            state.activity = "flying"
 
 
 def connect_mavlink():
@@ -358,7 +381,7 @@ def mavlink_reader(conn, state, mqtt_client):
             home_captured = True
 
 
-def handle_command(conn, payload, circle, state):
+def handle_command(conn, payload, active_maneuver, state):
     try:
         cmd = json.loads(payload)
     except json.JSONDecodeError:
@@ -368,10 +391,10 @@ def handle_command(conn, payload, circle, state):
     cmd_type = cmd.get("type")
     try:
         if cmd_type != "circle":
-            # Any other command abandons an in-progress circle -- otherwise
-            # circle_tick() would keep firing position targets that fight
-            # whatever this new command is trying to do.
-            circle.stop()
+            # Any other command abandons an in-progress maneuver --
+            # otherwise maneuver_tick() would keep firing position targets
+            # that fight whatever this new command is trying to do.
+            active_maneuver.stop()
 
         if cmd_type == "arm":
             mavlink_lib.arm(conn)
@@ -393,14 +416,14 @@ def handle_command(conn, payload, circle, state):
         elif cmd_type == "circle":
             # circle_point() itself doesn't touch flight mode (see its
             # docstring) since it's called many times a second -- GUIDED
-            # only needs setting once, here, before circle_tick() starts
+            # only needs setting once, here, before maneuver_tick() starts
             # calling it on the main loop's cadence.
             conn.set_mode("GUIDED")
-            circle.start(
+            active_maneuver.start(CircleManeuver(
                 center_lat=float(cmd["lat"]), center_lon=float(cmd["lon"]),
                 alt_rel_m=float(cmd["alt"]), radius_m=float(cmd["radius"]),
                 degrees=float(cmd["degrees"]), speed_mps=float(cmd["speed"]),
-            )
+            ))
             with state.lock:
                 state.activity = "circling"
         elif cmd_type == "fly_home":
@@ -447,7 +470,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 def on_message(client, userdata, msg):
     handle_command(
         userdata["conn"], msg.payload.decode("utf-8", errors="replace"),
-        userdata["circle"], userdata["state"],
+        userdata["active_maneuver"], userdata["state"],
     )
 
 
@@ -471,11 +494,11 @@ def connect_mqtt_with_retry(mqtt_client, timeout=30, interval=2):
 def main():
     conn = connect_mavlink()
     state = VehicleState()
-    circle = ActiveCircle()
+    active_maneuver = ActiveManeuver()
 
     mqtt_client = mqtt.Client(
         mqtt.CallbackAPIVersion.VERSION2,
-        userdata={"conn": conn, "circle": circle, "state": state},
+        userdata={"conn": conn, "active_maneuver": active_maneuver, "state": state},
     )
     mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
@@ -490,7 +513,7 @@ def main():
     period = 1.0 / TELEMETRY_HZ
     try:
         while True:
-            circle_tick(conn, circle, state)
+            maneuver_tick(conn, active_maneuver, state)
             snapshot = state.snapshot()
             mqtt_client.publish(TELEMETRY_TOPIC, json.dumps(snapshot))
             if UPDATE_DRONE:
