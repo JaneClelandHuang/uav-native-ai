@@ -28,7 +28,101 @@ implementation agent's proposed solution.
 > Why is `circle` required in every `handle_command`?
 >
 > That seems clumsy.
-\n\nThe original code that triggered the question was:\n\n```python\ndef handle_command(conn, payload, circle, state):\n    try:\n        cmd = json.loads(payload)\n    except json.JSONDecodeError:\n        log.warning("Ignoring malformed command payload: %r", payload)\n        return\n\n    cmd_type = cmd.get("type")\n    try:\n        if cmd_type != "circle":\n            # Any other command abandons an in-progress circle -- otherwise\n            # circle_tick() would keep firing position targets that fight\n            # whatever this new command is trying to do.\n            circle.stop()\n\n        if cmd_type == "arm":\n            mavlink_lib.arm(conn)\n        elif cmd_type == "disarm":\n            mavlink_lib.disarm(conn)\n        elif cmd_type == "takeoff":\n            mavlink_lib.takeoff(conn, float(cmd["alt"]))\n            with state.lock:\n                state.activity = "taking_off"\n        elif cmd_type == "goto":\n            mavlink_lib.goto(conn, float(cmd["lat"]), float(cmd["lon"]), float(cmd["alt"]))\n            with state.lock:\n                state.activity = "flying"\n        elif cmd_type == "circle":\n            conn.set_mode("GUIDED")\n            circle.start(\n                center_lat=float(cmd["lat"]), center_lon=float(cmd["lon"]),\n                alt_rel_m=float(cmd["alt"]), radius_m=float(cmd["radius"]),\n                degrees=float(cmd["degrees"]), speed_mps=float(cmd["speed"]),\n            )\n            with state.lock:\n                state.activity = "circling"\n        elif cmd_type == "fly_home":\n            with state.lock:\n                home_lat, home_lon, current_alt = state.home_lat, state.home_lon, state.alt_rel\n            if home_lat is None or home_lon is None:\n                log.warning("Ignoring fly_home: home position not yet captured")\n            else:\n                target_alt = max(current_alt, FLY_HOME_MIN_ALT_M) if current_alt is not None else FLY_HOME_MIN_ALT_M\n                mavlink_lib.goto(conn, home_lat, home_lon, target_alt)\n                with state.lock:\n                    state.activity = "flying"\n        elif cmd_type == "interrupt":\n            mavlink_lib.interrupt(conn)\n            with state.lock:\n                state.activity = "flying"\n        elif cmd_type == "land":\n            mavlink_lib.land(conn)\n            with state.lock:\n                state.activity = "landing"\n        else:\n            log.warning("Ignoring unknown command type: %r", cmd_type)\n    except (KeyError, ValueError, TypeError) as exc:\n        log.warning("Ignoring invalid command %r: %s", cmd, exc)\n```\n\n```python\ndef on_message(client, userdata, msg):\n    handle_command(\n        userdata["conn"], msg.payload.decode("utf-8", errors="replace"),\n        userdata["circle"], userdata["state"],\n    )\n```\n\nNotice that `on_message()` passes `userdata["circle"]` into the generic `handle_command()` path for **every** incoming command, regardless of whether the command itself is a circle command.\n
+\n\nThe original code that triggered the question was:
+
+```python
+def handle_command(conn, payload, circle, state):
+    try:
+        cmd = json.loads(payload)
+    except json.JSONDecodeError:
+        log.warning("Ignoring malformed command payload: %r", payload)
+        return
+
+    cmd_type = cmd.get("type")
+    try:
+        if cmd_type != "circle":
+            # Any other command abandons an in-progress circle -- otherwise
+            # circle_tick() would keep firing position targets that fight
+            # whatever this new command is trying to do.
+            circle.stop()
+
+        if cmd_type == "arm":
+            mavlink_lib.arm(conn)
+        elif cmd_type == "disarm":
+            mavlink_lib.disarm(conn)
+        elif cmd_type == "takeoff":
+            # NAV_TAKEOFF is only honored in GUIDED mode and while armed --
+            # mavlink_lib.takeoff makes "takeoff" a complete action so a
+            # command producer doesn't need its own mode/arm dance first
+            # (this is what manually switching to GUIDED in the MAVProxy
+            # console was standing in for during testing).
+            mavlink_lib.takeoff(conn, float(cmd["alt"]))
+            with state.lock:
+                state.activity = "taking_off"
+        elif cmd_type == "goto":
+            mavlink_lib.goto(conn, float(cmd["lat"]), float(cmd["lon"]), float(cmd["alt"]))
+            with state.lock:
+                state.activity = "flying"
+        elif cmd_type == "circle":
+            # circle_point() itself doesn't touch flight mode (see its
+            # docstring) since it's called many times a second -- GUIDED
+            # only needs setting once, here, before circle_tick() starts
+            # calling it on the main loop's cadence.
+            conn.set_mode("GUIDED")
+            circle.start(
+                center_lat=float(cmd["lat"]), center_lon=float(cmd["lon"]),
+                alt_rel_m=float(cmd["alt"]), radius_m=float(cmd["radius"]),
+                degrees=float(cmd["degrees"]), speed_mps=float(cmd["speed"]),
+            )
+            with state.lock:
+                state.activity = "circling"
+        elif cmd_type == "fly_home":
+            # Just goto() at the remembered home position -- no new MAVLink
+            # primitive needed, the same way circle reused goto()'s
+            # underlying send rather than inventing one. Transits at
+            # whatever's higher of the current altitude or
+            # FLY_HOME_MIN_ALT_M, so a low-altitude command doesn't drag the
+            # vehicle home skimming the ground, but a already-high vehicle
+            # doesn't needlessly climb first either. land is a deliberately
+            # separate follow-up command, same as after a goto.
+            with state.lock:
+                home_lat, home_lon, current_alt = state.home_lat, state.home_lon, state.alt_rel
+            if home_lat is None or home_lon is None:
+                log.warning("Ignoring fly_home: home position not yet captured")
+            else:
+                target_alt = max(current_alt, FLY_HOME_MIN_ALT_M) if current_alt is not None else FLY_HOME_MIN_ALT_M
+                mavlink_lib.goto(conn, home_lat, home_lon, target_alt)
+                with state.lock:
+                    state.activity = "flying"
+        elif cmd_type == "interrupt":
+            mavlink_lib.interrupt(conn)
+            with state.lock:
+                # Best fit from the activity vocabulary for "holding
+                # position, still airborne" -- there's no distinct
+                # "Holding"/"Loiter" state in what new-gui.py's bridge maps
+                # to, and this isn't landing or circling anymore.
+                state.activity = "flying"
+        elif cmd_type == "land":
+            mavlink_lib.land(conn)
+            with state.lock:
+                state.activity = "landing"
+        else:
+            log.warning("Ignoring unknown command type: %r", cmd_type)
+    except (KeyError, ValueError, TypeError) as exc:
+        log.warning("Ignoring invalid command %r: %s", cmd, exc)
+```
+
+```python
+def on_message(client, userdata, msg):
+    handle_command(
+        userdata["conn"], msg.payload.decode("utf-8", errors="replace"),
+        userdata["circle"], userdata["state"],
+    )
+```
+
+Notice that `on_message()` passes `userdata["circle"]` into the generic `handle_command()` path for **every** incoming command, regardless of whether the command itself is a circle command.
+
+
 The relevant code in `drone_backend.py` was:
 
 ``` python
