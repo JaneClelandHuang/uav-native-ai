@@ -456,6 +456,8 @@ own favorites to it directly; each entry needs `name`, `nickname`, `lat`,
   students `docker compose pull` instead of a 10-20 minute source build.
 - `backend/requirements.txt`: `pymavlink==2.4.41`, `paho-mqtt==2.1.0`.
 - `client/requirements.txt`: `paho-mqtt==2.1.0`, `matplotlib==3.9.2`.
+- `cv/requirements.txt`: `ultralytics==8.4.117` (installed separately, only
+  for the CV assignment — see "Not yet in scope" above).
 
 Bumping the ArduPilot version for a later course run: re-run
 `scripts/build_and_push_sitl.sh <new-tag>` and update `SITL_IMAGE` in
@@ -536,6 +538,18 @@ uav-native-ai/
     client/
       matplotlib_view.py
       requirements.txt
+    cv/
+      requirements.txt         <- ultralytics (YOLO26n) + paho-mqtt; separate from
+                                   client/backend so it's never installed until the
+                                   CV assignment
+      frame-collection.py      <- stand-alone: subscribes to new-gui's
+                                   VIDEO_STREAM/+/frame and saves sample frames
+      detect-people.py         <- stand-alone: runs YOLO26n person detection over
+                                   a folder of collected frames, saves annotated
+                                   copies to <folder>/detections/
+      data/                    <- gitignored frame-collection.py output (.gitkeep
+                                   only tracked file); data/<drone>-<MM-DD-YYYY>-<seq>/
+                                   per collection run, see frame-collection.py docstring
     scripts/
       generate_fleet.py
       verify_setup.py
@@ -614,3 +628,31 @@ Things worth knowing if this needs touching again:
   when `UPDATE_DRONE` is set, its own `DRONE_COLOR`). `matplotlib_view.py`
   deliberately stays single-vehicle (`VEHICLE_ID` picks which one it shows)
   since multi-vehicle *display* is `new-gui`'s job, not this stage's.
+- CV assignment: `cv/requirements.txt` (`ultralytics`, for YOLO26n, plus
+  `paho-mqtt`) and `cv/frame-collection.py` exist so far, deliberately kept
+  out of `client/`/`backend/` and out of `SETUP.md`'s Step 3 —
+  `ultralytics` pulls in PyTorch and is a much heavier install than
+  anything else in this lab, so it shouldn't hit every student's machine in
+  week 1 just for setting up the flight environment. No lab script or
+  `SETUP.md` step installs it yet; that wiring, plus the actual detection
+  code, lands with the CV lab itself.
+- `cv/frame-collection.py` is a stand-alone MQTT subscriber (only needs
+  `paho-mqtt`, not `ultralytics`) that saves sample frames from new-gui's
+  simulated cameras (`VIDEO_STREAM/{name}/frame`, `camera_topic_template`
+  in the `new-gui` repo's `camera_config.py`) to `cv/data/`, so students
+  have real frames to run YOLO against before deciding whether the stock
+  model needs retraining on the simulated ("fake") persons new-gui
+  composites into the frame. One folder per drone per run
+  (`data/<drone>-<MM-DD-YYYY>-<seq>/`, e.g. `Lime-08-10-2026-001/`) rather
+  than one shared folder, since any number of drones can be streaming
+  camera frames at once and interleaving them into a single directory (or
+  racing on a single counter) would make them harder to sort back out by
+  drone afterward. `seq` is scoped to drone+day: restarting the collector
+  the same day starts a fresh folder (`002`, `003`, ...) instead of
+  overwriting the previous run's frames, discovered by scanning `cv/data/`
+  for existing `<drone>-<date>-*` folders at the moment each drone's first
+  frame of the run arrives — not decided once for the whole process, so
+  drones whose first frame arrives later still get their own correctly
+  next-numbered folder. Requires `new-gui`'s camera simulation to actually
+  be running and publishing (`camera.config`'s `simulation: true`) — with
+  it off there's nothing on `VIDEO_STREAM/+/frame` to collect.

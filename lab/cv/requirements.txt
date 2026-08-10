@@ -1,0 +1,12 @@
+# CPU-only torch build: the default PyPI "torch" wheel bundles CUDA
+# libraries and preloads them at import time even with no NVIDIA GPU
+# present (e.g. plain WSL2), which segfaults on import instead of falling
+# back to CPU cleanly. --extra-index-url (not --index-url) so this only
+# steers torch/torchvision to the CPU index and everything else (including
+# ultralytics itself) still resolves from PyPI as normal.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
+
+ultralytics==8.4.117
+paho-mqtt==2.1.0

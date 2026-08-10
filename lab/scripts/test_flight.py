@@ -27,7 +27,7 @@ COMMAND_TOPIC = f"uav/{VEHICLE_ID}/command"
 
 EARTH_RADIUS_M = 6378137.0
 
-TAKEOFF_ALT_M = 10.0
+TAKEOFF_ALT_M = 20.0
 LEG_M = 15.0  # side length of the flight square
 ARRIVAL_TOLERANCE_M = 2.0
 RESEND_INTERVAL_S = 8.0
