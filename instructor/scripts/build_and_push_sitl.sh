@@ -11,9 +11,14 @@ set -euo pipefail
 # Rosetta-accelerated emulation -- see SETUP.md for the one-time setting to
 # enable that.
 #
-# Usage: GHCR_OWNER=your-org ./scripts/build_and_push_sitl.sh [ardupilot-tag]
+# Usage: GHCR_OWNER=your-org instructor/scripts/build_and_push_sitl.sh [ardupilot-tag]
+#
+# Lives outside lab/ deliberately -- lab/ is what gets vendored into student
+# repos, and this script (GHCR push access, image publishing) isn't for them.
+# Builds from lab/, since that's where docker/Dockerfile.sitl lives.
 
-cd "$(dirname "${BASH_SOURCE[0]}")/.."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}/../../lab"
 
 ARDUPILOT_TAG="${1:-Copter-4.6.3}"
 GHCR_OWNER="${GHCR_OWNER:?Set GHCR_OWNER to your GitHub org/user, e.g. GHCR_OWNER=my-org}"

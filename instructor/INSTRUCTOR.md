@@ -1,5 +1,49 @@
 # Instructor Notes
 
+Everything in this `instructor/` directory is deliberately kept **outside**
+`lab/` — `lab/` is exactly what gets vendored into student homework repos
+(see below), so anything that shouldn't be visible to students (this repo's
+lesson planning, GHCR push access, etc.) has to live somewhere else.
+
+## Two-repo course setup
+
+This course runs two repos:
+
+- **`uav-native-ai`** (this repo) — course site + the canonical `lab/`
+  infra (ArduPilot SITL, MQTT backend, matplotlib viewer). Used directly
+  for team-project work later in the semester.
+- **`native-ai-uav-fall-2026`** — the template repo GitHub (or GitHub
+  Classroom) stamps out into each student's own private repo for the
+  individual `hw01`–`hw06` assignments. It vendors a copy of `lab/` from
+  this repo, via `git subtree`, so homeworks get the same SITL/MQTT
+  environment without depending on this repo at homework time.
+
+**Initial vendoring** (already done once, re-run only if the template needs
+to be rebuilt from scratch): from `uav-native-ai`,
+`git subtree split --prefix=lab -b lab-export` produces a branch containing
+just `lab/`'s history as if it were a repo root; from
+`native-ai-uav-fall-2026`, `git subtree add --prefix=lab <path-or-url-to-
+uav-native-ai> lab-export --squash` pulls that in.
+
+**Keeping already-created student repos in sync.** `git subtree pull`
+against individual student repos is *not* used for ongoing updates — GitHub
+"generate repository from template" commonly gives each student repo a
+single fresh commit with none of the template's history behind it, which
+breaks subtree pull's usual merge-point tracking. Instead:
+
+```bash
+# after committing your fix under lab/ in uav-native-ai:
+instructor/scripts/sync-lab-infra.sh <roster-file>
+```
+
+`<roster-file>` is a plain text file, one student repo git URL per line —
+**never commit this file**, it's private student data (`.gitignore` already
+excludes `instructor/roster*`). The script exports the current `lab/` tree,
+mirrors it (via `rsync --delete`, so removed files propagate too) into each
+student repo's `lab/` directory, and commits + pushes only the repos where
+something actually changed. Students just see a new commit land and
+`git pull` — no subtree/submodule mechanics on their end.
+
 ## Publishing a pinned SITL image
 
 Students should `docker pull`, never build ArduPilot from source in class
