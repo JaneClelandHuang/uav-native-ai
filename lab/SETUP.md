@@ -97,9 +97,16 @@ run the development environment.
 
 This `lab/` directory lives in two places, and this guide works from either:
 
-- **Homework assignments:** your own private per-assignment repository
-  already includes this `lab/` directory — you don't need a separate
-  clone. Just make sure you're inside your repository's top level.
+- **Homework assignments:** clone your own private per-assignment
+  repository (it already includes this `lab/` directory, so no separate
+  clone of anything else is needed). Find its URL from the green **Code**
+  button on your repo's GitHub page:
+
+  ```bash
+  git clone <your-repo-url>
+  cd <your-repo-name>
+  ```
+
 - **Team-project work:** clone the shared course infrastructure repository,
   which is updated throughout the semester:
 
@@ -179,7 +186,7 @@ how many vehicles run or where they start -- that's computed by a script
 from settings in `.env`:
 
 ```bash
-python3 scripts/generate_fleet.py
+python scripts/generate_fleet.py
 ```
 
 The defaults (`CENTER_LOCATION=ND`, `NUM_DRONES=1`) start a single vehicle
@@ -192,7 +199,7 @@ you change either value -- it only rewrites `docker-compose.override.yml`,
 it does not itself start or stop anything.
 
 For a one-off run without editing `.env`, pass flags instead:
-`python3 scripts/generate_fleet.py --location CMAC --num-drones 3`
+`python scripts/generate_fleet.py --location CMAC --num-drones 3`
 (`--help` lists all of them). Flags only affect that run -- `.env` is left
 untouched either way.
 
