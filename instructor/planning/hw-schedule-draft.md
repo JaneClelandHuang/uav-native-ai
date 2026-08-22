@@ -55,23 +55,33 @@ writing:
 
 ---
 
-### HW2 — Prompt Engineering vs. Vibe Coding
+### HW2 — Flight Logs + Prompt Engineering
 
-**Learning goal:** Disciplined AI-assisted development as a workflow, not
-an autocomplete shortcut. Contrast deliberate prompting/review against
-"vibe coding" (accepting AI output uncritically).
+**Learning goal:** Prompt engineering as an empirical discipline, not
+guesswork — and, implicitly, the "vibe coding" contrast: a single casual
+prompt is itself one point in the comparison, not the default way to work.
 
-**Assignment:** Use Claude Code to build a small, well-specified extension
-to `mavlink_lib.py`/`simple_flight.py` (e.g. multi-waypoint flight read
-from a file). Submit the code **plus** a prompt log and critique: what
-the AI got wrong, how you caught it, what you changed and why.
+**Assignment:** Given a real flight log (instructor-supplied — see
+`instructor/planning/flight-logs/`, pending upload), students:
 
-**Grounded in:** `lab/backend/mavlink_lib.py`,
-`lab/scripts/simple_flight.py`, syllabus learning objective #1.
+1. Design a fixed set of analytical questions about the flight (e.g.
+   altitude/attitude behavior over time, anomalies, specific event
+   timing — exact question set TBD once the real log's fields/format are
+   in hand).
+2. Answer those questions using at least two distinct prompting
+   strategies against an LLM (e.g. single-shot vs. chain-of-thought,
+   or zero-shot vs. few-shot with worked examples).
+3. Verify each answer against the actual log data themselves — this is
+   the accountability step, not optional.
+4. Write up which strategy performed better, on what kinds of questions,
+   and why — an empirical quality claim (syllabus objective #5), not "it
+   felt more thorough."
 
-**Open question:** exact rubric for the prompt-log/critique component —
-what counts as evidence of critical review vs. just narrating the
-session.
+**Grounded in:** the provided flight log (pending), syllabus learning
+objectives #1 and #5.
+
+**Open question:** exact question set and rubric depend on the real log's
+format/fields once uploaded — revisit after that lands.
 
 ---
 
@@ -95,11 +105,12 @@ already-merged pure `parse_*` functions as-is.
 
 ---
 
-### HW4 — Flight Logs and Telemetry Health
+### HW4 — Live Telemetry Health and Fault Injection
 
-**Learning goal:** Move from "did it fly" to "how do we know it's
-healthy" — reading MAVLink telemetry, interpreting EKF/GPS/vibration
-health signals, fault injection.
+**Learning goal:** Builds on HW2's log-reading foundation — move from
+analyzing a static, already-completed log to interpreting telemetry
+*live* and diagnosing problems as they happen: EKF/GPS/vibration health
+signals, fault injection.
 
 **Assignment:** `instructor/monitor.md`'s tiered framework, built out as
 the assignment:
