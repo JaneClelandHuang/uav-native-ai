@@ -86,19 +86,34 @@ run the development environment.
 - **Mac (Intel or Apple Silicon):** Install Docker Desktop.
   - **Apple Silicon only:** the SITL image is `linux/amd64` (ArduPilot's own
     dev-toolchain base image doesn't publish an arm64 build). Docker Desktop
-    runs it under Rosetta-accelerated emulation, which is fast enough for
-    this course, but you must enable it once: **Docker Desktop → Settings →
-    General → "Use Rosetta for x86_64/amd64 emulation on Apple Silicon."**
-- **Docker Desktop users (Mac and Windows):** check Settings → Resources
-  before Step 4. Two separate limits live there, and both matter:
+    can run it under Rosetta-accelerated emulation, which is fast enough for
+    this course, but it's **off by default** and needs two settings, both
+    under **Docker Desktop → Settings → General**:
+    1. **Virtual Machine Manager** set to **Apple Virtualization framework**
+       -- the Rosetta checkbox below only appears/works under this VMM. If
+       you don't see it, check this first.
+    2. **"Use Rosetta for x86_64/amd64 emulation on Apple Silicon"** --
+       check this box.
+
+    Click **Apply & Restart** after changing either.
+- **Mac only:** check **Settings → Resources** before Step 4. Two separate
+  limits live there, and both matter:
   - **CPU/memory** -- the out-of-the-box limits are commonly too low for
     SITL; raise them from the defaults.
   - **Disk usage limit** (Resources → Advanced) -- this caps how much disk
-    *Docker's own VM* is allowed to use, separate from your host machine's
-    free space above. If it's set below ~8 GB, `docker compose pull` in
-    Step 4 can fail partway through even though your Mac/PC itself has
-    plenty of room. Linux/WSL2 users without Docker Desktop don't have this
-    extra limit -- only the host's actual free disk space applies.
+    *Docker's own VM* is allowed to use, separate from your Mac's free disk
+    space above. If it's set below ~8 GB, `docker compose pull` in Step 4
+    can fail partway through even though your Mac itself has plenty of
+    room.
+- **Windows (WSL2 backend) only:** these same Resources sliders in Docker
+  Desktop don't apply -- WSL2 manages its own resources, and its defaults
+  (50% of your RAM, all CPU cores, up to 1 TB of disk) are already well
+  above what this course needs, so you shouldn't need to touch anything.
+  If you ever do need to change them, it's `%UserProfile%\.wslconfig`
+  (`[wsl2]` section, `memory=`/`processors=` keys), not Docker Desktop's
+  UI -- then `wsl --shutdown` from PowerShell to apply it.
+- **Linux (no Docker Desktop):** no separate VM layer, so none of the
+  above applies -- only your host's actual free disk/CPU/memory.
 
 ---
 
@@ -396,7 +411,9 @@ PowerShell and Command Prompt are not supported for this course.
 ## Apple Silicon
 
 Enable Rosetta emulation in Docker Desktop and increase Docker's CPU and
-memory allocation if SITL performs poorly.
+memory allocation if SITL performs poorly. If the Rosetta checkbox is
+missing entirely, see Step 1 -- it only appears once the Virtual Machine
+Manager is set to Apple Virtualization framework.
 
 ---
 
@@ -414,11 +431,11 @@ Two different things can cause this -- check both:
 
 1. **Your host machine's own free disk space.** See "Before You Begin" for
    the ~8 GB you need.
-2. **Docker Desktop's own disk usage limit** (Mac/Windows only: Settings →
+2. **Docker Desktop's own disk usage limit** (Mac only: Settings →
    Resources → Advanced). This caps *Docker's VM*, separately from your
-   host's free space -- raise it if it's set low, even if your machine
-   itself has plenty of room. Linux/WSL2 without Docker Desktop doesn't
-   have this second limit.
+   Mac's free space -- raise it if it's set low, even if your machine
+   itself has plenty of room. This setting doesn't apply on Windows with
+   the WSL2 backend (see Step 1) or on Linux.
 
 ---
 
