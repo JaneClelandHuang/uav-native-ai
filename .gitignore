@@ -19,5 +19,9 @@ _site/
 .jekyll-cache/
 .jekyll-metadata
 
+# Student repo rosters -- private, never commit (used by
+# instructor/scripts/sync-lab-infra.sh)
+instructor/roster*
+
 # OS cruft
 .DS_Store

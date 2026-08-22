@@ -460,8 +460,8 @@ own favorites to it directly; each entry needs `name`, `nickname`, `lat`,
   for the CV assignment — see "Not yet in scope" above).
 
 Bumping the ArduPilot version for a later course run: re-run
-`scripts/build_and_push_sitl.sh <new-tag>` and update `SITL_IMAGE` in
-`.env` — nothing else in the repo needs to change.
+`../instructor/scripts/build_and_push_sitl.sh <new-tag>` and update
+`SITL_IMAGE` in `.env` — nothing else in the repo needs to change.
 
 ## Configuration (`.env`)
 
@@ -493,10 +493,10 @@ Bumping the ArduPilot version for a later course run: re-run
   success condition is met, which makes it self-heal against a dropped UDP
   command or the same cold-start pre-arm-check flakiness `verify_setup.py`
   documents.
-- **`scripts/build_and_push_sitl.sh`** — instructor-only: builds the pinned
-  SITL image and pushes it to GHCR. Lowercases both the ArduPilot tag *and*
-  the GHCR owner name before building — Docker repository paths must be
-  lowercase, and GitHub usernames/orgs commonly aren't.
+Instructor-only tooling (building/publishing the pinned SITL image, lesson
+working notes) lives outside `lab/`, in `../instructor/` — see
+`../instructor/INSTRUCTOR.md`. It's kept out of `lab/` specifically because
+`lab/` is what gets vendored into student repos.
 
 ## Known quirks worth knowing
 
@@ -514,8 +514,12 @@ Bumping the ArduPilot version for a later course run: re-run
 
 ## Repo layout
 
+This is `lab/`'s place within whichever repo you're reading it from — the
+shared `uav-native-ai` course infra repo for team-project work, or your own
+private homework repo (which vendors this same `lab/` directory):
+
 ```
-uav-native-ai/
+<repo root>/
   .venv/                        <- created once at the repo root, see SETUP.md
                                     Step 3 (shared across the whole course,
                                     not per-lab)
@@ -556,7 +560,8 @@ uav-native-ai/
       disarm.sh
       test_flight.py
       test_circle.py
-      build_and_push_sitl.sh
+  instructor/                    <- NOT under lab/, so NOT vendored into
+                                     student repos; see instructor/INSTRUCTOR.md
 ```
 
 ## DroneResponse `UPDATE_DRONE` integration

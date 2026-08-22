@@ -21,7 +21,15 @@ uav-native-ai/
                                            (ArduPilot SITL, MQTT backend,
                                            matplotlib viewer), added to as
                                            the course proceeds -- see
-                                           lab/ARCHITECTURE.md
+                                           lab/ARCHITECTURE.md. This is the
+                                           part vendored into the student
+                                           homework template repo, so it
+                                           contains only student-facing
+                                           material.
+  instructor/                          <- instructor-only notes and tooling
+                                           (SITL image publishing, lesson
+                                           planning) -- see
+                                           instructor/INSTRUCTOR.md
 ```
 
 ## Local development (site)

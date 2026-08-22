@@ -93,17 +93,20 @@ run the development environment.
 
 ---
 
-# Step 2 – Download the Course Repository
+# Step 2 – Get the Repository
 
-The course repository will contain every lab, example, script, and configuration
-file used throughout the semester.  These will be updated each week prior to use.
+This `lab/` directory lives in two places, and this guide works from either:
 
-Clone the repository:
+- **Homework assignments:** your own private per-assignment repository
+  already includes this `lab/` directory — you don't need a separate
+  clone. Just make sure you're inside your repository's top level.
+- **Team-project work:** clone the shared course infrastructure repository,
+  which is updated throughout the semester:
 
-```bash
-git clone https://github.com/JaneClelandHuang/uav-native-ai.git
-cd uav-native-ai
-```
+  ```bash
+  git clone https://github.com/JaneClelandHuang/uav-native-ai.git
+  cd uav-native-ai
+  ```
 
 ---
 
@@ -306,10 +309,10 @@ been sent.
 
 The final step confirms that the entire software stack is working correctly.
 
-Open a **second terminal** and run:
+Open a **second terminal**, move to your repository's top level, and run:
 
 ```bash
-cd uav-native-ai/lab
+cd lab
 
 source ../.venv/bin/activate
 
