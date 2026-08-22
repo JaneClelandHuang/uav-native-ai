@@ -44,6 +44,20 @@ student repo's `lab/` directory, and commits + pushes only the repos where
 something actually changed. Students just see a new commit land and
 `git pull` — no subtree/submodule mechanics on their end.
 
+**Distributing shared, non-per-student material (flight logs, datasets,
+etc.).** GitHub Releases do **not** carry over when a repo is generated
+from a template — a Release on `native-ai-uav-fall-2026` is only visible
+to people with direct access to that repo, not to students who only have
+their own individually-generated `native-ai-uav-<netid>` repo. Shared
+downloadable material instead goes in a separate repo,
+**`nd-native-ai-uav/native-ai-uav-resources`**, with read-only access
+granted via the **`fall-2026-students`** GitHub team (`pull` permission
+only). Add each student's GitHub username to that team as they enroll;
+put shared files as Releases there, e.g.
+https://github.com/nd-native-ai-uav/native-ai-uav-resources/releases/tag/hw02-flight-logs.
+This repo is separate from the per-student homework repos on purpose —
+don't confuse it with the template.
+
 ## Publishing a pinned SITL image
 
 Students should `docker pull`, never build ArduPilot from source in class

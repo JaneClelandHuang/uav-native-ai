@@ -61,13 +61,31 @@ writing:
 guesswork — and, implicitly, the "vibe coding" contrast: a single casual
 prompt is itself one point in the comparison, not the default way to work.
 
-**Assignment:** Given a real flight log (instructor-supplied — see
-`instructor/planning/flight-logs/`, pending upload), students:
+**Assignment:** Two real flight logs, finalized and distributed (release,
+not committed to git):
+https://github.com/nd-native-ai-uav/native-ai-uav-resources/releases/tag/hw02-flight-logs
+(grant each student read access via the `fall-2026-students` GitHub team
+as they enroll). Full instructor analysis/answer key for both —
+**not for student distribution** — in
+`instructor/hw02-flight-logs/{fence-breach-fuchsia,failsafe-cascade-lime}.md`.
 
-1. Design a fixed set of analytical questions about the flight (e.g.
-   altitude/attitude behavior over time, anomalies, specific event
-   timing — exact question set TBD once the real log's fields/format are
-   in hand).
+- **Log A** (`2025-08-24 11-56-32.bin`, FUCHSIA): repeated geofence
+  breaches, single clean cause, low complexity. Good first log.
+- **Log B** (`2026-03-21 16-46-34.bin`, LIME): radio/GCS comms failsafe
+  cascade, text-narrated via plain-English `MSG` entries, moderate
+  complexity, different evidence style than Log A (timing/text narrative
+  vs. distance-computation detective work) — good contrast pairing.
+
+A third, harder log (stale-home waypoint displacement, near-collision)
+was considered and set aside as too advanced for this assignment — real
+research incident, being written up separately for a paper.
+
+Students should, per log:
+
+1. Design a fixed set of analytical questions about the flight (both
+   answer-key docs above include candidate questions, including a couple
+   of deliberate "trap" questions that test whether a prompting strategy
+   correctly flags uncertainty rather than overclaiming).
 2. Answer those questions using at least two distinct prompting
    strategies against an LLM (e.g. single-shot vs. chain-of-thought,
    or zero-shot vs. few-shot with worked examples).
@@ -77,8 +95,8 @@ prompt is itself one point in the comparison, not the default way to work.
    and why — an empirical quality claim (syllabus objective #5), not "it
    felt more thorough."
 
-**Grounded in:** the provided flight log (pending), syllabus learning
-objectives #1 and #5.
+**Grounded in:** the two flight logs above, syllabus learning objectives
+#1 and #5.
 
 **Open question:** exact question set and rubric depend on the real log's
 format/fields once uploaded — revisit after that lands.
