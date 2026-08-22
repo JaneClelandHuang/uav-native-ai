@@ -59,7 +59,9 @@ You will need:
 - Hardware virtualization (Intel VT-x / AMD-V) enabled in your BIOS/UEFI --
   on by default on most machines, but see the Troubleshooting section below
   if Docker complains about it
-- Approximately 5 GB of available disk space
+- Approximately 8 GB of available disk space (the SITL image alone is
+  ~3.7 GB; this leaves headroom for the backend image, the broker, and
+  your Python virtual environment)
 
 ---
 
@@ -87,9 +89,16 @@ run the development environment.
     runs it under Rosetta-accelerated emulation, which is fast enough for
     this course, but you must enable it once: **Docker Desktop → Settings →
     General → "Use Rosetta for x86_64/amd64 emulation on Apple Silicon."**
-    Also raise Docker Desktop's CPU/memory limits from the defaults
-    (Settings → Resources) -- the out-of-the-box limits are commonly too low
-    for SITL.
+- **Docker Desktop users (Mac and Windows):** check Settings → Resources
+  before Step 4. Two separate limits live there, and both matter:
+  - **CPU/memory** -- the out-of-the-box limits are commonly too low for
+    SITL; raise them from the defaults.
+  - **Disk usage limit** (Resources → Advanced) -- this caps how much disk
+    *Docker's own VM* is allowed to use, separate from your host machine's
+    free space above. If it's set below ~8 GB, `docker compose pull` in
+    Step 4 can fail partway through even though your Mac/PC itself has
+    plenty of room. Linux/WSL2 users without Docker Desktop don't have this
+    extra limit -- only the host's actual free disk space applies.
 
 ---
 
@@ -396,6 +405,20 @@ memory allocation if SITL performs poorly.
 `docker compose pull` will fail (or hang) trying to reach `eclipse-mosquitto`
 or the SITL image on GHCR. Try a different network, or ask IT to allowlist
 Docker Hub / GHCR.
+
+---
+
+## `docker compose pull` fails partway through with a disk-space error
+
+Two different things can cause this -- check both:
+
+1. **Your host machine's own free disk space.** See "Before You Begin" for
+   the ~8 GB you need.
+2. **Docker Desktop's own disk usage limit** (Mac/Windows only: Settings →
+   Resources → Advanced). This caps *Docker's VM*, separately from your
+   host's free space -- raise it if it's set low, even if your machine
+   itself has plenty of room. Linux/WSL2 without Docker Desktop doesn't
+   have this second limit.
 
 ---
 
