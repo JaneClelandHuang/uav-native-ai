@@ -4,18 +4,12 @@ title: Schedule
 
 # Schedule
 
-The semester runs in two phases: individual skill-building (Weeks 1–7),
-then a team project (after Fall Break through finals week). See the
-[Syllabus]({{ '/syllabus.html' | relative_url }}) for how each phase is
-structured and assessed. Assignment instructions for each week are
-released separately as that week approaches.
+The semester runs in two phases: individual skill-building (Weeks 1–7), then a team project (after Fall Break through finals week). See the [Syllabus]({{ '/syllabus.html' | relative_url }}) for how each phase is structured and assessed. Assignment instructions for each week are released separately as that week approaches.
 
-The schedule may be adjusted as project needs and class progress become
-clearer. Any significant changes will be communicated in class and
+The schedule may be adjusted as project needs and class progress become clearer. Any significant changes will be communicated in class and
 through the course site.
 
-**Setup:** see [`lab/SETUP.md`](https://github.com/JaneClelandHuang/uav-native-ai/blob/main/lab/SETUP.md)
-for one-time environment setup ahead of Week 1.
+**Setup:** see [`lab/SETUP.md`](https://github.com/JaneClelandHuang/uav-native-ai/blob/main/lab/SETUP.md) for one-time environment setup ahead of Week 1.
 
 | Week | Dates | UAV / Systems Engineering | Native AI / Project Focus | Major Work |
 |---|---|---|---|---|
