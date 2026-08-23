@@ -219,6 +219,32 @@ The team project grade and individual oral-defense grade are separate. Strong te
 
 </div>
 
+### Letter Grades
+
+<div class="callout placeholder">
+<p>Standard 10-point bands shown below — adjust the point cutoffs if ND
+or this department uses different breakpoints. No A+ or F+/F- is used.</p>
+</div>
+
+<div class="table-wrap" markdown="1">
+
+| Grade | Points |
+|---|---:|
+| A | 930–1,000 |
+| A− | 900–929 |
+| B+ | 870–899 |
+| B | 830–869 |
+| B− | 800–829 |
+| C+ | 770–799 |
+| C | 730–769 |
+| C− | 700–729 |
+| D+ | 670–699 |
+| D | 630–669 |
+| D− | 600–629 |
+| F | below 600 |
+
+</div>
+
 ## Attendance and Participation
 
 This is a highly interactive, project-oriented course. Many class sessions involve hands-on exercises, demonstrations, architecture discussions, peer reviews, team development, and project critiques that cannot be fully reproduced by reading slides afterward.
