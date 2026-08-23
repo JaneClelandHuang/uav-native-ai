@@ -193,6 +193,24 @@ pre code { background: none; border: none; padding: 0; }
 .card .card-title { font-weight: 600; margin-top: 0.3em; font-size: 1.05rem; }
 .card .card-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.3em; }
 
+/* Hero image (home page) */
+.hero-image { margin: 1.6em 0 1.8em; }
+.hero-image img {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+.hero-image figcaption {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.7em;
+}
+
 .tag {
   display: inline-flex;
   font-family: 'IBM Plex Mono', monospace;

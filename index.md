@@ -8,6 +8,11 @@ title: Home
 
 <p class="lede">CSE 40701 prepares senior-level students to engineer software in an AI-assisted development environment, with an emphasis on cyber-physical systems (CPS) in the UAV domain.</p>
 
+<figure class="hero-image">
+  <img src="{{ '/assets/img/two-drones.jpg' | relative_url }}" alt="Two multirotor UAVs on a runway, prepared for a coordinated flight test.">
+  <figcaption>Coordinated multi-UAV operations — the kind of system this course engineers.</figcaption>
+</figure>
+
 Students work extensively with GPT/Claude and related AI tools while
 building and integrating a swarm-based Physical AI system for disaster
 relief — combining software architecture, AI-assisted development,
