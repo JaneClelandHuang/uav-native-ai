@@ -25,4 +25,4 @@ See the [Syllabus]({{ '/syllabus.html' | relative_url }}) for the full course de
 
 </div>
 
-The destination: a swarm-based Physical AI system for disaster relief. In teams, you will choose a real-world disaster-response problem and engineer a system in which autonomous UAVs perceive what is happening in their environment, reason about what they observe, and act in the physical world. Your system must also keep humans meaningfully involved through visualization and interaction, operate within appropriate safety guardrails, and provide evidence that its autonomous behavior can be trusted.
+The course culminates in a half-semester, team-based project, in which students will develop a swarm-based Physical AI system for disaster relief. Teams will selects a real-world disaster-response problem and engineer a system in which autonomous UAVs <i>perceive</i> what is happening in their environment, <i>reason</i> about what they observe, and </i>act in the physical world. The resulting system must also keep humans meaningfully involved through visualization and interaction, operate within appropriate safety guardrails, and build guardrails around any autonomous behavior.
