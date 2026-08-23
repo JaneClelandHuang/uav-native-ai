@@ -157,7 +157,9 @@ course.
 
 **Required Text/Readings:** Practical readings and technical materials
 will be assigned throughout the semester in support of each topic. No
-textbook is required.
+textbook is required. In lieu of a textbook, students will be provided
+with Claude Pro and Anthropic credits sufficient for all required
+exercises and project work.
 
 ## Generative AI Policy
 
