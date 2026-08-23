@@ -223,18 +223,15 @@ teammates.
 
 ## Late Work and Extensions
 
-<div class="callout placeholder">
-<p><strong>TBD</strong></p>
-<p>Grace period, penalty schedule, and extension request process still need to be specified.</p>
-</div>
+Submitting work late is problematic because we will discuss submissions in class on Thursday.  Work will be accepted late without penalty for ONE, and only one, individual assignment during the semester as long as received by midnight on Wednesday in the week it is due. Work submitted after that time will be penalized by 25% if received by the following Sunday midnight.  Work submitted late due to formally excused absence or sickness will be determined individually through discussion with the instructor.
 
-Project milestone deadlines are particularly important because later project activities build directly on earlier deliverables. Teams should communicate emerging problems early rather than waiting until a deadline.
+Project milestone deadlines are important because later project activities build directly on earlier deliverables. Teams should communicate emerging problems early rather than waiting until a deadline.
 
 ## Technology Use
 
-Computers and software-development tools are integral to this course and will be used extensively during class. Students are expected to bring their laptops to class and to have the software and course infrastructure needed for the day's activities installed and operational.
+Computers and software-development tools are integral to this course and will be used extensively during class. Students are expected to bring their laptops to class and to have the software and course infrastructure needed for the day's activities installed and operational.  
 
-All required course software will be installed on students' own laptops. Initial setup will take place during Week 1. If you encounter problems that prevent the required software or infrastructure from running successfully on your laptop, notify the instructor during Week 1 so that we can diagnose the problem and, if necessary, discuss alternative arrangements.
+All required course software will be installed on students' own laptops. Initial setup will take place during Week 1. If you encounter problems that prevent the required software or infrastructure from running successfully on your laptop, notify the instructor during Week 1 so that we can diagnose the problem and, if necessary, discuss alternative arrangements. 
 
 Software development inevitably involves technical and infrastructure failures. Students are expected to manage their work accordingly by
 committing and pushing changes regularly, maintaining appropriate backups, and beginning assignments sufficiently early to identify and
