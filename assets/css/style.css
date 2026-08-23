@@ -34,7 +34,7 @@ body {
 }
 
 .wrap {
-  max-width: 900px;
+  max-width: 1160px;
   margin: 0 auto;
   padding: 0 28px;
 }
@@ -91,7 +91,7 @@ h2 { font-size: 1.5rem; margin: 1.7em 0 0.6em; padding-top: 0.4em; border-top: 1
 h2:first-child { margin-top: 0; border-top: none; padding-top: 0; }
 h3 { font-size: 1.15rem; margin: 1.4em 0 0.5em; }
 
-p { margin: 0 0 1.1em; max-width: 68ch; color: var(--ink-dim); }
+p { margin: 0 0 1.1em; max-width: 82ch; color: var(--ink-dim); }
 main > .lede { font-size: 1.2rem; color: var(--ink); max-width: none; }
 
 a { color: var(--accent-cool); }
