@@ -29,7 +29,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.6;
 }
 
@@ -92,7 +92,7 @@ h2:first-child { margin-top: 0; border-top: none; padding-top: 0; }
 h3 { font-size: 1.15rem; margin: 1.4em 0 0.5em; }
 
 p { margin: 0 0 1.1em; max-width: 68ch; color: var(--ink-dim); }
-main > .lede { font-size: 1.1rem; color: var(--ink); max-width: 62ch; }
+main > .lede { font-size: 1.2rem; color: var(--ink); max-width: none; }
 
 a { color: var(--accent-cool); }
 a:hover { text-decoration-thickness: 2px; }

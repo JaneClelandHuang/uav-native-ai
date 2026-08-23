@@ -24,3 +24,10 @@ See the [Syllabus]({{ '/syllabus.html' | relative_url }}) for the full course de
 </figure>
 
 </div>
+
+UAVs are already reshaping how disasters get answered — search and rescue,
+damage assessment, medical delivery, wildfire monitoring. This course puts
+you inside that loop: engineering a system that perceives its
+environment, reasons about what it perceives using AI, and acts — while
+treating every AI-assisted decision as something you're accountable for,
+not something you take on faith.
