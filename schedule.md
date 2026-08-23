@@ -17,6 +17,8 @@ week's [lesson page]({{ '/lessons/' | relative_url }}) for the full
 assignment; team-project weeks link to a deliverable below instead of a
 homework page.
 
+<div class="table-wrap" markdown="1">
+
 | Week | Dates | Topic | Native AI / Project Focus | Slides | Homework |
 |---|---|---|---|---|---|
 | **1** | Aug. 25–27 | UAV Infrastructure & Architecture | AI as a Learning Partner | — | [HW1]({{ '/lessons/lesson1.html#homework' \| relative_url }}) |
@@ -39,7 +41,11 @@ homework page.
 | — | Dec. 9 | Last class day | Course wrap-up / contingency as needed | | |
 | **Finals Week** | TBD | Individual Project Defense | Oral technical defense and discussion | — | **Individual Oral Defense** |
 
+</div>
+
 ## Project Deliverables at a Glance
+
+<div class="table-wrap" markdown="1">
 
 | Deliverable | Purpose |
 |---|---|
@@ -49,3 +55,5 @@ homework page.
 | **D4 — Testing Agent + Engineering Evidence** | Build and evaluate a specialized testing agent and begin assembling evidence that important system behaviors work. |
 | **D5 — Final Project Website + System** | Complete, demonstrate, and provide an engineering case for the final Physical AI system. |
 | **Individual Oral Defense** | Demonstrate individual understanding of the system, engineering decisions, evidence, AI usage, and personal contributions. |
+
+</div>

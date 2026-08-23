@@ -115,7 +115,7 @@ Students are encouraged and, for many assignments, required to use tools such as
 - building specialized software-engineering agents;
 - preparing technical explanations and documentation.
 
-The use AI does not transfer responsibility to AI.
+The use of AI does not transfer responsibility to AI.
 
 Students remain responsible for the correctness, safety, quality, and integrity of everything they submit. You must understand the software and engineering artifacts you submit and be able to explain, critique, modify, test, and defend them independently. Some assessments will therefore explicitly evaluate **individual understanding of AI-assisted work**. These may include individualized
 questions based on submitted assignments and an individual oral defense of the team project. The course expects students to use AI effectively **while retaining engineering judgment and individual understanding**.
@@ -151,6 +151,8 @@ The course is graded on a 1,000-point scale. Assessment progresses from individu
 
 ### Individual Skill-Building Assignments — 400 points
 
+<div class="table-wrap" markdown="1">
+
 | Deliverable | Points |
 |---|---:|
 | HW1 — UAV Infrastructure & Architecture | 50 |
@@ -162,9 +164,13 @@ The course is graded on a 1,000-point scale. Assessment progresses from individu
 | HW7 — Onboard Intelligence / Reasoning Pipeline | 60 |
 | **Subtotal** | **400** |
 
+</div>
+
 Generative AI use is expected on these assignments. Assignment grades therefore reflect both the quality of the submitted engineering artifact and demonstrated individual understanding of that artifact. Students may be asked individualized questions based on their submitted work and should be prepared to explain, critique, diagnose, and modify what they submit.
 
 ### Team Project Milestones — 250 points
+
+<div class="table-wrap" markdown="1">
 
 | Deliverable | Points |
 |---|---:|
@@ -174,9 +180,13 @@ Generative AI use is expected on these assignments. Assignment grades therefore 
 | D4 — Testing Agent + Engineering Evidence | 80 |
 | **Subtotal** | **250** |
 
+</div>
+
 Project milestones are maintained through the team's evolving GitHub Pages project website and project repository. Milestones emphasize working software, architectural reasoning, integration, testing, evidence, and effective technical communication rather than lengthy standalone reports.
 
 ### Final Project Assessment — 350 points
+
+<div class="table-wrap" markdown="1">
 
 | Deliverable | Points |
 |---|---:|
@@ -184,6 +194,8 @@ Project milestones are maintained through the team's evolving GitHub Pages proje
 | D5 — Final Project Website / Engineering Evidence | 100 |
 | Individual Oral Project Defense | 100 |
 | **Subtotal** | **350** |
+
+</div>
 
 The final project assessment constitutes 35% of the course grade. It evaluates three complementary forms of evidence:
 
@@ -196,12 +208,16 @@ The team project grade and individual oral-defense grade are separate. Strong te
 
 ### Total
 
+<div class="table-wrap" markdown="1">
+
 | Category | Points | Course Weight |
 |---|---:|---:|
 | Individual Skill-Building Assignments | 400 | 40% |
 | Team Project Milestones | 250 | 25% |
 | Final Project Assessment | 350 | 35% |
 | **Total** | **1,000** | **100%** |
+
+</div>
 
 ## Attendance and Participation
 
