@@ -174,7 +174,7 @@ pre code { background: none; border: none; padding: 0; }
   margin-bottom: 0.5em;
 }
 
-.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 0 0 1.6em; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 0 0 1.6em; }
 .card {
   border: 1px solid var(--line);
   border-radius: var(--radius);

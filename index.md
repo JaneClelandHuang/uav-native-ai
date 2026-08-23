@@ -28,7 +28,18 @@ Students work hands-on with UAV software and simulation, building capabilities f
 
 </div>
 
-See the [Syllabus]({{ '/syllabus.html' | relative_url }}) for the full course description, learning goals, prerequisites, and grading, and the [Schedule]({{ '/schedule.html' | relative_url }}) for the week-by-week plan.
+<div class="card-grid">
+<a class="card" href="{{ '/syllabus.html' | relative_url }}">
+  <span class="card-eyebrow">Start Here</span>
+  <span class="card-title">Syllabus</span>
+  <span class="card-desc">Full course description, learning goals, prerequisites, and grading.</span>
+</a>
+<a class="card" href="{{ '/schedule.html' | relative_url }}">
+  <span class="card-eyebrow">Start Here</span>
+  <span class="card-title">Schedule</span>
+  <span class="card-desc">Week-by-week plan, slides, and homework links.</span>
+</a>
+</div>
 
 The course culminates in a half-semester, team-based project, in which students will develop a swarm-based Physical AI system for disaster relief. Teams will select a real-world disaster-response problem and engineer a system in which autonomous UAVs <i>perceive</i> what is happening in their environment, <i>reason</i> about what they observe, and <i>act</i> in the physical world. The resulting system must also keep humans meaningfully involved through visualization and interaction, operate within appropriate safety guardrails, and build guardrails around any autonomous behavior.
 
