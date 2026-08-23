@@ -221,27 +221,20 @@ The team project grade and individual oral-defense grade are separate. Strong te
 
 ### Letter Grades
 
-<div class="callout placeholder">
-<p>Standard 10-point bands shown below — adjust the point cutoffs if ND
-or this department uses different breakpoints. No A+ or F+/F- is used.</p>
-</div>
-
 <div class="table-wrap" markdown="1">
 
-| Grade | Points |
-|---|---:|
-| A | 930–1,000 |
-| A− | 900–929 |
-| B+ | 870–899 |
-| B | 830–869 |
-| B− | 800–829 |
-| C+ | 770–799 |
-| C | 730–769 |
-| C− | 700–729 |
-| D+ | 670–699 |
-| D | 630–669 |
-| D− | 600–629 |
-| F | below 600 |
+| Percentage | Grade | Notre Dame Description |
+|---|---|---|
+| 93–100 | A | Truly Exceptional |
+| 90–92.99 | A− | Outstanding |
+| 87–89.99 | B+ | Very Good |
+| 83–86.99 | B | Good |
+| 80–82.99 | B− | More than Acceptable |
+| 77–79.99 | C+ | Acceptable: Meets All Basic Standards |
+| 73–76.99 | C | Acceptable: Meets Most Basic Standards |
+| 70–72.99 | C− | Acceptable: Meets Some Basic Standards |
+| 60–69.99 | D | Minimally Passing Work |
+| < 60 | F | Failing |
 
 </div>
 
