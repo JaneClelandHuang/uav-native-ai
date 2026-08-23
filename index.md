@@ -30,12 +30,10 @@ Students work hands-on with UAV software and simulation, building capabilities f
 
 <div class="card-grid">
 <a class="card" href="{{ '/syllabus.html' | relative_url }}">
-  <span class="card-eyebrow">Start Here</span>
   <span class="card-title">Syllabus</span>
   <span class="card-desc">Full course description, learning goals, prerequisites, and grading.</span>
 </a>
 <a class="card" href="{{ '/schedule.html' | relative_url }}">
-  <span class="card-eyebrow">Start Here</span>
   <span class="card-title">Schedule</span>
   <span class="card-desc">Week-by-week plan, slides, and homework links.</span>
 </a>
