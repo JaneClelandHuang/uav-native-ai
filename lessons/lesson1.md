@@ -19,7 +19,7 @@ isn't a black box next lecture.
 
 ## Reading
 Vibe engineering, Simon Willison's webblog on Vibe Engineering provides a high-level view of what it means to do software engineering with AI today.
-https://simonwillison.net/2025/Oct/7/vibe-engineering/?utm_source=chatgpt.com
+[blog post](https://simonwillison.net/2025/Oct/7/vibe-engineering/?utm_source=chatgpt.com)
 We will discuss the following question in class:  "As AI takes on more of the coding, how does the role of the software engineer change? Where should human expertise, judgment, and responsibility be focused?"
 
 ## Resources
