@@ -6,13 +6,13 @@ title: Home
 
 # Native AI Software and Systems Engineering for UAVs
 
-<p class="lede">CSE 40701 prepares senior-level students to engineer software in an AI-assisted development environment, with an emphasis on cyber-physical systems (CPS) in the UAV domain.</p>
+<p class="lede">CSE 40701 prepares senior-level students to engineer autonomous UAV software and systems in a world where AI is both part of the system they build and part of how they build it.</p>
 
 <div class="home-intro" markdown="1">
 
 <div class="home-intro-text" markdown="1">
 
-Students work extensively with GPT/Claude and related AI tools while building and integrating a swarm-based Physical AI system for disaster relief — combining software architecture, AI-assisted development, runtime analysis, human interaction, perception, autonomy, testing, and assurance.
+Students work hands-on with UAV software and simulation, building capabilities for multi-UAV coordination, runtime monitoring, visualization, perception, and autonomous decision making. Throughout the course, GPT/Claude serves as an engineering partner for understanding unfamiliar code, designing architectures, implementing and debugging software, analyzing operational evidence, and testing what you build. Students will also have opportunities to visit the UAV flying field and evaluate selected project capabilities in a physical-world setting.
 
 See the [Syllabus]({{ '/syllabus.html' | relative_url }}) for the full course description, learning goals, prerequisites, and grading, and the [Schedule]({{ '/schedule.html' | relative_url }}) for the week-by-week plan.
 
@@ -20,14 +20,9 @@ See the [Syllabus]({{ '/syllabus.html' | relative_url }}) for the full course de
 
 <figure class="home-intro-image">
   <img src="{{ '/assets/img/two-drones.jpg' | relative_url }}" alt="Two multirotor UAVs on a runway, prepared for a coordinated flight test.">
-  <figcaption>Coordinated multi-UAV operations — the kind of system this course engineers.</figcaption>
+  <figcaption>Two Inspired Flight 1200A drones on the runway and ready for deployment.</figcaption>
 </figure>
 
 </div>
 
-UAVs are already reshaping how disasters get answered — search and rescue,
-damage assessment, medical delivery, wildfire monitoring. This course puts
-you inside that loop: engineering a system that perceives its
-environment, reasons about what it perceives using AI, and acts — while
-treating every AI-assisted decision as something you're accountable for,
-not something you take on faith.
+The destination: a swarm-based Physical AI system for disaster relief. In teams, you will choose a real-world disaster-response problem and engineer a system in which autonomous UAVs perceive what is happening in their environment, reason about what they observe, and act in the physical world. Your system must also keep humans meaningfully involved through visualization and interaction, operate within appropriate safety guardrails, and provide evidence that its autonomous behavior can be trusted.
