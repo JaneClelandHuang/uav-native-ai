@@ -17,9 +17,14 @@ environment. Right now the goal is: get it running, poke at it, and
 understand the shape of the system well enough that the architecture
 isn't a black box next lecture.
 
-## Readings
+## Reading
+Vibe engineering, Simon Willison's webblog on Vibe Engineering provides a high-level view of what it means to do software engineering with AI today.
+https://simonwillison.net/2025/Oct/7/vibe-engineering/?utm_source=chatgpt.com
+We will discuss the following question in class:  "As AI takes on more of the coding, how does the role of the software engineer change? Where should human expertise, judgment, and responsibility be focused?"
 
-Prioritized — if you only have time for the first two, do those.
+## Resources
+
+Treat these readings as potential resources that are available to you throughout the course.
 
 1. **[SITL Simulator (Software in the Loop) — ArduPilot Dev Docs](https://ardupilot.org/dev/docs/sitl-simulator-software-in-the-loop.html)**
    What SITL actually is: a build of the real autopilot code using an
@@ -43,11 +48,11 @@ Prioritized — if you only have time for the first two, do those.
    Skim for GUIDED mode specifically. You'll see it referenced directly
    in the MQTT command contract.
 
-5. *(Optional, quick background)* **[ArduPilot — Wikipedia](https://en.wikipedia.org/wiki/ArduPilot)**
+5. **[ArduPilot — Wikipedia](https://en.wikipedia.org/wiki/ArduPilot)**
    Five-minute orientation: what ArduPilot is, its history, how widely
    it's used.
 
-6. *(Optional, deeper dive)* **[MAVLink Developer Guide](https://mavlink.io/en/)**
+6. **[MAVLink Developer Guide](https://mavlink.io/en/)**
    The full, vehicle-agnostic protocol documentation, if #3 leaves you
    wanting more detail.
 
