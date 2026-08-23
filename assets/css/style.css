@@ -193,22 +193,31 @@ pre code { background: none; border: none; padding: 0; }
 .card .card-title { font-weight: 600; margin-top: 0.3em; font-size: 1.05rem; }
 .card .card-desc { font-size: 0.88rem; color: var(--muted); margin-top: 0.3em; }
 
-/* Hero image (home page) */
-.hero-image { margin: 1.6em 0 1.8em; }
-.hero-image img {
+/* Home intro (text + photo side by side) */
+.home-intro {
+  display: flex;
+  gap: 2em;
+  align-items: flex-start;
+  margin: 1.6em 0 1.8em;
+}
+.home-intro-text { flex: 1 1 380px; min-width: 0; }
+.home-intro-image { flex: 0 0 280px; margin: 0; }
+.home-intro-image img {
   display: block;
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
   border-radius: var(--radius);
   border: 1px solid var(--line);
   box-shadow: var(--shadow);
 }
-.hero-image figcaption {
+.home-intro-image figcaption {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--muted);
-  margin-top: 0.7em;
+  margin-top: 0.6em;
+}
+@media (max-width: 640px) {
+  .home-intro { flex-direction: column; }
+  .home-intro-image { flex: 0 0 auto; max-width: 320px; margin: 0 auto; }
 }
 
 .tag {
