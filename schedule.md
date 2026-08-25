@@ -9,7 +9,7 @@ The semester runs in two phases: individual skill-building (Weeks 1–7), then a
 The schedule may be adjusted as project needs and class progress become clearer. Any significant changes will be communicated in class and
 through the course site.
 
-**Setup:** see [`lab/SETUP.md`](https://github.com/JaneClelandHuang/uav-native-ai/blob/main/lab/SETUP.md) for one-time environment setup.
+**Setup:** see `lab/SETUP.md` in your own homework repo for one-time environment setup (also available [here](https://github.com/nd-native-ai-uav/native-ai-uav-fall-2026/blob/main/lab/SETUP.md)).
 
 Slides are posted to Google Slides closer to each lecture — the column
 below is a placeholder until those links are added. Weeks 1–7 link to that
