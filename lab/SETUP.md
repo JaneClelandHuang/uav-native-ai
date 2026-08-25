@@ -121,14 +121,20 @@ run the development environment.
 
 This `lab/` directory lives in two places, and this guide works from either:
 
-- **Homework assignments:** clone your own private per-assignment
-  repository (it already includes this `lab/` directory, so no separate
-  clone of anything else is needed). Find its URL from the green **Code**
-  button on your repo's GitHub page:
+- **Homework assignments:** clone your own private repository,
+  `native-ai-uav-<netid>` (replace `<netid>` with your Notre Dame netid),
+  under the `nd-native-ai-uav` org — it already includes this `lab/`
+  directory, so no separate clone of anything else is needed.
 
+  **Using HTTPS:**
   ```bash
-  git clone <your-repo-url>
-  cd <your-repo-name>
+  git clone https://github.com/nd-native-ai-uav/native-ai-uav-<netid>.git
+  cd native-ai-uav-<netid>
+  ```
+  **Using SSH (if you have configured a GitHub SSH key):**
+  ```bash
+  git clone git@github.com:nd-native-ai-uav/native-ai-uav-<netid>.git
+  cd native-ai-uav-<netid>
   ```
 
 - **Team-project work:** clone the shared course infrastructure repository,
