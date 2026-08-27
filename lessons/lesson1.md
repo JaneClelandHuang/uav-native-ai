@@ -96,3 +96,20 @@ Whichever you pick, keep it simple: this is meant to be doable entirely
 with the `arm` / `takeoff` / `goto` / `land` commands you already have,
 no new backend features required. Watch it happen in `matplotlib_view.py`
 while it runs.
+
+**Deliverable.**
+This one's low-stakes — the point is to make sure your submission pipeline
+works before it matters for a graded assignment. In your own repository's
+`hw01/` directory, commit:
+
+- The `.py` script you wrote for part 2.
+- One screenshot of the flight in progress, from `matplotlib_view.py`,
+  the `gui/` multi-vehicle viewer, or both.
+
+Then push it the normal way:
+
+```bash
+git add .
+git commit -m "Complete HW01"
+git push
+```
