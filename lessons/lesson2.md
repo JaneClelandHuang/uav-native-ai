@@ -4,12 +4,11 @@
 
 By the end of this lesson, you should be able to:
 
-- Analyze an underspecified software problem by identifying questions, alternatives, assumptions, and design decisions.
-- Translate design decisions into precise, testable requirements using **EARS**.
-- Design a software solution that integrates with an existing multi-component UAV system.
-- Implement your design without unnecessarily coupling components or bypassing the existing architecture.
-- Validate your implementation against externally supplied flight scenarios.
-- Use quantitative evidence to evaluate both the **correctness** and **performance** of your solution.
+- Analyze an underspecified software problem — the questions it raises, the alternative behaviors, and the tradeoffs between them.
+- Make design decisions and explain *why*: what you were trying to achieve and what you gave up.
+- Design a solution that integrates with an existing multi-component UAV system, and sketch its architecture.
+- Implement your design without bypassing the existing architecture.
+- Validate against flight scenarios you did not write, using quantitative evidence for both **correctness** and **performance**.
 
 This week is deliberately different from Lesson 1.
 
@@ -17,168 +16,97 @@ In Lesson 1, the infrastructure and interfaces were largely provided for you. Th
 
 > **Multiple UAVs need to operate concurrently without violating safe separation.**
 
-There is no single prescribed design.
+There is no single prescribed design. Your job is to analyze the problem, make and justify design decisions, design and implement a solution, and demonstrate that it works.
 
-Your job is to analyze the problem, make and justify design decisions, specify what your system must do, design and implement a solution, and demonstrate that it works.
+**Budget about 6 hours.** We start the analysis and design in class. You build the ATC from scratch — but this is a Native AI course, so lean on Claude for the mechanical parts (MQTT wiring, flying a UAV through waypoints, arrival checks) and spend your own time on the design and the coordination logic. If you pass ~8 hours, stop and come to office hours.
 
 ---
 
 ## Using AI
 
-You are **encouraged to use Claude (Pro) throughout this assignment** — analysis, requirements, design, implementation, and testing. This is a Native AI software engineering course; using AI well is part of the work, not a way around it.
+You are **encouraged to use Claude (Pro) throughout this assignment** — analysis, design, implementation, and testing. This is a Native AI software engineering course; using AI well is part of the work, not a way around it.
 
-You remain fully responsible for understanding, evaluating, and being able to defend everything you submit. See [How This Is Graded](#how-this-is-graded) — part of your grade is answering individual questions about *your* code, in class, without AI.
+You remain fully responsible for understanding, evaluating, and being able to defend everything you submit.
 
-As part of your submission, include a short account (about half a page) in:
+As part of your submission, include a short account (about half a page) in `hw02/AI_USE.md`:
 
-`hw02/AI_USE.md`
-
-Cover:
-
-- **Where and how** you used Claude across the process.
+- **Where and how** you used Claude.
 - **Where it helped** — concrete examples.
 - **Where it didn't** — where it was wrong or misleading, or where you had to override it, and how you noticed.
 - **Insights** — anything you learned about using AI as an engineering partner on a problem like this.
 
-Honesty and specificity matter more than length. "I used it for everything and it was great" is not a useful account.
+Honesty and specificity matter more than length.
 
 ---
 
 ## The Engineering Process
 
-For this assignment, use the following process:
+Work through the problem in this order — don't jump straight to code:
 
-**Analyze → Specify → Design → Implement → Validate**
-
-Do not jump directly to implementation.
+**Analyze → Design → Implement → Validate**
 
 ### 1. Analyze
 
-First, make sure you understand the problem you are solving. You may choose to build upon any design discussed in class, or to start from a new design that you prefer.
+Understand the problem before you solve it. You may build on a design discussed in class or start from one you prefer.
 
-Identify:
+Think through:
 
-- Questions that need to be answered as part of the design process.
-- Alternative ways the system could behave.
-- Assumptions you are making. (Note: There are probably hundreds of assumptions. Document 1 or 2 of the key ones)
-- Important tradeoffs.
-- Decisions you ultimately make.
+- What questions have to be answered before you can design? (Who decides when there's a conflict? Does the system react to conflicts or predict them? When two UAVs are in conflict, which one yields, and why?)
+- What are the alternative ways the system could behave?
+- What are the important tradeoffs — for example latency, complexity, freedom from deadlock, and how well the design scales as UAVs are added?
+- What one or two assumptions are you making that really matter?
 
-There are many reasonable ways to design an Air Traffic Control (ATC) system. Your goal is to make thoughtful decisions and be able to explain them. While some solutions might be better than others, in most cases, they are better with respect to certain quality goals and worse with respect to others. In other words there is not necessarily a right or wrong answer; however, you might want to consider qualities such as latency, complexity, and freedom-from-deadlocks.  
+There is not a single right answer. Most designs are better on some quality goals and worse on others; your job is to choose deliberately and be able to explain the choice.
 
-Keep a short record of your analysis in:
+### 2. Design
 
-`hw02/ANALYSIS.md`
+Decide your approach and write it up. This is the main written deliverable — **about one page** — in `hw02/DESIGN.md`:
 
-Your analysis should show the **questions and alternatives you considered**, not just the final decisions.
+1. **What you wanted to achieve** and the **tradeoffs** you weighed (this replaces a formal requirements document — explain it in your own words).
+2. **Why you chose this design** over the alternatives you considered.
+3. **An architecture sketch** — a diagram of the major components and how they communicate. Any tool is fine, including a clear photo of a handwritten diagram.
+4. The **responsibility of each component** you add or change, and any new MQTT topics/messages.
 
----
+Do not assume the simple scripts from Lesson 1 are adequate here — `test_flight.py` flies one predetermined mission. Your ATC introduces concurrency and coordination, so consider how the existing architecture has to evolve.
 
-### 2. Specify
+Your design does **not** need to look like anyone else's. Since we start in class, adopting a similar overall approach to classmates is fine, as long as the rest of the work is your own.
 
-Once you have made the necessary decisions, specify the behavior of your system.
+### 3. Implement
 
-Write your key behavioral requirements using **EARS (Easy Approach to Requirements Syntax)**.
+Build what you designed.
 
-For example, an EARS requirement might take the general form:
+- Keep UAV commands and telemetry flowing through the Lesson 1 infrastructure — don't bypass it.
+- Your code should be recognizable as a realization of your `DESIGN.md`. If implementation forces a real design change, update `DESIGN.md`.
+- Don't optimize for the example workload specifically — you'll be graded on scenarios you haven't seen.
 
-> **When** `<trigger occurs>`, **the system shall** `<required response>`.
+You already have everything you need from Lesson 1: the MQTT command and telemetry contract (recapped in `lab/lesson2/README.md`), and `scripts/test_flight.py` as a worked example of driving one UAV over that contract. That script is single-UAV and blocking, so it is a reference, not a design you can reuse directly.
 
-or:
+### 4. Validate
 
-> **While** `<state holds>`, **the system shall** `<required behavior>`.
+An example workload is in `lab/lesson2/`. Run your system against it and record, in a short **Results** section of `DESIGN.md`:
 
-Your functional requirements will define what your system must accomplish without unnecessarily prescribing its internal architecture.
+```text
+Flights completed:            2 / 2
+Minimum required separation:  8.0 m
+Minimum observed separation:  13.4 m
+Total workload time:          94.2 s
+```
 
-Pay particular attention to requirements involving:
-
-- Safe separation.
-- UAV movement and progress.
-- Conflict detection and response.
-- Completion of assigned flights.
-- Starting subsequent flights.
-- Failure or exceptional conditions that your design handles.
-
-Put your requirements in:
-
-`hw02/REQUIREMENTS.md`
-
-A good functional requirement is sufficiently precise that you can determine from a test whether it is satisfied.
-
----
-
-### 3. Design
-
-Now determine how your system will satisfy those requirements.
-
-Think about:
-
-- What components are needed?
-- What is each component responsible for?
-- Where is state maintained?
-- How do components communicate?
-- What information does each component need?
-- What interfaces or MQTT messages are needed?
-- Which existing components need to change?
-- Which existing components should remain unchanged?
-
-You are working within an existing system.
-
-Do not assume that the simple scripts from Lesson 1 are adequate for the problem you are now solving. For example, `test_flight.py` was designed to demonstrate a simple predetermined flight. Your ATC system introduces concurrency, coordination, and potentially dynamic decisions.
-
-Your design should therefore consider how the **existing architecture must evolve**.
-
-Create:
-
-`hw02/DESIGN.md`
-
-Include:
-
-1. A short description of your architecture.
-2. A diagram showing the major components and communication between them. (Note: you can  use any modeling or sketching tool, and/or a photo of a clearly handwritten model)
-3. The responsibility of each new or modified component.
-4. Any new interfaces or MQTT topics/messages you introduce.
-5. The most important design decisions and why you made them.
-
-Your design does **not** need to look like anyone else's design. As we are starting the exercise in class, it is completely fine if you choose to adopt a similar/same design to others in the class as long as everything else is your own independent work.
-
----
-
-### 4. Implement
-
-Implement the system you designed.
-
-Use the existing UAV infrastructure rather than bypassing it. UAV commands and telemetry should continue to flow through the infrastructure introduced in Lesson 1.
-
-Your implementation should be understandable as a realization of the architecture described in `DESIGN.md`.
-
-If your implementation forces you to make a significant new design decision, update your design documentation. Design is allowed to evolve as you learn more during implementation.
-
-Do not optimize specifically for the example test scenario. Your system will ultimately be evaluated using additional scenarios that you have not seen.
+Don't just say "it passed." If something behaved unexpectedly, say what happened and what you did about it.
 
 ---
 
 ## Flight Workloads
 
-Your ATC system will be given a JSON file describing flights that must be completed.
-
-Conceptually, a workload contains an ordered sequence of missions for each UAV:
+Your ATC system is given a JSON file describing flights that must be completed.
 
 ```text
-Drone 1:  Mission 1A → Mission 1B → Mission 1C
-Drone 2:  Mission 2A → Mission 2B
-Drone 3:  Mission 3A → Mission 3B → Mission 3C
+UAV 1:  Mission 1A → Mission 1B → Mission 1C
+UAV 2:  Mission 2A → Mission 2B
+UAV 3:  Mission 3A → Mission 3B → Mission 3C
 ```
 
-Missions assigned to the **same UAV are sequential**.
-
-As soon as a UAV completes one mission, its next mission is eligible to begin.
-
-Different UAVs may therefore have active missions concurrently.
-
-Your system is responsible for deciding **how these flights can be completed safely**.
-
-The workload describes **what must be accomplished**. It does not prescribe how your ATC system should accomplish it.
+Missions for the **same UAV are sequential** — the next begins as soon as the previous one completes. Different UAVs may have missions active at the same time. The workload says **what** must be accomplished, not how.
 
 ### Format
 
@@ -190,7 +118,7 @@ The workload describes **what must be accomplished**. It does not prescribe how 
     "1": [
       { "mission_id": "1A",
         "waypoints": [
-          { "lat": 41.6983055, "lon": -86.237055, "alt": 15 }
+          { "lat": 41.6983055, "lon": -86.2370550, "alt": 15 }
         ] }
     ],
     "2": [ ... ],
@@ -199,197 +127,119 @@ The workload describes **what must be accomplished**. It does not prescribe how 
 }
 ```
 
-- Keys of `missions` are UAV ids (`"1"`, `"2"`, `"3"`) — matching the vehicle ids in the telemetry topics from Lesson 1.
+- Keys of `missions` are UAV ids (`"1"`, `"2"`, `"3"`) — the same ids as the Lesson 1 telemetry topics.
 - Each mission has a `mission_id` and 1–3 `waypoints`, visited in order.
-- `lat` / `lon` are absolute; `alt` is **metres above home** (relative altitude — the same value `{"type": "goto", "alt": N}` takes).
-- A mission is complete when the UAV comes **within 2 m** (3D) of its final waypoint. **Your `start_tests.py` must use this 2 m tolerance** to decide when a mission is done and the next one may begin. The instructor's monitor uses the same 2 m, so a looser tolerance would not help you and counts as not meeting the spec.
-- All UAVs launch from the standard 3-UAV fleet positions around the home coordinate.
+- `lat` / `lon` are absolute; `alt` is **metres above home** (relative altitude — the value `{"type": "goto", "alt": N}` takes).
+- A mission is complete when the UAV comes **within 2 m** (3D) of its final waypoint. This tolerance is fixed — the grading monitor uses it, so a looser one would not help and counts as not meeting the spec.
+- All UAVs launch from the standard 3-UAV fleet positions around the home coordinate (see `lab/lesson2/README.md`).
 
 ---
 
 ## Standard Execution Interface
 
-Every submission must be startable in exactly the same way, so that any solution can be run and evaluated without knowing anything about its internal design.
+Every submission must start the same way, so any solution can be run without knowing its internals.
 
-**You write this script yourself:**
+**You write this script:**
 
 ```bash
 python lab/lesson2/start_tests.py <workload.json> <min-separation-m>
 ```
 
-It takes a flight workload and the required minimum separation (in metres), starts your ATC system, and runs the workload to completion. The standard 3-UAV fleet will already be running.
-
-This is a real constraint of the assignment: although everyone's internal architecture will differ, every solution must expose the **same external boundary** so it can be tested independently. Designing that boundary is part of the exercise.
+It takes the workload and the required minimum separation (metres), starts your ATC, and runs the workload to completion. The standard 3-UAV fleet is already running.
 
 Your `start_tests.py` must:
 
-- Accept the workload file and minimum separation as arguments, exactly as shown above.
-- Start your ATC system, and anything else it needs, with no manual steps.
-- Dispatch each UAV's missions in order — a UAV's next mission begins once its previous one completes.
+- Accept the two arguments exactly as shown.
+- Start your ATC and anything it needs, with no manual steps.
+- Run each UAV's missions in order, beginning the next as soon as the previous completes (2 m).
 - Exit once every mission is complete (or after a generous timeout).
+
+`lab/lesson2/` contains **`example_workload.json`** to develop against and a **`README.md`** recapping the MQTT contract and the fleet layout.
 
 ### How grading observes your system
 
-The instructor runs a separate **monitor** — you will **not** see it — that subscribes only to UAV telemetry on the existing MQTT infrastructure. It measures separation, mission completion, and timing from telemetry alone.
+The instructor runs a separate **monitor** — you will not see it — that subscribes only to UAV telemetry on the existing infrastructure and measures separation, completion, and timing from telemetry alone.
 
-Your system is therefore graded on **what is observable in the telemetry stream**. Your UAV commands and telemetry must keep flowing through the Lesson 1 infrastructure; a system that coordinates UAVs "off the books" cannot be evaluated and will not receive credit for behavior the monitor cannot see. You will need to build your own way to measure separation and completion for `VALIDATION.md`.
+So your system is graded on **what is observable in the telemetry stream**. Keep commands and telemetry on the Lesson 1 infrastructure — a system that coordinates "off the books" cannot be evaluated. Build your own way to measure separation and completion for your Results section.
 
-Before submitting, confirm that a fresh clone of your repository can be started with the command above — no manual edits, no extra setup scripts.
-
----
-
-### 5. Validate
-
-An example flight workload is provided in `lab/lesson2/` for you to develop against. The workload format is described in [Flight Workloads](#flight-workloads) above.
-
-Run your system against this workload and collect evidence about its behavior.
-
-At minimum, report:
-
-- Whether **all required flights completed**.
-- Whether the required **minimum UAV separation** was maintained.
-- The **minimum observed separation** during the test.
-- The **total time required to complete the workload**.
-- Any other metric that provides useful evidence about the behavior of your design.
-
-Put your results in:
-
-`hw02/VALIDATION.md`
-
-Do not report only that the test "passed."
-
-Provide quantitative evidence.
-
-For example:
-
-```text
-Flights completed:          8 / 8
-Minimum required separation: 10.0 m
-Minimum observed separation:  13.4 m
-Total workload time:          94.2 s
-```
-
-If your system behaves unexpectedly, investigate the result. Explain what happened and whether you changed your requirements, design, or implementation as a result.
-
-### Instructor Validation
-
-Your submitted system will also be run against **additional flight workloads that you have not seen**.
-
-The same execution mechanism will be used:
-
-```bash
-python lab/lesson2/start_tests.py <instructor-workload.json> <min-separation-m>
-```
-
-These tests may create different patterns of concurrent UAV activity from the example provided to you, and may use a different minimum separation.
-
-Your implementation will be evaluated on whether it can safely and successfully complete the workload, not whether it reproduces a particular ATC architecture.
-
-All submissions will ultimately be evaluated on the same computing environment so that timing measurements can be meaningfully compared.
+Your submitted system is also run against **workloads you have not seen**, which may use different concurrency patterns and a different minimum separation. All submissions run in the same environment so timing is comparable.
 
 ---
 
 ## What Are We Evaluating?
 
-There are two different questions.
-
 ### Correctness
 
-Does your system satisfy its requirements?
-
-In particular:
+Does your system do the job?
 
 - Do all required flights complete?
 - Is safe separation maintained?
-- Does the system continue to make progress?
+- Does the system keep making progress (no deadlock)?
 
 A system that is fast but unsafe is not a successful solution.
 
 ### Performance
 
-Among correct solutions, how effectively does the system allow UAVs to operate?
+Among correct solutions, how well does it use the airspace?
 
-For example:
-
-- How long does the complete workload take?
+- How long does the whole workload take?
 - How much time do UAVs spend unnecessarily waiting?
-- How responsive is the system when coordination is required?
+- How responsive is it when coordination is required?
 
-A solution that permits only one UAV to fly at a time might make maintaining separation easy, but it may make poor use of the available airspace.
+A solution that flies only one UAV at a time is easy to keep safe but makes poor use of the airspace.
 
-**Safety comes first, but safety alone does not necessarily make a good ATC design.**
+**Safety comes first, but safety alone does not make a good ATC design.**
 
 ---
 
 ## How This Is Graded
 
-Your grade combines your written engineering work, how your system performs on flight workloads **you have not seen**, and an individual discussion of your code in class.
-
-### Rubric
-
-The assignment is graded out of **100 points**. Most components are evaluated using engineering judgment based on the criteria below. Automated evaluation of correctness and performance uses the precise rules described in the following section.
+The assignment is graded out of **100 points**. Most components are evaluated with engineering judgment against the criteria below; correctness and performance are measured by the monitor.
 
 <div class="table-wrap" markdown="1">
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **Analysis** — `ANALYSIS.md` | 13 | Meaningful questions and alternatives explored; key assumptions identified; important decisions justified through relevant tradeoffs such as latency, complexity, freedom from deadlock, and scalability. |
-| **Requirements** — `REQUIREMENTS.md` | 7 | Clear, testable EARS requirements that capture the important behaviors of your chosen solution, including safety, progress, conflict response, mission completion, and relevant exceptional conditions. |
-| **Design** — `DESIGN.md` | 16 | Clear architecture and diagram; component responsibilities and interfaces documented; important decisions justified; appropriately evolves the existing architecture rather than bypassing it. |
-| **Implementation** | 12 | Working, readable implementation that realizes the documented design, uses the existing infrastructure appropriately, and runs through the standard `start_tests.py` entry point without manual intervention. |
-| **Correctness on unseen workloads** | 14 | Determined by the automated evaluation described below. |
-| **Performance on unseen workloads** | 8 | Determined by the automated evaluation described below. |
-| **Validation** — `VALIDATION.md` | 5 | Quantitative evidence from testing, with meaningful interpretation of the results and investigation of unexpected behavior. |
-| **AI Use** — `AI_USE.md` | 5 | Specific reflection on where AI helped, where its suggestions were challenged, corrected, or rejected, how important AI-generated work was verified, and what you learned. |
-| **Individual Code Understanding** — in class | 20 | Demonstrates that you understand and can explain your own architecture and implementation, justify important decisions, trace behavior through your code, and reason about changes or alternative scenarios. |
+| **Design** — `DESIGN.md` | 35 | A clear ~1-page account of what you wanted to achieve, the tradeoffs, and why you chose this design over the alternatives; a readable architecture sketch; component responsibilities and any new topics documented; a design that evolves the existing architecture rather than bypassing it. |
+| **Implementation** | 25 | Working, readable code that realizes your design, uses the existing infrastructure, and runs through `start_tests.py` from a clean clone with no manual steps. |
+| **Correctness on unseen workloads** | 20 | All flights complete, separation maintained, no deadlock — on scenarios you did not develop against. |
+| **Performance on unseen workloads** | 5 | Among correct solutions: workload time, unnecessary waiting, coordination responsiveness. |
+| **Validation** — Results in `DESIGN.md` | 5 | Quantitative evidence from your own test run, with brief interpretation and investigation of anything unexpected. |
+| **AI Use** — `AI_USE.md` | 5 | Specific reflection on where AI helped, where you challenged or rejected it, how you verified its work, and what you learned. |
+| **Individual code understanding** — in class | 5 | See below. |
 | **Total** | **100** | |
 
 </div>
 
-### Individual code understanding — 20%
+### Individual code understanding
 
-Because AI assistance is expected, being able to explain your own work is a graded outcome in its own right — a fifth of this assignment.
+Because AI assistance is expected, being able to explain your own work is a skill this course grades directly.
 
-In class on **Thursday**, you will receive a short set of questions specific to the code and design in your repository — for example, why a particular component holds the state it does, what your system does if a UAV stops responding, or how your conflict logic behaves in a case your validation did not cover. The [Before You Submit](#before-you-submit) questions are a good guide to the kind of thing to be ready for.
+This is the first assignment using this, so it's only **5 points** here — expect it to carry more weight later. In **Thursday's class** you'll get a few questions about the code and design in your repository (for example: why a component holds the state it does, what your system does if a UAV stops responding, how your conflict logic handles a case your validation didn't cover) and answer them **on your own, in class, without AI**.
 
-You answer these **independently, in class, without AI assistance.** You are graded on how well you can reason about your own system — its design decisions, its behavior, and its limits.
+The goal is to start building the habit of being able to reason about and defend what you submit.
 
 ---
 
 ## Deliverable
 
-In your repository, create:
-
 ```text
 hw02/
-├── ANALYSIS.md
-├── REQUIREMENTS.md
-├── DESIGN.md
-├── VALIDATION.md
-├── AI_USE.md
+├── DESIGN.md        (~1 page: goals + tradeoffs + why this design + architecture sketch + Results)
+├── AI_USE.md        (~half a page)
 └── <your implementation files>
 
 lab/lesson2/
-└── start_tests.py        (you write this)
+└── start_tests.py   (you write this)
 ```
 
-Your submission should contain:
-
-- **Analysis** — questions, alternatives, assumptions, and decisions.
-- **Requirements** — your key behavioral requirements written using EARS.
-- **Design** — architecture, responsibilities, interfaces, and rationale.
-- **Implementation** — the working ATC system.
-- **Validation** — results from running the supplied example workload, including quantitative metrics.
-- **AI use reflection** — a short, specific account of how you used Claude.
-- **`start_tests.py`** — your entry-point script (see [Standard Execution Interface](#standard-execution-interface)).
-
-Your solution must run through the standard interface:
+Your solution must run through:
 
 ```bash
 python lab/lesson2/start_tests.py <workload.json> <min-separation-m>
 ```
 
-Commit and push your work:
+Commit and push:
 
 ```bash
 git add .
@@ -401,15 +251,12 @@ git push
 
 ## Before You Submit
 
-Make sure you can answer these questions:
+Be ready to explain:
 
-- What were the most important decisions you made during analysis?
-- Which of those decisions became requirements?
-- How does your architecture realize those requirements?
-- What evidence demonstrates that your implementation satisfies them?
-- What are the strengths and weaknesses of the design you chose?
-- What would happen to your design if the number of UAVs increased substantially?
-
-Most importantly:
+- The most important decisions you made, and the tradeoffs behind them.
+- How your architecture carries out those decisions.
+- What evidence shows your system works.
+- The strengths and weaknesses of your design.
+- What would happen to it if the number of UAVs grew substantially.
 
 > **Be able to explain why your system is designed the way it is.**
