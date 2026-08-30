@@ -329,6 +329,8 @@ Your grade combines your written engineering work, how your system performs on f
 
 The assignment is graded out of **100 points**. Most components are evaluated using engineering judgment based on the criteria below. Automated evaluation of correctness and performance uses the precise rules described in the following section.
 
+<div class="table-wrap" markdown="1">
+
 | Component | Points | What earns the points |
 |---|---:|---|
 | **Analysis** — `ANALYSIS.md` | 13 | Meaningful questions and alternatives explored; key assumptions identified; important decisions justified through relevant tradeoffs such as latency, complexity, freedom from deadlock, and scalability. |
@@ -339,8 +341,11 @@ The assignment is graded out of **100 points**. Most components are evaluated us
 | **Performance on unseen workloads** | 8 | Determined by the automated evaluation described below. |
 | **Validation** — `VALIDATION.md` | 5 | Quantitative evidence from testing, with meaningful interpretation of the results and investigation of unexpected behavior. |
 | **AI Use** — `AI_USE.md` | 5 | Specific reflection on where AI helped, where its suggestions were challenged, corrected, or rejected, how important AI-generated work was verified, and what you learned. |
-| **Individual Code Understanding** — in class | 20 | Demonstrates that you understand and can explain your own architecture and implementation, justify important decisions, trace behavior through your code, and reason about changes or alternative scenarios.  |
+| **Individual Code Understanding** — in class | 20 | Demonstrates that you understand and can explain your own architecture and implementation, justify important decisions, trace behavior through your code, and reason about changes or alternative scenarios. |
 | **Total** | **100** | |
+
+</div>
+
 ### Individual code understanding — 20%
 
 Because AI assistance is expected, being able to explain your own work is a graded outcome in its own right — a fifth of this assignment.
