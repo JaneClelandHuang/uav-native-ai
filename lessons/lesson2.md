@@ -339,7 +339,7 @@ The assignment is graded out of **100 points**. Most components are evaluated us
 | **Performance on unseen workloads** | 8 | Determined by the automated evaluation described below. |
 | **Validation** — `VALIDATION.md` | 5 | Quantitative evidence from testing, with meaningful interpretation of the results and investigation of unexpected behavior. |
 | **AI Use** — `AI_USE.md` | 5 | Specific reflection on where AI helped, where its suggestions were challenged, corrected, or rejected, how important AI-generated work was verified, and what you learned. |
-| **Individual Code Understanding** — in class | 20 | Demonstrates that you understand and can explain your own architecture and implementation, justify important decisions, trace behavior through your code, and reason about changes or alternative scenarios. |
+| **Individual Code Understanding** — in class | 20 | Demonstrates that you understand and can explain your own architecture and implementation, justify important decisions, trace behavior through your code, and reason about changes or alternative scenarios.  |
 | **Total** | **100** | |
 ### Individual code understanding — 20%
 
