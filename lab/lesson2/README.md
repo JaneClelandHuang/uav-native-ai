@@ -30,7 +30,7 @@ start point on the retained `uav/<id>/home` topic.
 | `test1.json` | 2 UAVs, one crossing conflict. The simplest case — start here. |
 | `test2.json` | 3 UAVs, two missions each. All three cross the area at once, then spread out to land. |
 | `test3.json` | 3 UAVs, three missions each. The `test2` pattern repeated back to back. |
-| `start_tests.py` | **You write this.** `python lab/lesson2/start_tests.py <workload.json> <min-separation-m>` — starts your ATC and runs the given workload to completion. |
+| `start_tests.py` | **You write this — it goes in your `hw02/` folder, not here.** `python hw02/start_tests.py <workload.json> <min-separation-m>` starts your ATC and runs the given workload to completion. |
 
 Develop against all three. Workload format is in the assignment under
 *Flight Workloads*. Your submitted system is also run against **additional

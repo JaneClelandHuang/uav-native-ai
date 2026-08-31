@@ -78,7 +78,7 @@ Your design does **not** need to look like anyone else's. However, as will will 
 
 ### 3. Implement
 
-Build what you designed.  **ALL of your code should be placed into your hwk2 repository**.
+Build what you designed.  **ALL of your code — including `start_tests.py` — goes in your `hw02/` folder.**
 
 - Leverage the existing infrastructure to startup drones.  Note you'll need to copy over the multi-UAV program infrastructure and rebuild your fleet one time. 
 - Your code should be recognizable as a realization of your `DESIGN.md`. If implementation forces a real design change, update `DESIGN.md`.
@@ -145,10 +145,10 @@ Missions for the **same UAV are sequential** — the next begins as soon as the 
 
 Every submission must start the same way, so any solution can be run without knowing its internals.
 
-**You write this script:**
+**You write this script, in `hw02/`:**
 
 ```bash
-python lab/lesson2/start_tests.py <workload.json> <min-separation-m>
+python hw02/start_tests.py <workload.json> <min-separation-m>
 ```
 
 It takes the workload and the required minimum separation (metres), starts your ATC, and runs the workload to completion. The standard 3-UAV fleet is already running.
@@ -231,18 +231,16 @@ The goal is to start building the habit of being able to reason about and defend
 
 ```text
 hw02/
-├── DESIGN.md        (~1 page: goals + tradeoffs + why this design + architecture sketch + Results)
-├── AI_USE.md        (~half a page)
-└── <your implementation files>
-
-lab/lesson2/
-└── start_tests.py   (you write this)
+├── DESIGN.md         (goals + tradeoffs + why this design + architecture sketch + Results)
+├── AI_USE.md         (~half a page)
+├── start_tests.py    (you write this — the standard entry point)
+└── <your other implementation files>
 ```
 
 Your solution must run through:
 
 ```bash
-python lab/lesson2/start_tests.py <workload.json> <min-separation-m>
+python hw02/start_tests.py <workload.json> <min-separation-m>
 ```
 
 Commit and push:
