@@ -2,84 +2,89 @@
 
 ## Lesson Objectives
 
-By the end of this lesson, you should be able to:
+By the end of this lesson, you will have had initial experience in:
 
-- Analyze an underspecified software problem — the questions it raises, the alternative behaviors, and the tradeoffs between them.
-- Make design decisions and explain *why*: what you were trying to achieve and what you gave up.
-- Design a solution that integrates with an existing multi-component UAV system, and sketch its architecture.
-- Implement your design without bypassing the existing architecture.
-- Validate against flight scenarios you did not write, using quantitative evidence for both **correctness** and **performance**.
+- Analyzing an underspecified software problem — the questions it raises, the alternative behaviors, and the tradeoffs between them.
+- Making design decisions and explain *why*: what you were trying to achieve and what you gave up.
+- Designing a solution that integrates with an existing multi-component UAV system, and sketch its architecture.
+- Implementing your design without bypassing the existing architecture.
+- Validating against flight scenarios you did not write, using quantitative evidence for both **correctness** and **performance**.
 
-This week is deliberately different from Lesson 1.
+Whereas for the previous 'assignment', the infrastructure and interfaces were largely provided for you. This week, you are given the following **problem** to solve:  **Multiple UAVs need to operate concurrently without violating safe separation.**  However, there is no single prescribed design. Your job is to analyze the problem, make and justify design decisions, design and implement a solution, and demonstrate that it works.
 
-In Lesson 1, the infrastructure and interfaces were largely provided for you. This week, you are given a **problem**:
-
-> **Multiple UAVs need to operate concurrently without violating safe separation.**
-
-There is no single prescribed design. Your job is to analyze the problem, make and justify design decisions, design and implement a solution, and demonstrate that it works.
-
-**Budget about 6 hours.** We start the analysis and design in class. You build the ATC from scratch — but this is a Native AI course, so lean on Claude for the mechanical parts (MQTT wiring, flying a UAV through waypoints, arrival checks) and spend your own time on the design and the coordination logic. If you pass ~8 hours, stop and come to office hours.
+**Budget around 6 hours** of homework time. However, we will start the analysis and design in class, as this is the first design exercise we will conduct inthis course. You will build the ATC from scratch; however, as this is a Native AI course, you can lean on Claude for the mechanical parts (MQTT wiring, flying a UAV through waypoints, arrival checks) and spend your own time on the design and the coordination logic. Importantly, there are many ways to solve this problem, all of which exhibit trade-offs in terms of effectiveness vs runtime processing vs development effort (and expertise). 
 
 ---
 
 ## Using AI
 
-You are **encouraged to use Claude (Pro) throughout this assignment** — analysis, design, implementation, and testing. This is a Native AI software engineering course; using AI well is part of the work, not a way around it.
+You are **encouraged to use Claude (Pro) throughout this assignment** — analysis, design, implementation, and testing. This is a Native AI software engineering course; using AI well is part of the work, not a way around it.  However, *you remain fully responsible for understanding, evaluating, and being able to explain and defend everything you submit*.
 
-You remain fully responsible for understanding, evaluating, and being able to defend everything you submit.
-
-As part of your submission, include a short account (about half a page) in `hw02/AI_USE.md`:
+As part of your submission, include a short account in `hw02/AI_USE.md` explaining:
 
 - **Where and how** you used Claude.
 - **Where it helped** — concrete examples.
 - **Where it didn't** — where it was wrong or misleading, or where you had to override it, and how you noticed.
 - **Insights** — anything you learned about using AI as an engineering partner on a problem like this.
 
-Honesty and specificity matter more than length.
+Length is up to you, but anywhere from 1/2 page to 3 pages is OK.  The real purpose for this is for you to think about what you did, what worked, where you felt the need to 'pilot' Claude and/or provide corrective guidance.
 
 ---
+## The Engineering Problem
+
+
+When multiple UAVs operate in shared airspace, their individual missions may bring them close enough to threaten safe separation, even though each mission is perfectly reasonable when considered independently. Our existing infrastructure does not prevent two UAVs from being commanded into the same airspace at the same time.  In real-world deployments, mid-air collisions can be both costly and dangerous. Your challenge is to design and implement a **collision-avoidance system** that monitors multiple UAVs and intervenes when necessary to maintain safe separation.
+
+Your solution **must not rely on pre-planning conflict-free routes**. Instead, it must detect and respond to conflicts that arise during flight. At the same time, interventions should disrupt the UAVs' planned missions as little as reasonably possible: after resolving a conflict, UAVs should be able to continue toward their intended destinations whenever it is safe to do so.  You may choose the architecture of your solution—for example, a centralized **Air Traffic Control (ATC)** service, distributed **onboard collision avoidance**, or a hybrid approach.
+
 
 ## The Engineering Process
 
-Work through the problem in this order — don't jump straight to code:
+Work through the problem in this order — don't jump straight to code: **Analyze → Design → Implement → Validate**
 
-**Analyze → Design → Implement → Validate**
+## Working with Claude 
+
+At each step of the process, there are various ways in which you can interact with Claude.  Here are a few of the main approaches (especially for the Design and Implementation phases). Notably in all of these cases it helps to start by providing context about the problem and what you seek to achieve. Design a clear prompt explaining this.  Make sure that Claude understands the existing infrastructure first.
+
+- *You know what you want already:* Describe your own design/implementation plan and direct Claude to implement it.
+- *You have an idea but want to explore it with Claude:* Suggest a design and ask Claude to critique it. Iterate through the critiques. Ask for explanations where needed.
+- *You don't know where to start:* Ask Claude to list key performance tradeoffs associated with the problem. Then ask Claude to propose 2-3 different solutions and to evaluation them against these tradeoffs. Then select one, and ask Claude to generate a design and later to implement it.  Run the tests yourself.  
+
+Use the *tutor me - quiz me* pattern to make sure you thoroughly understand your solution. 
 
 ### 1. Analyze
 
-Understand the problem before you solve it. You may build on a design discussed in class or start from one you prefer.
+Understand the problem before you solve it. You may build on a design discussed in class or create your own design.  Think through:
 
-Think through:
-
-- What questions have to be answered before you can design? (Who decides when there's a conflict? Does the system react to conflicts or predict them? When two UAVs are in conflict, which one yields, and why?)
+- What questions have to be answered before you can design? (Who decides when there's a conflict (e.g., is this a centralized or distributed design)? Does the system react to conflicts or predict them? When two UAVs are in conflict, which one yields, and why?)
 - What are the alternative ways the system could behave?
 - What are the important tradeoffs — for example latency, complexity, freedom from deadlock, and how well the design scales as UAVs are added?
 - What one or two assumptions are you making that really matter?
 
-There is not a single right answer. Most designs are better on some quality goals and worse on others; your job is to choose deliberately and be able to explain the choice.
+There is not a single right answer. Most designs are better with respect to some quality goals and worse for others; your job is to consider the design trade-offs, choose deliberately and be able to explain your choice.  In week 3 we will discuss and compare performance across these solutions.
 
 ### 2. Design
 
-Decide your approach and write it up. This is the main written deliverable — **about one page** — in `hw02/DESIGN.md`:
+Decide on your approach and write it up. This is the main written deliverable and should be about 2-3 pages (including sketch) in `hw02/DESIGN.md`. 
 
 1. **What you wanted to achieve** and the **tradeoffs** you weighed (this replaces a formal requirements document — explain it in your own words).
 2. **Why you chose this design** over the alternatives you considered.
-3. **An architecture sketch** — a diagram of the major components and how they communicate. Any tool is fine, including a clear photo of a handwritten diagram.
-4. The **responsibility of each component** you add or change, and any new MQTT topics/messages.
+3. **An architecture sketch** — a diagram of the major components and how they communicate. Any tool is fine, including a clear photo of a handsketched diagram (writing must be legible).
+4. A brief description of the **responsibility of each component** you add or change, and any new MQTT topics/messages.
 
 Do not assume the simple scripts from Lesson 1 are adequate here — `test_flight.py` flies one predetermined mission. Your ATC introduces concurrency and coordination, so consider how the existing architecture has to evolve.
 
-Your design does **not** need to look like anyone else's. Since we start in class, adopting a similar overall approach to classmates is fine, as long as the rest of the work is your own.
+Your design does **not** need to look like anyone else's. However, as will will start this work in class, adopting a similar overall approach to classmates is fine, as long as the rest of the work is your own.
 
 ### 3. Implement
 
-Build what you designed.
+Build what you designed.  **ALL of your code should be placed into your hwk2 repository**.
 
-- Keep UAV commands and telemetry flowing through the Lesson 1 infrastructure — don't bypass it.
+- Leverage the existing infrastructure to startup drones.  Note you'll need to copy over the multi-UAV program infrastructure and rebuild your fleet one time. 
 - Your code should be recognizable as a realization of your `DESIGN.md`. If implementation forces a real design change, update `DESIGN.md`.
-- Don't optimize for the example workload specifically — you'll be graded on scenarios you haven't seen.
+- Don't optimize for the example workload specifically, your solution will be evaluated against similar, but unseen scenarios. 
 
-You already have everything you need from Lesson 1: the MQTT command and telemetry contract (recapped in `lab/lesson2/README.md`), and `scripts/test_flight.py` as a worked example of driving one UAV over that contract. That script is single-UAV and blocking, so it is a reference, not a design you can reuse directly.
+You already have everything you need from Lesson 1: the MQTT command and telemetry contract (recapped in `lab/lesson2/README.md`), and `scripts/test_flight.py` as a worked example of driving one UAV over that contract. That script is for a single-UAV, so it is a reference, not a design you can reuse directly. Build a clear mental model of how you want to realize your design before generating code. 
 
 ### 4. Validate
 
