@@ -37,11 +37,6 @@ When multiple UAVs operate in shared airspace, their individual missions may bri
 
 Your solution **must not rely on pre-planning conflict-free routes**. Instead, it must detect and respond to conflicts that arise during flight. At the same time, interventions should disrupt the UAVs' planned missions as little as reasonably possible: after resolving a conflict, UAVs should be able to continue toward their intended destinations whenever it is safe to do so.  You may choose the architecture of your solution—for example, a centralized **Air Traffic Control (ATC)** service, distributed **onboard collision avoidance**, or a hybrid approach.
 
-
-## The Engineering Process
-
-Work through the problem in this order — don't jump straight to code: **Analyze → Design → Implement → Validate**
-
 ## Working with Claude 
 
 At each step of the process, there are various ways in which you can interact with Claude.  Here are a few of the main approaches (especially for the Design and Implementation phases). Notably in all of these cases it helps to start by providing context about the problem and what you seek to achieve. Design a clear prompt explaining this.  Make sure that Claude understands the existing infrastructure first.
@@ -51,6 +46,11 @@ At each step of the process, there are various ways in which you can interact wi
 - *You don't know where to start:* Ask Claude to list key performance tradeoffs associated with the problem. Then ask Claude to propose 2-3 different solutions and to evaluation them against these tradeoffs. Then select one, and ask Claude to generate a design and later to implement it.  Run the tests yourself.  
 
 Use the *tutor me - quiz me* pattern to make sure you thoroughly understand your solution. 
+
+## The Engineering Process
+
+Work through the problem in this order — don't jump straight to code: **Analyze → Design → Implement → Validate**
+
 
 ### 1. Analyze
 
@@ -100,7 +100,6 @@ Total workload time:          94.2 s
 
 Don't just say "it passed." If something behaved unexpectedly, say what happened and what you did about it.
 
----
 
 ## Flight Workloads
 
@@ -164,15 +163,15 @@ Your `start_tests.py` must:
 
 ### How grading observes your system
 
-The instructor runs a separate **monitor** — you will not see it — that subscribes only to UAV telemetry on the existing infrastructure and measures separation, completion, and timing from telemetry alone.
+The instructor will run their own **monitor**  that subscribes only to UAV telemetry on the existing infrastructure and measures separation, completion, and timing from telemetry alone.
 
-So your system is graded on **what is observable in the telemetry stream**. Keep commands and telemetry on the Lesson 1 infrastructure — a system that coordinates "off the books" cannot be evaluated. Build your own way to measure separation and completion for your Results section.
+So the performance of your system is tested on **what is observable in the telemetry stream**. This means that your design must maintain the MQTT architecture whereby drones continue to publish their status messages as they fly.
 
-Your submitted system is also run against **workloads you have not seen**, which may use different concurrency patterns and a different minimum separation. All submissions run in the same environment so timing is comparable.
+Your submitted system will also be run against **workloads you have not seen**, which may use different concurrency patterns and even different minimum separation distances. All submissions run in the same environment so timing is comparable.
 
 ---
 
-## What Are We Evaluating?
+## What will be evaluated in the running system?
 
 ### Correctness
 
