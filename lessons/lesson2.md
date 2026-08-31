@@ -82,16 +82,17 @@ Build what you designed.  **ALL of your code should be placed into your hwk2 rep
 
 - Leverage the existing infrastructure to startup drones.  Note you'll need to copy over the multi-UAV program infrastructure and rebuild your fleet one time. 
 - Your code should be recognizable as a realization of your `DESIGN.md`. If implementation forces a real design change, update `DESIGN.md`.
-- Don't optimize for the example workload specifically, your solution will be evaluated against similar, but unseen scenarios. 
+- Don't optimize for these workloads specifically, your solution will be evaluated against similar, but unseen scenarios. 
 
 You already have everything you need from Lesson 1: the MQTT command and telemetry contract (recapped in `lab/lesson2/README.md`), and `scripts/test_flight.py` as a worked example of driving one UAV over that contract. That script is for a single-UAV, so it is a reference, not a design you can reuse directly. Build a clear mental model of how you want to realize your design before generating code. 
 
 ### 4. Validate
 
-An example workload is in `lab/lesson2/`. Run your system against it and record, in a short **Results** section of `DESIGN.md`:
+Three workloads are in `lab/lesson2/` — `test1.json` (2 UAVs, one conflict), `test2.json` (3 UAVs), and `test3.json` (3 UAVs, longer). Run your system against all three and record, per workload, a short **Results** section in `DESIGN.md`:
 
 ```text
-Flights completed:            2 / 2
+test2.json
+Flights completed:            6 / 6
 Minimum required separation:  8.0 m
 Minimum observed separation:  13.4 m
 Total workload time:          94.2 s
@@ -159,7 +160,7 @@ Your `start_tests.py` must:
 - Run each UAV's missions in order, beginning the next as soon as the previous completes (2 m).
 - Exit once every mission is complete (or after a generous timeout).
 
-`lab/lesson2/` contains **`example_workload.json`** to develop against and a **`README.md`** recapping the MQTT contract and the fleet layout.
+`lab/lesson2/` contains **`test1.json`–`test3.json`** to develop against and a **`README.md`** recapping the MQTT contract and the fleet layout.
 
 ### How grading observes your system
 

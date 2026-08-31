@@ -1,0 +1,30 @@
+{
+  "scenario": "test1",
+  "description": "Two UAVs on crossing routes that pass through the operating area at about the same time. UAV 3 is not used.",
+  "missions": {
+    "1": [
+      {
+        "mission_id": "1A",
+        "waypoints": [
+          {
+            "lat": 41.6983055,
+            "lon": -86.237055,
+            "alt": 15
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "mission_id": "2A",
+        "waypoints": [
+          {
+            "lat": 41.6987097,
+            "lon": -86.2373678,
+            "alt": 15
+          }
+        ]
+      }
+    ]
+  }
+}

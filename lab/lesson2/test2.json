@@ -1,0 +1,72 @@
+{
+  "scenario": "test2",
+  "description": "Three UAVs, two missions each. The first missions send all three across the operating area at once; the second missions spread them out to land.",
+  "missions": {
+    "1": [
+      {
+        "mission_id": "1A",
+        "waypoints": [
+          {
+            "lat": 41.6983055,
+            "lon": -86.237055,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "1B",
+        "waypoints": [
+          {
+            "lat": 41.6983055,
+            "lon": -86.2367663,
+            "alt": 15
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "mission_id": "2A",
+        "waypoints": [
+          {
+            "lat": 41.6987097,
+            "lon": -86.2373678,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "2B",
+        "waypoints": [
+          {
+            "lat": 41.6988625,
+            "lon": -86.2371994,
+            "alt": 15
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "mission_id": "3A",
+        "waypoints": [
+          {
+            "lat": 41.6987097,
+            "lon": -86.2367422,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "3B",
+        "waypoints": [
+          {
+            "lat": 41.6988625,
+            "lon": -86.2369106,
+            "alt": 15
+          }
+        ]
+      }
+    ]
+  }
+}

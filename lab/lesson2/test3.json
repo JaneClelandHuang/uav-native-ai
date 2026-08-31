@@ -1,0 +1,102 @@
+{
+  "scenario": "test3",
+  "description": "Three UAVs, three missions each -- repeated crossings of the operating area, back to back.",
+  "missions": {
+    "1": [
+      {
+        "mission_id": "1A",
+        "waypoints": [
+          {
+            "lat": 41.6983055,
+            "lon": -86.237055,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "1B",
+        "waypoints": [
+          {
+            "lat": 41.6988445,
+            "lon": -86.237055,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "1C",
+        "waypoints": [
+          {
+            "lat": 41.6983055,
+            "lon": -86.237055,
+            "alt": 15
+          }
+        ]
+      }
+    ],
+    "2": [
+      {
+        "mission_id": "2A",
+        "waypoints": [
+          {
+            "lat": 41.6987097,
+            "lon": -86.2373678,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "2B",
+        "waypoints": [
+          {
+            "lat": 41.6984403,
+            "lon": -86.2367422,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "2C",
+        "waypoints": [
+          {
+            "lat": 41.6987097,
+            "lon": -86.2373678,
+            "alt": 15
+          }
+        ]
+      }
+    ],
+    "3": [
+      {
+        "mission_id": "3A",
+        "waypoints": [
+          {
+            "lat": 41.6987097,
+            "lon": -86.2367422,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "3B",
+        "waypoints": [
+          {
+            "lat": 41.6984403,
+            "lon": -86.2373678,
+            "alt": 15
+          }
+        ]
+      },
+      {
+        "mission_id": "3C",
+        "waypoints": [
+          {
+            "lat": 41.6987097,
+            "lon": -86.2367422,
+            "alt": 15
+          }
+        ]
+      }
+    ]
+  }
+}
