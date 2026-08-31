@@ -9,6 +9,7 @@ By the end of this lesson, you will have had initial experience in:
 - Designing a solution that integrates with an existing multi-component UAV system, and sketch its architecture.
 - Implementing your design without bypassing the existing architecture.
 - Validating against flight scenarios you did not write, using quantitative evidence for both **correctness** and **performance**.
+- Critically evaluating your own design — finding its flaws and reasoning about how to address them.
 
 Whereas for the previous 'assignment', the infrastructure and interfaces were largely provided for you. This week, you are given the following **problem** to solve:  **Multiple UAVs need to operate concurrently without violating safe separation.**  However, there is no single prescribed design. Your job is to analyze the problem, make and justify design decisions, design and implement a solution, and demonstrate that it works.
 
@@ -49,7 +50,7 @@ Use the *tutor me - quiz me* pattern to make sure you thoroughly understand your
 
 ## The Engineering Process
 
-Work through the problem in this order — don't jump straight to code: **Analyze → Design → Implement → Validate**
+Work through the problem in this order — don't jump straight to code: **Analyze → Design → Implement → Validate → Reflect**
 
 
 ### 1. Analyze
@@ -99,6 +100,19 @@ Total workload time:          94.2 s
 ```
 
 Don't just say "it passed." If something behaved unexpectedly, say what happened and what you did about it.
+
+### 5. Reflect on your approach
+
+Building a first version almost always surfaces something your analysis missed — a coordination pattern that deadlocks, a policy that is safe but serializes everything, an assumption that does not hold in the simulator. Working through that is a large part of the point of this exercise, and it is where AI is *least* able to do the work for you.
+
+Submit a discussion of your process — **either** a written `hw02/REFLECTION.md` (about a page) **or** a **recording of at most 5 minutes** (screen capture or talking-head; put the link or the file in `hw02/REFLECTION.md`). Cover:
+
+- **What you tried** — including approaches you started and abandoned, and why.
+- **What flaws or limitations you found** — through testing or by reasoning. Be specific: which scenario, what went wrong, what the telemetry or logs showed.
+- **How you addressed them** — or, if you ran out of time, exactly how you *would*, and what you would expect it to cost.
+- **Where your design still falls short**, honestly.
+
+A recording is often the faster and more convincing option — talk through your architecture sketch and your test runs. This part is about *your* engineering judgement, so do the reflection yourself, without AI.
 
 
 ## Flight Workloads
@@ -205,9 +219,10 @@ The assignment is graded out of **100 points**. Most components are evaluated wi
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **Design** — `DESIGN.md` | 35 | A clear ~1-page account of what you wanted to achieve, the tradeoffs, and why you chose this design over the alternatives; a readable architecture sketch; component responsibilities and any new topics documented; a design that evolves the existing architecture rather than bypassing it. |
-| **Implementation** | 25 | Working, readable code that realizes your design, uses the existing infrastructure, and runs through `start_tests.py` from a clean clone with no manual steps. |
-| **Correctness on unseen workloads** | 20 | All flights complete, separation maintained, no deadlock — on scenarios you did not develop against. |
+| **Design** — `DESIGN.md` | 28 | A clear 2–3 page account of what you wanted to achieve, the tradeoffs, and why you chose this design over the alternatives; a readable architecture sketch; component responsibilities and any new topics documented; a design that evolves the existing architecture rather than bypassing it. |
+| **Approach & iteration discussion** — `REFLECTION.md` or a ≤5-min recording | 15 | An honest, specific account of what you tried, the flaws you found (with evidence), how you addressed them or would, and where the design still falls short. |
+| **Implementation** | 20 | Working, readable code that realizes your design, uses the existing infrastructure, and runs through `start_tests.py` from a clean clone with no manual steps. |
+| **Correctness on unseen workloads** | 17 | All flights complete, separation maintained, no deadlock — on scenarios you did not develop against. |
 | **Performance on unseen workloads** | 5 | Among correct solutions: workload time, unnecessary waiting, coordination responsiveness. |
 | **Validation** — Results in `DESIGN.md` | 5 | Quantitative evidence from your own test run, with brief interpretation and investigation of anything unexpected. |
 | **AI Use** — `AI_USE.md` | 5 | Specific reflection on where AI helped, where you challenged or rejected it, how you verified its work, and what you learned. |
@@ -231,6 +246,7 @@ The goal is to start building the habit of being able to reason about and defend
 ```text
 hw02/
 ├── DESIGN.md         (goals + tradeoffs + why this design + architecture sketch + Results)
+├── REFLECTION.md     (the discussion, or a link/file for a ≤5-min recording)
 ├── AI_USE.md         (~half a page)
 ├── start_tests.py    (you write this — the standard entry point)
 └── <your other implementation files>
@@ -259,7 +275,7 @@ Be ready to explain:
 - The most important decisions you made, and the tradeoffs behind them.
 - How your architecture carries out those decisions.
 - What evidence shows your system works.
-- The strengths and weaknesses of your design.
+- The strengths and weaknesses of your design, and the flaws you found while building it.
 - What would happen to it if the number of UAVs grew substantially.
 
 > **Be able to explain why your system is designed the way it is.**
