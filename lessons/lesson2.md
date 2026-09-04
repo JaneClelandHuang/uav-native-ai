@@ -158,13 +158,14 @@ Missions for the **same UAV are sequential** — the next begins as soon as the 
 
 Every submission must start the same way, so any solution can be run without knowing its internals.
 
-**You write this script, in `hw02/`:**
+**You write this script, in `hw02/`.** Your modules import each other by flat name (`from atc import ...`), so the harness is run with `hw02/` as the working directory:
 
 ```bash
-python hw02/start_tests.py <workload.json> <min-separation-m>
+cd hw02
+python start_tests.py <workload.json> <min-separation-m>
 ```
 
-It takes the workload and the required minimum separation (metres), starts your ATC, and runs the workload to completion. The standard 3-UAV fleet is already running.
+It takes a path to the workload and the required minimum separation (metres) — e.g. `python start_tests.py ../lab/lesson2/test1.json 30` — starts your ATC, and runs the workload to completion. The standard 3-UAV fleet is already running.
 
 Your `start_tests.py` must:
 
@@ -255,7 +256,8 @@ hw02/
 Your solution must run through:
 
 ```bash
-python hw02/start_tests.py <workload.json> <min-separation-m>
+cd hw02
+python start_tests.py <workload.json> <min-separation-m>
 ```
 
 Commit and push:

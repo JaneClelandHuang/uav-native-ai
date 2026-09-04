@@ -30,11 +30,31 @@ start point on the retained `uav/<id>/home` topic.
 | `test1.json` | 2 UAVs, one crossing conflict. The simplest case — start here. |
 | `test2.json` | 3 UAVs, two missions each. All three cross the area at once, then spread out to land. |
 | `test3.json` | 3 UAVs, three missions each. The `test2` pattern repeated back to back. |
-| `start_tests.py` | **You write this — it goes in your `hw02/` folder, not here.** `python hw02/start_tests.py <workload.json> <min-separation-m>` starts your ATC and runs the given workload to completion. |
 
-Develop against all three. Workload format is in the assignment under
-*Flight Workloads*. Your submitted system is also run against **additional
-workloads you have not seen**, so don't hard-code to these.
+Those three workloads are all that lives here. Workload format is in the
+assignment under *Flight Workloads*. Develop against all three — your
+submitted system is also run against **additional workloads you have not
+seen**, so don't hard-code to these.
+
+## Running your ATC
+
+You write `start_tests.py` yourself. It goes in your `hw02/` folder
+alongside the rest of your code — **not in this directory**. Because your
+modules import each other by flat name (`from atc import ...`), the harness
+is run with `hw02/` as the working directory:
+
+```bash
+cd hw02
+python start_tests.py <workload.json> <min-separation-m>
+```
+
+Pass a path to one of the workloads above, e.g.
+
+```bash
+python start_tests.py ../lab/lesson2/test1.json 30
+```
+
+`start_tests.py` starts your ATC and runs the given workload to completion.
 
 ## The interface you already have (Lesson 1)
 
