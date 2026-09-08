@@ -18,7 +18,7 @@ There is almost no code to write this week. You will run a small helper to turn 
 
 ## Readings
 
-*Readings will be posted here before this lesson begins.*
+Prompt Engineering by Lee Boenstra (Google), https://share.google/wBICVPdZ6qFvMoZNK
 
 ---
 
