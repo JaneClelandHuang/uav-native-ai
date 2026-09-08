@@ -129,7 +129,7 @@ Out of **100 points**.
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **README.txt file** Instructions for running your code and filenames of prompts. |5| Your programs must be self-contained. Create a README.txt file under lab/lesson3 that provides instructions for calling your code. IF you expect me to install something you need to include a requirements.txt file for that installation.  All instructions go into the README.txt file. |
+| **`README.txt`** — how to run your code, and your prompt filenames | 5 | Your programs must be self-contained. Put a `README.txt` in your `hw03/` folder with the exact commands to run each `analyze.py` and the names of your prompt files. If I have to install anything, include a `requirements.txt` in `hw03/` and say so. All run instructions go in `README.txt`. |
 | **Coded solutions** (both failures) + write-ups | 30 | Two small programs that read the right records, compute the diagnostic signal, reach the right verdict on the example log (including "can't tell" where honest), and produce a clear thresholded graph. Plus the two short paragraphs in `REPORT.md`. |
 | **Prompt solutions** (both failures) + write-ups | 30 | Two reusable prompts that specify input, computation, decision rule (including "none" and "can't tell"), graph, and explanation well enough to run one-shot on an unseen log. Plus the two short paragraphs, the three-run reproducibility check, and the battery false-alarm check. |
 | **Retrospective** — code vs prompt | 15 | An honest half-page comparing the two approaches across effort to verify, robustness, trust, maintainability, and reproducibility — grounded in what actually happened when you built them. |
@@ -156,6 +156,8 @@ hw03/
 │   ├── analyze.py
 │   ├── <graph>.png
 │   └── prompt.md
+├── README.txt         how to run each analyze.py + your prompt filenames
+├── requirements.txt   only if your code needs anything beyond lab/lesson3's
 └── REPORT.md          two coded write-ups + two prompt write-ups + the retrospective
 ```
 
