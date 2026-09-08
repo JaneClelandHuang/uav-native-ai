@@ -1,0 +1,9 @@
+# Lesson 3 -- flight-log analysis
+#
+# Enough to run bin2csv.py and work through the lab examples (extract
+# records, plot them). HW3 itself needs nothing more -- the prompts run
+# in Claude, and Claude generates the graphs.
+
+pymavlink==2.4.41
+matplotlib==3.9.2
+numpy
