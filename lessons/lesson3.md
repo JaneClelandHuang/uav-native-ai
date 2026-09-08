@@ -18,7 +18,8 @@ By the end of this lesson, you will have had initial experience in:
 
 ## Readings
 
-Prompt Engineering by Lee Boenstra (Google), https://share.google/wBICVPdZ6qFvMoZNK
+Read this before doing the prompt element of the homework.  We will discuss in class on Thursday too.
+*Prompt Engineering* by Lee Boenstra (Google), https://share.google/wBICVPdZ6qFvMoZNK 
 
 ---
 
@@ -63,12 +64,12 @@ For the **same two** failures, write a reusable prompt that gets the diagnosis o
 
 1. Extract the records that failure needs, e.g. `python lab/lesson3/bin2csv.py "<log>.bin" -t VIBE --single`
 2. Upload the CSV(s) to Claude.
-3. Paste your saved prompt. **One shot — no follow-up messages.**
+3. Feed your saved prompt to Claude. **One shot — no follow-up messages.**
 4. Claude returns the verdict, the graph, and the explanation.
 
 ### Two checks your prompt must pass
 
-- **Reproducibility.** Run the finished prompt on the *same* log at least **three times**. Note anything that changes between runs — the verdict, the numbers, the graph, the confidence.
+- **Reproducibility.** Run the finished prompt on the *same* log at least **three times**. Note anything that changes between runs — the verdict, the numbers, the graph, the confidence. While the exact output won't be exactly the same, the diagnosis should be consistent.
 - **No false alarm.** Run it on the `battery/` log. It must not report your failure on a log that does not have it.
 
 ---
@@ -83,9 +84,7 @@ Half a page, in `hw03/REPORT.md`. Having built both solutions for both failures,
 - **Maintainability** — six months from now, adding a third failure type, which do you extend?
 - **Reproducibility** — what did the three same-log prompt runs show?
 
-If both approaches reached the right verdict for both failures, say so. The marks are for the reasoning, not for declaring a winner. Do this section yourself, without AI.
-
-You may submit the retrospective as a recording of **at most 5 minutes** instead of writing it — put the link or file in `REPORT.md`.
+If both approaches reached the right verdict for both failures, say so. The marks are for the reasoning, not for declaring a winner. Do this section yourself, *without AI*. 
 
 ---
 
@@ -102,19 +101,17 @@ You may submit the retrospective as a recording of **at most 5 minutes** instead
 
 Keep it tight — this is *show your work briefly*, not a second assignment.
 
-**Coded solution — one short paragraph per failure** (≈4–6 sentences): which records it reads, what it computes, the verdict it gives on the lab log, and one thing it gets wrong or cannot tell. Reference the graph file.
+**Coded solution — one short paragraph per failure** (≈4–6 sentences): which records it reads, what it computes, the verdict it gives on the lab log, and one thing it gets wrong or cannot tell (if you experienced any errors during any stage of your homework). Reference the graph files that you have created for the analysis.
 
 **Prompt solution — one short paragraph per failure** (≈4–6 sentences): the verdict it gives on the lab log; one earlier version of the prompt that failed, the case it failed on, and the change that fixed it; the result of the three same-log runs; and what it said on the `battery/` log.
 
 **Retrospective — half a page** (or the ≤5-minute recording): the code-vs-prompt comparison above.
 
-That is the whole write-up. No separate validation matrix, no AI-use file.
-
 ---
 
 ## How Your Work Will Be Tested
 
-The instructor will run **both** your solutions for **both** failures on a few flight logs — some you have seen, some you have not, including at least one clean flight and the battery case. For each we check:
+The instructor will run **both** your solutions for **both** failures on a few flight logs — some you have seen, some you have not (but with very similar failures), including at least one clean flight and the battery case. For each we check:
 
 - **Right verdict** — including "no problem" when there is none, and not inventing one.
 - **Grounded explanation** — does it point at real values in the log, or hand-wave.
@@ -132,9 +129,10 @@ Out of **100 points**.
 
 | Component | Points | What earns the points |
 |---|---:|---|
+| **README.txt file** Instructions for running your code and filenames of prompts. |5| Your programs must be self-contained. Create a README.txt file under lab/lesson3 that provides instructions for calling your code. IF you expect me to install something you need to include a requirements.txt file for that installation.  All instructions go into the README.txt file. |
 | **Coded solutions** (both failures) + write-ups | 30 | Two small programs that read the right records, compute the diagnostic signal, reach the right verdict on the example log (including "can't tell" where honest), and produce a clear thresholded graph. Plus the two short paragraphs in `REPORT.md`. |
 | **Prompt solutions** (both failures) + write-ups | 30 | Two reusable prompts that specify input, computation, decision rule (including "none" and "can't tell"), graph, and explanation well enough to run one-shot on an unseen log. Plus the two short paragraphs, the three-run reproducibility check, and the battery false-alarm check. |
-| **Retrospective** — code vs prompt | 20 | An honest half-page comparing the two approaches across effort to verify, robustness, trust, maintainability, and reproducibility — grounded in what actually happened when you built them. |
+| **Retrospective** — code vs prompt | 15 | An honest half-page comparing the two approaches across effort to verify, robustness, trust, maintainability, and reproducibility — grounded in what actually happened when you built them. |
 | **Individual understanding** — in class | 20 | See below. |
 | **Total** | **100** | |
 
