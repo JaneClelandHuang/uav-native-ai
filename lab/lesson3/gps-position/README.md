@@ -52,7 +52,8 @@ WORK THROUGH IT
 - What can this log NOT tell you about the root cause? Where would that
   information have to come from instead?
 
-Things worth noticing, because they matter when you write the prompt:
+Things worth noticing, because they matter when you build the detector
+(script or prompt):
   - A "GPS / position problem" does not always show up as a bad GPS
     number. Here HDop is fine and there are zero errors.
   - The log records what the aircraft did, precisely. It does not always

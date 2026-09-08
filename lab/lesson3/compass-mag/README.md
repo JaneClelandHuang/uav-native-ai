@@ -16,7 +16,7 @@ THE FILE
   2024-07-12 11-53-41.bin    LIME
 
 (This is also the worst of the vibration flights -- a single flight can
-show more than one problem. Worth keeping in mind for your prompts.)
+show more than one problem. Worth keeping in mind for your analysis.)
 
 
 WHAT TO LOOK AT
@@ -53,7 +53,8 @@ WORK THROUGH IT
 - What does that tell you about where that compass is mounted, or what
   is generating the field? Would you trust it for heading?
 
-Things worth noticing, because they matter when you write the prompt:
+Things worth noticing, because they matter when you build the detector
+(script or prompt):
   - You catch the bad compass by comparing it against the good ones,
     not by looking at it alone. A single-compass reading in isolation
     tells you very little.

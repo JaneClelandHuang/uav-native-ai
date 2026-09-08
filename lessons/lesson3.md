@@ -5,14 +5,14 @@
 By the end of this lesson, you will have had initial experience in:
 
 - Reading an ArduPilot dataflash log and pulling out the records that carry evidence, not the sensor exhaust.
-- Recognising three common failure signatures — excessive vibration, GPS/position problems, and compass/magnetic interference — from what they leave in the data.
-- Writing **reusable prompts** that diagnose a failure from a flight log in one shot: a verdict, a graph, and an evidence-based explanation, with no follow-up steering.
-- Validating a prompt against logs it has not seen, and being honest about where it is uncertain or wrong.
+- Recognising two common failure signatures — a GPS/position problem and either excessive vibration or compass/magnetic interference — from what they leave in the data.
+- Getting a failure diagnosis out of an AI **two ways**: by having it write you an analysis program you run yourself, and by writing a prompt that returns the answer directly with no code for you to keep.
+- Judging, from having done both, **which approach you would reach for** — and being able to say why in terms of effort to verify, robustness, trust, and maintainability.
 - Distinguishing a conclusion the data supports from a plausible-sounding one it does not.
 
-There is almost no code to write this week. You will run a small helper to turn a log into CSV, and everything else happens in Claude. **The work is the prompting** — can you observe a failure, understand it, and specify it precisely enough that a prompt diagnoses it reliably on *any* log, not just the one you tested?
+**The work is the comparison.** Either approach can get a right answer on a log you have already studied. The engineering question is what each one costs you when the log is new and the stakes are real.
 
-**Budget around 6 hours.** We will start by working through the lab examples together in class.
+**Budget around 8 hours.** We will work through a failure together in class first.
 
 ---
 
@@ -24,173 +24,125 @@ Prompt Engineering by Lee Boenstra (Google), https://share.google/wBICVPdZ6qFvMo
 
 ## Using AI
 
-You will use **Claude (Pro)** for this entire assignment — that is the point of it. Your deliverable *is* a set of prompts.
+You will use **Claude (Pro)** for this entire assignment — that is the point of it. In one track Claude writes the analysis code; in the other your deliverable *is* a prompt. Either way:
 
-*You remain fully responsible for understanding, evaluating, and being able to explain and defend everything you submit.* In Thursday's class you will answer questions about your prompts on your own, without AI.
-
-Include a short `hw03/AI_USE.md` (half a page to three pages):
-
-- **Where and how** you used Claude beyond the prompts themselves — understanding the signatures, drafting, debugging your prompts.
-- **Where it helped**, with concrete examples.
-- **Where it didn't** — where it gave you a confident wrong answer, and how you noticed.
-- **Insights** — what you learned about getting reliable behaviour out of a prompt.
+*You remain fully responsible for understanding, evaluating, and being able to explain and defend everything you submit.* In Thursday's class you will answer questions about your work on your own, without AI.
 
 ---
 
-## The Lab Examples
+## The Two Failures
 
-Before you write anything, get to know the three failures. `lab/lesson3/` has real flight logs, one folder per kind of problem, each with a README explaining which records to pull and what to look at:
+You will analyse **two** flight-log failures:
 
-```text
-lab/lesson3/
-├── vibration/       a healthy flight, then a session where vibration climbs
-├── gps-position/    a flight told to climb that drifted sideways instead
-├── compass-mag/     one compass reading the motors instead of the Earth
-├── battery/         a battery failsafe — NOT one of your three, a compare-against case
-├── bin2csv.py       dumps a .bin to CSV, one file per record type
-└── requirements.txt
-```
+- **GPS / position** — required.
+- **Vibration** *or* **compass / magnetic interference** — your choice.
 
-Install the helper's dependencies once:
+`lab/lesson3/` has a labelled example log for each, one folder per problem, plus a **worked example** for a fourth kind of failure — a **battery failsafe** — in `battery/`: a written diagnosis, a short physics primer, and a coded (Track A) solution. Read it first — it is the model for the *depth* your own analysis and write-ups should reach. It does **not** include a prompt; that half is yours to work out. The battery case is **not** one of your two.
 
-```bash
-pip install -r lab/lesson3/requirements.txt
-```
-
-Work through the examples: extract the records with `bin2csv.py`, plot them, and get a feel for each signal — its typical range, its threshold, and where it gets ambiguous. Use Claude to write the plotting code, then check it against the raw CSV. `battery/` is not one of your three — it is there to make sure your prompts do not false-alarm on a problem outside their scope.
-
-These are not graded. They are how you learn what your prompts have to detect.
+Before you write anything, get to know your two failures from the lab folders: extract the records, plot them, and learn each signal — its typical range, its threshold or its tell, and where it gets ambiguous. The folder READMEs say which records to pull. These are not graded; they are how you learn what your analysis has to detect.
 
 ---
 
-## The Assignment
+## Track A — The Coded Solution
 
-Write **three reusable prompts**, one for each failure type:
+For **each** of your two failures, have Claude write you a small Python program that diagnoses that failure from an extracted log.
 
-1. **Vibration**
-2. **GPS / position**
-3. **Compass / magnetic interference**
+- Claude writes the code; **you run it locally** and read it. One script per failure — `hw03/<failure>/analyze.py`. It reads the CSV(s) `bin2csv.py` produces and prints a **verdict** (problem present / no problem / not enough data) plus the **evidence** (specific values and timestamps), and saves a **graph** of the diagnostic signal with the relevant thresholds marked.
+- Keep it small: one failure, one or two plots, no CLI framework, no GUI. It is a tool you own and can re-run, not a product.
+- Iterate against the labelled example log until the verdict and the graph are right, and check the numbers it prints against the raw CSV yourself.
 
-Each prompt takes the extracted data from *any* flight log and, in a single response, produces:
+## Track B — The Prompt Solution
 
-- a **verdict** — problem present, no problem, or not enough data to tell;
-- a **graph** of the diagnostic signal, with the relevant thresholds marked;
-- an **explanation** — what was found, in which records, with specific values, and how confident it is.
+For the **same two** failures, write a reusable prompt that gets the diagnosis out of Claude with **no code for you to keep**.
 
-"Reusable" means self-contained: you save the prompt, and it works on the next log without you steering Claude through it.
+- One prompt per failure — `hw03/<failure>/prompt.md`. Given the extracted data from *any* log, in a **single response** it returns the same three things: verdict, graph, evidence-based explanation. "Reusable" means self-contained — you save it, and it works on the next log without you steering Claude through it.
+- The prompt has to tell Claude everything: which CSV(s) and columns it is getting, how to compute the diagnostic signal, what counts as a problem (**and** what "no problem" and "not enough data" look like), what the graph shows, and how to phrase the answer — verdict first, then evidence with specific values, then confidence, then what the data *cannot* establish.
+- Any code Claude runs to answer is Claude's, not yours — it is not part of the deliverable and you do not maintain it.
 
----
+### How a prompt runs
 
-## How a Prompt Runs
-
-The workflow your prompt is written for:
-
-1. Extract the records that problem needs:
-
-   ```bash
-   python lab/lesson3/bin2csv.py "<some-log>.bin" -t VIBE --single
-   ```
-
-2. Upload the resulting CSV(s) to Claude.
+1. Extract the records that failure needs, e.g. `python lab/lesson3/bin2csv.py "<log>.bin" -t VIBE --single`
+2. Upload the CSV(s) to Claude.
 3. Paste your saved prompt. **One shot — no follow-up messages.**
 4. Claude returns the verdict, the graph, and the explanation.
 
-Your prompt has to tell Claude everything it needs: which files it is getting, how to compute the diagnostic signal from them, what counts as a problem, what the graph should show, and how to phrase the answer.
+### Two checks your prompt must pass
+
+- **Reproducibility.** Run the finished prompt on the *same* log at least **three times**. Note anything that changes between runs — the verdict, the numbers, the graph, the confidence.
+- **No false alarm.** Run it on the `battery/` log. It must not report your failure on a log that does not have it.
 
 ---
 
-## What Each Prompt Must Specify
+## The Retrospective
 
-- **Input contract** — which CSV(s) and columns it expects, named exactly.
-- **Computation** — how to derive the diagnostic signal (for example: the largest of `VibeX/VibeY/VibeZ` at each moment; field magnitude `sqrt(MagX² + MagY² + MagZ²)` for each compass; distance from home from `POS` against `ORGN`).
-- **Decision rule** — the threshold, the correlation strength, or the comparison that separates "problem" from "fine" — **and** what "no problem" and "not enough data" look like, explicitly.
-- **Graph** — what to plot, threshold lines, what to annotate.
-- **Explanation** — verdict first, then the evidence (specific numbers and timestamps), then confidence, then what the data *cannot* establish.
-- **Robustness** — it must not invent a problem on a log that does not have this one, and it must stay in its lane when a *different* problem is present.
+Half a page, in `hw03/REPORT.md`. Having built both solutions for both failures, compare **code vs prompt** across:
 
----
+- **Effort to verify** — how much work was it to convince yourself each answer was right?
+- **Robustness** — which one would you trust more on a log you have never seen, and why?
+- **Trust** — where did either approach give you a confident answer that was wrong or unsupported, and how did you catch it?
+- **Maintainability** — six months from now, adding a third failure type, which do you extend?
+- **Reproducibility** — what did the three same-log prompt runs show?
 
-## The Three Prompts
+If both approaches reached the right verdict for both failures, say so. The marks are for the reasoning, not for declaring a winner. Do this section yourself, without AI.
 
-| Prompt | Records it works from | What makes it hard |
-|---|---|---|
-| **Vibration** | `VIBE` | Threshold logic, but "healthy" is not zero, and ArduPilot's own vibration failsafe never fires in these logs — the prompt cannot wait for an error. It must not flag the clean flight. |
-| **Compass / magnetic** | `MAG`, `CTUN`, `BAT` | The diagnosis is relational: compute the field magnitude for all three compasses, compare them, and correlate the bad one with throttle or current. There is no single number to threshold. |
-| **GPS / position** | `POS`, `GUIP`, `ORGN`, `GPS`, `ERR` | The signature is *not* a bad GPS number — HDOP can look fine and there can be zero errors. It needs `POS` vs `GUIP` and the two `ORGN` records, and the honest verdict includes "the log cannot establish the root cause." |
-
-Start with vibration. GPS/position is the one that will fight you.
+You may submit the retrospective as a recording of **at most 5 minutes** instead of writing it — put the link or file in `REPORT.md`.
 
 ---
 
 ## Working with Claude
 
-- **You cannot paste a whole log.** Even after `bin2csv.py`, some records have thousands of rows. Decide what your prompt asks Claude to compute and summarise before it reasons — and give it the columns it actually needs, not all of them.
-- **Ask for the answer in a fixed shape.** Verdict, then evidence, then confidence, then limits. A reader — and a grader — should be able to skim it the same way every time.
-- **Make it cite evidence.** A prompt handed a summary will produce a confident wrong answer if you let it (for the GPS log it will reach for "the EKF drifted," which the data does not support). Require every claim to name a value or a record, and allow "I can't tell from this."
-- **Handle "no problem" on purpose.** It is easy to write a prompt that always finds something. Test each prompt on the healthy vibration flight and on the battery log.
-- **Iterate against the labelled examples.** You know the right answer for every log in `lab/lesson3/`. Run your prompt, find where it is wrong, and fix the prompt — or fix what you feed it — and record which change fixed it.
+- **You cannot paste a whole log.** Even after `bin2csv.py`, some records have thousands of rows. In Track A the script does the reducing; in Track B decide what the prompt asks Claude to compute and summarise before it reasons, and give it the columns it needs, not all of them.
+- **Make it cite evidence.** Handed a summary, Claude will produce a confident wrong answer if you let it — for the GPS log it reaches for "the EKF drifted," which the data does not support. Require every claim to name a value or a record, and allow "I can't tell from this."
+- **Handle "no problem" on purpose.** It is easy to build a detector that always finds something. Test against the healthy vibration flight and the battery log.
+- **Iterate against the labelled example.** You know the right answer for the logs in `lab/lesson3/`. Run it, find where it is wrong, fix the code or the prompt, and note what fixed it.
 
 ---
 
-## The Engineering Process
+## What Goes in `REPORT.md`
 
-Work through it in this order: **Analyse → Draft → Test & Iterate → Validate → Reflect**
+Keep it tight — this is *show your work briefly*, not a second assignment.
 
-### 1. Analyse
+**Coded solution — one short paragraph per failure** (≈4–6 sentences): which records it reads, what it computes, the verdict it gives on the lab log, and one thing it gets wrong or cannot tell. Reference the graph file.
 
-From the lab examples, work out for each failure: which records and fields carry the signal, what distinguishes it (a threshold, a trend, a correlation, a gap between commanded and actual), and what a clean flight and a *different* failure look like.
+**Prompt solution — one short paragraph per failure** (≈4–6 sentences): the verdict it gives on the lab log; one earlier version of the prompt that failed, the case it failed on, and the change that fixed it; the result of the three same-log runs; and what it said on the `battery/` log.
 
-### 2. Draft
+**Retrospective — half a page** (or the ≤5-minute recording): the code-vs-prompt comparison above.
 
-Write a first version of each prompt against the spec above. Save each one as a file — this is your submission.
-
-### 3. Test & Iterate
-
-Run each prompt in Claude against its example log(s). Where it is wrong — wrong threshold, misread column, hallucinated finding, wrong graph, over- or under-diagnosis — change the prompt and run it again. Then run it on the *healthy* vibration flight and on a log for a *different* problem, and make sure it does not misfire. Keep the versions that failed and note what fixed each.
-
-### 4. Validate
-
-Build a table in `hw03/VALIDATION.md`: each prompt against every log in `lab/lesson3/` (including `battery/` and the healthy flight) and against the holdout log the instructor provides. For each: what the prompt returned, the right answer, whether it matched, and — for the misses — what you think went wrong. Include the graphs Claude generated.
-
-### 5. Reflect
-
-Submit `hw03/REFLECTION.md` (about a page) **or** a recording of at most 5 minutes (link or file in that file). Cover: prompts you tried that did not work, how you told a prompt problem apart from a data problem, what you changed, and where your prompts still fall short. Do this yourself, without AI.
+That is the whole write-up. No separate validation matrix, no AI-use file.
 
 ---
 
-## How Your Prompts Will Be Tested
+## How Your Work Will Be Tested
 
-The instructor will run your three prompts on a set of flight logs — some you have worked with, some you have not, including at least one clean flight and the battery case. For each we check:
+The instructor will run **both** your solutions for **both** failures on a few flight logs — some you have seen, some you have not, including at least one clean flight and the battery case. For each we check:
 
-- **Did it reach the right verdict** — including "no problem" when there is none, and not inventing one.
-- **Is the explanation grounded** — does it point at real values in the log, or is it hand-waving.
-- **Is it one shot** — the prompt has to work as saved, with no follow-up.
+- **Right verdict** — including "no problem" when there is none, and not inventing one.
+- **Grounded explanation** — does it point at real values in the log, or hand-wave.
+- **One shot** (Track B) — the prompt works as saved, with no follow-up.
 
-Your prompts are judged on the unseen logs as well as the examples, so do not tune them to the four you have.
+Your solutions are judged on the unseen logs too, so do not tune them to the examples.
 
 ---
 
 ## How This Is Graded
 
-The assignment is graded out of **100 points**.
+Out of **100 points**.
 
 <div class="table-wrap" markdown="1">
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **The three prompts** | 40 | Prompts that specify their input, computation, decision rule (including "none" and "can't tell"), graph, and explanation clearly enough to run reliably on an unseen log. |
-| **Development & iteration** — `PROMPTS.md` | 15 | For each prompt: the final version, an earlier version that failed with the case it failed on and the fix, and why it is structured the way it is. |
-| **Validation** — `VALIDATION.md` | 20 | The full test matrix against every lab log plus the holdout, the generated graphs, and honest analysis of the misses. |
-| **Robustness on the holdout** | 10 | Correct verdicts on logs you did not develop against — no false positives, handles "none". |
-| **AI Use** — `AI_USE.md` | 5 | Specific reflection on where AI helped, where you challenged or rejected it, and how you verified its work. |
-| **Individual understanding** — in class | 10 | See below. |
+| **Coded solutions** (both failures) + write-ups | 30 | Two small programs that read the right records, compute the diagnostic signal, reach the right verdict on the example log (including "can't tell" where honest), and produce a clear thresholded graph. Plus the two short paragraphs in `REPORT.md`. |
+| **Prompt solutions** (both failures) + write-ups | 30 | Two reusable prompts that specify input, computation, decision rule (including "none" and "can't tell"), graph, and explanation well enough to run one-shot on an unseen log. Plus the two short paragraphs, the three-run reproducibility check, and the battery false-alarm check. |
+| **Retrospective** — code vs prompt | 20 | An honest half-page comparing the two approaches across effort to verify, robustness, trust, maintainability, and reproducibility — grounded in what actually happened when you built them. |
+| **Individual understanding** — in class | 20 | See below. |
 | **Total** | **100** | |
 
 </div>
 
 ### Individual understanding
 
-Because the AI's output is part of what you submit, being able to explain your own prompts is graded directly. In **Thursday's class** you will get a few questions — for example: why your vibration prompt asks for the summary it does, what your GPS prompt says on a log with two problems at once, how you know a given verdict is not the model bluffing — and answer them **on your own, without AI**.
+Because AI did part of this work, being able to explain it is graded directly. In **Thursday's class** you will get a few questions — for example: why your GPS analysis looks at `POS` versus `GUIP` rather than the GPS numbers; what your prompt says on a log with two problems at once; when you would reach for the coded solution over the prompt for a brand-new failure type — and answer them **on your own, without AI**.
 
 ---
 
@@ -198,14 +150,15 @@ Because the AI's output is part of what you submit, being able to explain your o
 
 ```text
 hw03/
-├── prompts/
-│   ├── vibration.md
-│   ├── gps-position.md
-│   └── compass-mag.md
-├── PROMPTS.md        (final + one failed earlier version each + the fix + rationale)
-├── VALIDATION.md     (the test matrix + the generated graphs + analysis of the misses)
-├── REFLECTION.md     (the discussion, or a link/file for a ≤5-min recording)
-└── AI_USE.md
+├── gps-position/
+│   ├── analyze.py     Track A — the program Claude wrote, that you run
+│   ├── <graph>.png    what analyze.py produces
+│   └── prompt.md      Track B — your reusable prompt
+├── <vibration | compass-mag>/
+│   ├── analyze.py
+│   ├── <graph>.png
+│   └── prompt.md
+└── REPORT.md          two coded write-ups + two prompt write-ups + the retrospective
 ```
 
 Commit and push:
@@ -222,9 +175,9 @@ git push
 
 Be ready to explain:
 
-- Why each prompt asks Claude for the computation and the summary it does.
-- What each prompt returns on a clean flight, and on the battery log.
-- Where each prompt is unreliable, and the case that would break it.
-- What you would change to add a fourth failure type.
+- Which records and fields carry the signal for each of your two failures, and what distinguishes the failure from a clean flight.
+- What each solution returns on a clean flight and on the battery log.
+- Where each solution is unreliable, and the case that would break it.
+- For a new failure type: whether you would write a prompt or have Claude code a tool, and why.
 
-> **Be able to explain why a prompt reaches the verdict it does — and where it shouldn't be trusted.**
+> **Be able to explain why a solution reaches the verdict it does — and where it shouldn't be trusted.**

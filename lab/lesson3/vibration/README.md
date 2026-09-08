@@ -6,8 +6,8 @@ Four real flights of the LIME hexacopter. The first is a healthy flight
 flying session, about 15 minutes apart, and the vibration climbs across
 them.
 
-These are here so you can get to know the signal before you write a prompt
-to detect it. Nothing to hand in.
+These are here so you can get to know the signal before you try to
+detect it. Nothing to hand in.
 
 
 THE FILES
@@ -58,7 +58,8 @@ WORK THROUGH IT
   vibration -- try BAT.Curr (battery current) and the ATT record
   (DesRoll vs Roll, DesPitch vs Pitch).
 
-Things worth noticing, because they matter when you write the prompt:
+Things worth noticing, because they matter when you build the detector
+(script or prompt):
   - High vibration is evidence, not a diagnosis. It tells you the
     measurements are noisy, not what caused it (a chipped prop, a loose
     mount, a resonance).

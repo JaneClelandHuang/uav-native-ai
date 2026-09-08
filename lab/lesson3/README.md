@@ -4,40 +4,51 @@ LESSON 3 -- FLIGHT-LOG ANALYSIS
 Two things this week.
 
 THE HOMEWORK (HW3) -- on the lesson page, not in this folder
-    Write three reusable prompts, one each for vibration, GPS / position,
-    and compass / magnetic interference. Given the extracted data from
-    any flight log, a prompt returns a verdict, a graph, and an
-    evidence-based explanation -- in one shot, run from Claude. The
-    graded skill is the prompt engineering. No code to run beyond
-    bin2csv.py, no API key.
+    Analyse TWO flight-log failures -- GPS / position (required) plus
+    vibration OR compass / magnetic interference -- each one TWO ways:
+
+      A. have Claude write you a small Python program you run yourself
+      B. write a reusable prompt that returns the diagnosis with no
+         code for you to keep
+
+    Then a half-page retrospective: code vs prompt -- effort to verify,
+    robustness, trust, maintainability, reproducibility. The graded
+    skill is the comparison.
     Full spec: https://janeclelandhuang.github.io/uav-native-ai/lessons/lesson3.html
 
 THE LAB EXAMPLES (this folder) -- not graded
     Real flight logs, one folder per kind of problem. They are here so
     you can SEE what each problem looks like in the data before you try
-    to write a prompt that detects it. Extract the records, plot them,
-    get a feel for the signal and for where it gets ambiguous.
+    to detect it. Extract the records, plot them, get a feel for the
+    signal and for where it gets ambiguous.
 
-Work through the lab examples first. Then write the prompts.
+    battery/ has a WORKED example -- a written diagnosis, a short physics
+    primer, and a coded (Track A) solution. Read it first; it is the
+    model for how deep your own analysis should go. It does NOT include a
+    prompt -- that half is yours. It is NOT one of the failures you
+    analyse.
+
+Work through your two lab folders first. Then build the solutions.
 
 
 THE LAB EXAMPLE FOLDERS
 ----------------------
 
-  vibration/       mechanical vibration -- a healthy flight, then a
-                   session where it climbs                  (a prompt target)
-
   gps-position/    a flight told to climb straight up that drifted
-                   sideways instead                         (a prompt target)
+                   sideways instead                         (required)
+
+  vibration/       mechanical vibration -- a healthy flight, then a
+                   session where it climbs                  (pick this OR compass-mag)
 
   compass-mag/     magnetic interference -- one compass reads the motors
-                   instead of the Earth                     (a prompt target)
+                   instead of the Earth                     (pick this OR vibration)
 
-  battery/         a battery that sags under load and trips a failsafe.
-                   NOT one of the three you write a prompt for -- it is
-                   here as a different kind of problem to compare
-                   against, and as a check on whether your prompts
-                   false-alarm on something outside their scope.
+  battery/         a battery failsafe -- a WORKED example: a written
+                   diagnosis, a short physics primer, and a coded
+                   (Track A) solution with its graphs. No prompt -- that
+                   half is yours. Your model for how deep to go, and a
+                   check on whether your solutions false-alarm on a
+                   problem outside their scope. NOT one of your two.
 
 Open the README in each folder for the file list, which records to
 pull, and what to look at.
@@ -68,5 +79,6 @@ Install what you need first:
 
   pip install -r lab/lesson3/requirements.txt
 
-You are encouraged to use Claude to write the plotting code -- then
-check what it produced against the raw CSV yourself.
+In Track A, Claude writes the analysis code -- you run it and check what
+it produced against the raw CSV yourself. In Track B, the prompt does
+the work in Claude and there is no code for you to keep.
