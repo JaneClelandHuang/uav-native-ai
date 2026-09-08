@@ -23,7 +23,7 @@ homework page.
 |---|---|---|---|---|---|
 | **1** | Aug. 25–27 | UAV Infrastructure & Architecture | AI as a Learning Partner | [Slides](https://docs.google.com/presentation/d/10LI35AFa5R1IsfC90Pu4gVsAAaklz4Ka/edit?usp=sharing) | [HW1]({{ '/lessons/lesson1.html#homework' \| relative_url }}) |
 | **2** | Sept. 1–3 | Multi-UAV Air Traffic Control | AI-Assisted Programming | [Slides](https://docs.google.com/presentation/d/1Q76U49WDVPYHZkZvcUMIKAqTMzWGvo7T/edit?usp=sharing) | [HW2]({{ '/lessons/lesson2.html' \| relative_url }}) |
-| **3** | Sept. 8–10 | Flight-Log Analysis | AI-Assisted Data Analysis | — | [HW3]({{ '/lessons/lesson3.html#homework' \| relative_url }}) |
+| **3** | Sept. 8–10 | Flight-Log Analysis | AI-Assisted Data Analysis | — | [HW3]({{ '/lessons/lesson3.html' \| relative_url }}) |
 | **4** | Sept. 15–17 | Runtime Monitoring & Fault Injection | AI-Assisted Diagnosis | — | [HW4]({{ '/lessons/lesson4.html#homework' \| relative_url }}) |
 | **5** | Sept. 22–24 | GUI Programming for UAV Systems | AI-Assisted UI Development | — | [HW5]({{ '/lessons/lesson5.html#homework' \| relative_url }}) |
 | **6** | Sept. 29–Oct. 1 | Computer Vision & Perception | Engineering an AI Component | — | [HW6]({{ '/lessons/lesson6.html#homework' \| relative_url }}) |
