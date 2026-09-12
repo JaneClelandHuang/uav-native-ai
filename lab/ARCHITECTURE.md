@@ -613,6 +613,11 @@ private homework repo (which vendors this same `lab/` directory):
     client/
       matplotlib_view.py
       requirements.txt
+    client2/                 <- instructor-synced clients; see "Two client
+                                 directories" below for why this isn't just
+                                 more files in client/
+      monitor_view.py
+      requirements.txt
     cv/
       requirements.txt         <- ultralytics (YOLO26n) + paho-mqtt; separate from
                                    client/backend so it's never installed until the
@@ -634,6 +639,32 @@ private homework repo (which vendors this same `lab/` directory):
   instructor/                    <- NOT under lab/, so NOT vendored into
                                      student repos; see instructor/INSTRUCTOR.md
 ```
+
+### Two client directories
+
+`lab/client/` and `lab/client2/` look symmetric but mean opposite things to
+`instructor/scripts/sync-lab-infra.sh`: **`client/` is deliberately excluded
+from the mirror it pushes to every student repo; `client2/` is not.**
+
+This split exists because of a real incident, not a hypothetical: an early
+version of that script mirrored `lab/` wholesale, including `client/`, and
+it silently overwrote an instructor's own multi-drone rewrite of
+`matplotlib_view.py` with the plain single-vehicle template version — no
+warning, no conflict, just gone. `client/` is a GUI students (and the
+instructor's own working copy) are expected to rewrite, per
+`matplotlib_view.py`'s own docstring ("meant to be swappable... with zero
+backend changes") — exactly the kind of file a blanket infra sync should
+never touch.
+
+`client2/` is where an instructor-authored client that *should* reach every
+student repo goes instead — `monitor_view.py` (lesson 4's minimal runtime-
+monitoring console client) is the first thing living here. The trade-off is
+explicit, not accidental: anything genuinely new placed in `client2/` will
+overwrite a same-named file a student has edited there, same as any other
+infra file under `lab/`. Don't add a file to `client2/` that you expect
+students to meaningfully customize — that belongs in `client/`, or a new,
+separate directory with its own name and its own decision about whether it
+syncs.
 
 ## DroneResponse `UPDATE_DRONE` integration
 

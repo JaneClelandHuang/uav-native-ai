@@ -17,10 +17,27 @@ MQTT_PORT = int(os.environ.get("MQTT_PORT", "1883"))
 MONITOR_CONFIG_TOPIC = f"uav/{VEHICLE_ID}/monitor_config"
 MONITORED_DATA_TOPIC = f"uav/{VEHICLE_ID}/monitored_data"
 
-# Which monitor_signals.py categories this client wants published. See
-# lab/backend/monitor_signals.py's CATEGORY_HANDLERS for the full set
-# (vibration, gps, ekf, compass, battery) -- add more here to see more.
-CATEGORIES = ["vibration"]
+# Other topics this client doesn't touch but could -- uncomment and
+# client.subscribe() any of these in on_connect() below if you want them
+# too. See ARCHITECTURE.md's "The MQTT contract" for the full picture.
+# TELEMETRY_TOPIC = f"uav/{VEHICLE_ID}/telemetry"    # core flight state, always on, no config needed
+# HOME_TOPIC = f"uav/{VEHICLE_ID}/home"               # retained, published once at boot
+# STATUS_TEXT_TOPIC = f"uav/{VEHICLE_ID}/status_text" # ArduPilot's own PreArm/failsafe messages,
+#                                                      # relayed the instant they arrive, not retained
+# COMMAND_TOPIC = f"uav/{VEHICLE_ID}/command"         # clients -> backend only; a monitor wouldn't
+#                                                      # subscribe to this, just listed for completeness
+
+# Which monitor_signals.py categories this client wants published.
+# Uncomment any of the below (or add several at once) to see more -- this
+# is the full set CATEGORY_HANDLERS knows about as of lesson 4; add a new
+# category there first if you need one that isn't listed here.
+CATEGORIES = [
+    "vibration",  # VIBRATION: vibration_x/y/z, clipping (3 cumulative counts)
+    # "gps",      # GPS_RAW_INT: fix_type, satellites_visible, h_acc_m/v_acc_m, hdop_h/hdop_v
+    # "ekf",      # EKF_STATUS_REPORT: flags, velocity/pos_horiz/pos_vert/compass variance
+    # "compass",  # RAW_IMU: mag_x/y/z, derived field_magnitude
+    # "battery",  # SYS_STATUS: voltage_v, current_a, remaining_pct
+]
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
