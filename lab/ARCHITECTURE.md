@@ -305,6 +305,9 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 | `uav/<id>/telemetry` | backend → clients | no | Full vehicle state, published at `TELEMETRY_HZ` |
 | `uav/<id>/command` | clients → backend | no | Arm/disarm/takeoff/goto/circle/fly_home/interrupt/land requests |
 | `uav/<id>/home` | backend → clients | **yes** | Shared local-frame origin, published once |
+| `uav/<id>/monitor_config` | clients → backend | **yes** | Which runtime-monitoring categories to include on `monitored_data` |
+| `uav/<id>/monitored_data` | backend → clients | no | Only the currently-configured categories, published at `TELEMETRY_HZ` |
+| `uav/<id>/status_text` | backend → clients | no | Every `STATUSTEXT` the vehicle sends, relayed the instant it arrives |
 
 ```json
 // uav/1/telemetry
@@ -377,6 +380,74 @@ misleading `-1` or `0`.
 Malformed JSON or unknown command types are logged and ignored — the backend
 never crashes on bad input. This is "trust but verify" applied to its own
 system boundary, the same principle that applies to AI-generated code.
+
+### Runtime monitoring (`monitor_config` / `monitored_data` / `status_text`)
+
+Added for lesson 4, alongside — not instead of — the core telemetry above:
+existing `mavlink_reader` handling for `HEARTBEAT`/`GLOBAL_POSITION_INT`/
+`VFR_HUD`/`SYS_STATUS`→battery is untouched, so nothing here can break
+`matplotlib_view.py` or any other existing consumer.
+
+**The dispatch table lives in `backend/monitor_signals.py`, not inline in
+`drone_backend.py`.** `mavlink_reader` calls it once per message,
+unconditionally — not as another `elif` branch in the existing chain,
+because some message types (`SYS_STATUS`) need to hit both the old inline
+handling *and* this. `CATEGORY_HANDLERS` maps a MAVLink message type to a
+category name and a `mavlink_lib.parse_*` function; the result lands in one
+new `VehicleState` slot (`self.monitor`, a dict keyed by category, latest
+value per category) rather than a new named attribute per signal — adding a
+category is a one-line addition to that table, nothing else changes:
+
+```json
+// uav/1/monitored_data
+{
+  "vehicle_id": "1", "timestamp": 1737000000.123,
+  "vibration": {"vibration_x": 0.02, "vibration_y": 0.03, "vibration_z": 0.02,
+                "clipping": [0, 0, 0]},
+  "gps": {"fix_type": 6, "satellites_visible": 10,
+          "h_acc_m": 0.3, "v_acc_m": 0.3, "hdop_h": 1.21, "hdop_v": 2.0}
+}
+```
+
+Categories: `vibration` (`VIBRATION`), `gps` (`GPS_RAW_INT`), `ekf`
+(`EKF_STATUS_REPORT`), `compass` (`RAW_IMU`'s magnetometer fields, plus a
+derived `field_magnitude`), `battery` (`SYS_STATUS`, independently of the
+`battery_voltage`/`battery_level` already on `telemetry`). Confirmed live
+against a running SITL instance, not assumed from the MAVLink spec alone —
+worth calling out since one candidate field, dataflash's `BAT.Res` (battery
+internal resistance), turned out not to exist anywhere in the MAVLink
+dialect at all when checked this way, and was dropped rather than faked.
+
+**Only the categories a client has asked for are published — nothing by
+default.** `monitor_config` is retained, mirroring `home`'s pattern: a
+client sets it once, and it takes effect immediately (a fresh subscriber
+sees it right away) and stays in effect (a backend restart, or a late
+subscriber, sees the same configuration without anyone re-sending it).
+Every message on this topic fully replaces the requested set, not merges
+into it:
+
+```json
+// uav/1/monitor_config (retained)
+{"categories": ["vibration", "gps"]}
+```
+
+Unknown category names are logged and dropped, same "never crash on bad
+input" policy as `command`. Before any `monitor_config` message has ever
+arrived, `monitored_data` still publishes every tick — just with an empty
+body (`{"vehicle_id": ..., "timestamp": ...}`, no categories) — rather than
+not publishing at all, so a subscriber can tell "not configured yet" apart
+from "the broker isn't there."
+
+**`STATUSTEXT` is handled differently in kind, not degree, and doesn't go
+through any of the above.** It's an event stream (ArduPilot emits one
+whenever something's worth saying — `PreArm: ...`, `EKF Failsafe` — not a
+value that's meaningfully "current"), so folding it into `monitor` the same
+way as everything else would silently drop all but the last message
+received between two `TELEMETRY_HZ` ticks. Instead it's relayed the moment
+it arrives — same "publish immediately, don't wait for the tick" pattern
+`HOME_POSITION` already uses — on its own topic, with nothing kept in
+`VehicleState` and no retain: a client that wants a history keeps it
+themselves; the backend's job stops at "here's the message, right now."
 
 ## Coordinate frame policy
 

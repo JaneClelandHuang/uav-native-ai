@@ -284,10 +284,38 @@ def parse_gps_accuracy(msg):
     the MAVLINK20 note at the top of this file. SITL's default GPS model
     is fairly idealized, so expect these to sit near-constant "good" values
     unless a SIM_GPS_* fault has been injected via set_param().
+
+    hdop_h/hdop_v come from the same message's eph/epv fields (dilution of
+    position, unitless * 100 per the MAVLink spec -- confirmed live against
+    a running SITL instance: eph=121 -> hdop_h=1.21) -- a different
+    quantity from h_acc/v_acc above: HDOP is about satellite geometry, the
+    accuracy fields are an actual position-error estimate. Dataflash's
+    GPS.HDop is this one, not h_acc.
     """
     return {
         "fix_type": msg.fix_type,
         "satellites_visible": msg.satellites_visible,
         "h_acc_m": msg.h_acc / 1000.0,
         "v_acc_m": msg.v_acc / 1000.0,
+        "hdop_h": msg.eph / 100.0,
+        "hdop_v": msg.epv / 100.0,
+    }
+
+
+def parse_compass(msg):
+    """From RAW_IMU. xmag/ymag/zmag are raw magnetometer readings in
+    milligauss -- confirmed live on this message for the primary compass
+    (plain SCALED_IMU never arrives on this firmware; SCALED_IMU2/3 report
+    the same values here, for this airframe's other simulated IMU
+    instances). field_magnitude is derived, not a wire field: sqrt(x^2 +
+    y^2 + z^2), the same total-field-strength metric a compass health check
+    would look at, since a magnetic anomaly can hide in the total even when
+    no single axis looks obviously wrong.
+    """
+    mag_x, mag_y, mag_z = msg.xmag, msg.ymag, msg.zmag
+    return {
+        "mag_x": mag_x,
+        "mag_y": mag_y,
+        "mag_z": mag_z,
+        "field_magnitude": math.sqrt(mag_x**2 + mag_y**2 + mag_z**2),
     }

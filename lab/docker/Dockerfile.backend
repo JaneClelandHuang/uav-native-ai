@@ -6,6 +6,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/mavlink_lib.py .
+COPY backend/monitor_signals.py .
 COPY backend/drone_backend.py .
 
 CMD ["python", "-u", "drone_backend.py"]

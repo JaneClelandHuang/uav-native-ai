@@ -215,6 +215,7 @@ x-drone-backend: &drone-backend
     dockerfile: docker/Dockerfile.backend
   volumes:
     - ./backend/mavlink_lib.py:/app/mavlink_lib.py:ro
+    - ./backend/monitor_signals.py:/app/monitor_signals.py:ro
     - ./backend/drone_backend.py:/app/drone_backend.py:ro
   depends_on:
     - mosquitto

@@ -12,6 +12,7 @@ import paho.mqtt.client as mqtt
 from pymavlink import mavutil
 
 import mavlink_lib
+import monitor_signals
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger("drone_backend")
@@ -26,6 +27,20 @@ FLY_HOME_MIN_ALT_M = 20.0  # fly_home transits at max(current alt_rel, this)
 TELEMETRY_TOPIC = f"uav/{VEHICLE_ID}/telemetry"
 COMMAND_TOPIC = f"uav/{VEHICLE_ID}/command"
 HOME_TOPIC = f"uav/{VEHICLE_ID}/home"
+
+# Lesson-4 runtime monitoring. MONITORED_DATA_TOPIC carries only whichever
+# monitor_signals.CATEGORY_HANDLERS categories are currently requested on
+# MONITOR_CONFIG_TOPIC (retained -- see handle_monitor_config and
+# ARCHITECTURE.md's "The MQTT contract"); empty ({}) until a client
+# configures at least one category. Separately, every monitor_signals.
+# RELAY_HANDLERS entry (currently just STATUSTEXT, on uav/<id>/status_text)
+# is relayed unconditionally and immediately as its own topic -- built from
+# that table's suffix in mavlink_reader, not a fixed constant here, since
+# relay topics are never subscribed to by name from this file. Never
+# retained: a late subscriber should see nothing until the next event, not
+# a stale status message.
+MONITOR_CONFIG_TOPIC = f"uav/{VEHICLE_ID}/monitor_config"
+MONITORED_DATA_TOPIC = f"uav/{VEHICLE_ID}/monitored_data"
 
 # Optional, off by default: also publish a message in DroneResponse's
 # UPDATE_DRONE shape on this topic every tick, alongside the normal
@@ -176,6 +191,18 @@ class VehicleState:
         self.home_lon = None
         self.home_alt = None
 
+        # Lesson-4 runtime monitoring. `monitor` is the one slot every
+        # monitor_signals.CATEGORY_HANDLERS category writes into (latest
+        # value per category, keyed by category name) -- adding a category
+        # never means adding another VehicleState attribute, just another
+        # table entry in monitor_signals.py. `monitored_categories` is which
+        # of those categories a client has asked to actually see on
+        # MONITORED_DATA_TOPIC; empty until a uav/<id>/monitor_config
+        # message arrives (see handle_monitor_config) -- deliberate opt-in,
+        # not everything published by default.
+        self.monitor = {}
+        self.monitored_categories = set()
+
     def snapshot(self):
         with self.lock:
             return {
@@ -192,6 +219,26 @@ class VehicleState:
                 "armed": self.armed,
                 "mode": self.mode,
                 "activity": self.activity,
+            }
+
+    def monitored_snapshot(self):
+        """Same shape of call as snapshot(), but only the currently
+        requested categories -- {} if none have been requested yet. Reading
+        self.monitor and self.monitored_categories together under one lock
+        acquisition matters here: monitored_categories can change (a new
+        monitor_config message) between two separate lock acquisitions,
+        which would let a still-active category slip through one publish
+        after being deselected, or vice versa.
+        """
+        with self.lock:
+            return {
+                "vehicle_id": VEHICLE_ID,
+                "timestamp": time.time(),
+                **{
+                    category: self.monitor[category]
+                    for category in self.monitored_categories
+                    if category in self.monitor
+                },
             }
 
 
@@ -380,6 +427,26 @@ def mavlink_reader(conn, state, mqtt_client):
             log.info("Published home position (retained): %s", home)
             home_captured = True
 
+        # Lesson-4 runtime monitoring -- deliberately not another elif
+        # branch above: SYS_STATUS (and any future overlap) needs to reach
+        # both the existing handling above *and* this, so it runs
+        # unconditionally for every message, independent of whether the
+        # chain above also matched it. See monitor_signals.py's docstring.
+        store = monitor_signals.extract_for_storage(msg)
+        if store is not None:
+            category, fields = store
+            with state.lock:
+                state.monitor[category] = fields
+        else:
+            relay = monitor_signals.extract_for_relay(msg)
+            if relay is not None:
+                topic_suffix, fields = relay
+                # Immediate, not gated on the main loop's publish tick --
+                # same reasoning as HOME_POSITION above. No retain: a late
+                # subscriber should see nothing until the next event, not a
+                # stale status message (see ARCHITECTURE.md).
+                mqtt_client.publish(f"uav/{VEHICLE_ID}/{topic_suffix}", json.dumps(fields))
+
 
 def handle_command(conn, payload, active_maneuver, state):
     try:
@@ -462,12 +529,30 @@ def handle_command(conn, payload, active_maneuver, state):
         log.warning("Ignoring invalid command %r: %s", cmd, exc)
 
 
+def handle_monitor_config(payload, state):
+    """uav/<id>/monitor_config payload -> state.monitored_categories.
+    A config message fully replaces the requested set (not merged) --
+    the retained message on this topic is meant to always describe the
+    complete current configuration, not one incremental change.
+    """
+    valid, unknown = monitor_signals.parse_requested_categories(payload)
+    if unknown:
+        log.warning("Ignoring unknown monitor_config categories: %s", unknown)
+    with state.lock:
+        state.monitored_categories = valid
+    log.info("monitor_config updated: now publishing categories %s", sorted(valid))
+
+
 def on_connect(client, userdata, flags, reason_code, properties):
     log.info("Connected to MQTT broker at %s:%s (%s)", MQTT_HOST, MQTT_PORT, reason_code)
     client.subscribe(COMMAND_TOPIC)
+    client.subscribe(MONITOR_CONFIG_TOPIC)
 
 
 def on_message(client, userdata, msg):
+    if msg.topic == MONITOR_CONFIG_TOPIC:
+        handle_monitor_config(msg.payload.decode("utf-8", errors="replace"), userdata["state"])
+        return
     handle_command(
         userdata["conn"], msg.payload.decode("utf-8", errors="replace"),
         userdata["active_maneuver"], userdata["state"],
@@ -516,6 +601,7 @@ def main():
             maneuver_tick(conn, active_maneuver, state)
             snapshot = state.snapshot()
             mqtt_client.publish(TELEMETRY_TOPIC, json.dumps(snapshot))
+            mqtt_client.publish(MONITORED_DATA_TOPIC, json.dumps(state.monitored_snapshot()))
             if UPDATE_DRONE:
                 payload = update_drone_payload(snapshot)
                 if payload is not None:
