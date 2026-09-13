@@ -303,7 +303,7 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 | Topic | Direction | Retained? | Purpose |
 |---|---|---|---|
 | `uav/<id>/telemetry` | backend → clients | no | Full vehicle state, published at `TELEMETRY_HZ` |
-| `uav/<id>/command` | clients → backend | no | Arm/disarm/takeoff/goto/circle/fly_home/interrupt/land requests |
+| `uav/<id>/command` | clients → backend | no | Arm/disarm/takeoff/goto/circle/fly_home/interrupt/land/inject_fault requests |
 | `uav/<id>/home` | backend → clients | **yes** | Shared local-frame origin, published once |
 | `uav/<id>/monitor_config` | clients → backend | **yes** | Which runtime-monitoring categories to include on `monitored_data` |
 | `uav/<id>/monitored_data` | backend → clients | no | Only the currently-configured categories, published at `TELEMETRY_HZ` |
@@ -370,7 +370,16 @@ misleading `-1` or `0`.
 {"type": "fly_home"}
 {"type": "interrupt"}
 {"type": "land"}
+{"type": "inject_fault", "params": {"SIM_VIB_MOT_MAX": 95.2, "SIM_VIB_MOT_MULT": 5.1}}
 ```
+
+`inject_fault` (lesson 4, `scripts/mischief_maker.py`) sets one or more
+ArduPilot `SIM_*` simulation parameters via the same generic
+`mavlink_lib.set_param()` any tuning parameter uses — SITL treats fault
+injection as ordinary parameters, not a special mechanism. The one thing
+`handle_command` guards here: any param name not starting with `SIM_` is
+logged and dropped, never sent — this command type must never be usable to
+touch a real tuning parameter.
 
 ```json
 // uav/1/home (retained)
@@ -382,6 +391,12 @@ never crashes on bad input. This is "trust but verify" applied to its own
 system boundary, the same principle that applies to AI-generated code.
 
 ### Runtime monitoring (`monitor_config` / `monitored_data` / `status_text`)
+
+See also `scripts/mischief_maker.py`, which produces the faults these
+categories exist to detect — a randomized-severity `inject_fault` command
+(documented above, in "The MQTT contract") fired at a randomized moment
+after a real takeoff, so neither the exact trigger time nor the exact
+magnitude is predictable ahead of time.
 
 Added for lesson 4, alongside — not instead of — the core telemetry above:
 existing `mavlink_reader` handling for `HEARTBEAT`/`GLOBAL_POSITION_INT`/

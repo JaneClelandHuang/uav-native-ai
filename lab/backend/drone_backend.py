@@ -523,6 +523,20 @@ def handle_command(conn, payload, active_maneuver, state):
             mavlink_lib.land(conn)
             with state.lock:
                 state.activity = "landing"
+        elif cmd_type == "inject_fault":
+            # Lesson-4 fault injection (mischief_maker.py). SIM_* params are
+            # ordinary ArduPilot parameters -- same PARAM_SET path as any
+            # other tuning value (see mavlink_lib.set_param's docstring) --
+            # so the one thing worth guarding here is scope: this command
+            # type must never be usable to set a real tuning parameter,
+            # accidentally or otherwise. Reject anything outside SIM_* by
+            # name rather than trusting the caller's intent.
+            params = cmd.get("params", {})
+            for name, value in params.items():
+                if not name.startswith("SIM_"):
+                    log.warning("Ignoring inject_fault for non-SIM_ param: %r", name)
+                    continue
+                mavlink_lib.set_param(conn, name, value)
         else:
             log.warning("Ignoring unknown command type: %r", cmd_type)
     except (KeyError, ValueError, TypeError) as exc:
