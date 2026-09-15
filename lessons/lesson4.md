@@ -95,6 +95,14 @@ compass). It does **not** include a combined plot+detector — building
 that connection yourself, for your own categories, is Step 4's job, not
 something to copy.
 
+**[`lab/lesson4/BATTERY-MONITOR-GUIDE.md`](../lab/lesson4/BATTERY-MONITOR-GUIDE.md)**
+walks through every new file behind this lesson — how to run the battery
+demo yourself, a plain-language pass on what each program does and why,
+then the real technical detail underneath that. Read the plain-language
+pass first regardless of how comfortable you already are with the code —
+it's the fastest way to see how the pieces fit together before diving into
+any one of them.
+
 ---
 
 ## Step 1 — Subscribe
