@@ -1,0 +1,8 @@
+# Lesson 4 -- runtime monitoring worked example (lab/lesson4/battery/).
+# Same pins as lab/client2/requirements.txt: paho-mqtt for the MQTT
+# subscribe pattern, matplotlib for battery_plot.py, PyQt5 so matplotlib
+# gets a real GUI backend on WSL2 (see gui/readme-wsl.txt if the plot
+# window still won't open after installing this).
+paho-mqtt==2.1.0
+matplotlib==3.9.2
+PyQt5

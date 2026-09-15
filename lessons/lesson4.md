@@ -85,8 +85,15 @@ The infrastructure is already built for you:
 - **GPS** — required.
 - **VIBRATION** or **MAG-COMPASS** — your choice.
 
-`POWER-BATTERY` is not one of your two. I'll work through it live in class
-as this lesson's worked example.
+`POWER-BATTERY` is not one of your two. `lab/lesson4/battery/` has a
+worked example for it — a plotter and a detector, built the same way
+you're building your own two. Read it first, the same way `lesson3/
+battery/` was the model for HW03: it's there to show the depth your own
+work should reach, and to give you something to check your own solutions
+against (they should never misreport a battery problem as GPS/vibration/
+compass). It does **not** include a combined plot+detector — building
+that connection yourself, for your own categories, is Step 4's job, not
+something to copy.
 
 ---
 
