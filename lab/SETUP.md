@@ -414,6 +414,40 @@ PowerShell and Command Prompt are not supported for this course.
 
 ---
 
+## Matplotlib window never appears (WSL2) -- `battery_plot.py`, `matplotlib_view.py`, etc.
+
+Two separate known issues, both WSL2/WSLg-specific. Check for the first
+error message to know which one you've hit:
+
+**`qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in ""`,
+`Aborted (core dumped)`** -- a missing system library the Qt "xcb"
+platform plugin depends on (WSL2 doesn't install these by default even
+though `DISPLAY`/`WAYLAND_DISPLAY` are already set correctly by WSLg).
+Find exactly which one with `ldd`:
+```bash
+ldd .venv/lib/python3.12/site-packages/PyQt5/Qt5/plugins/platforms/libqxcb.so | grep "not found"
+```
+Confirmed fix on one machine: `sudo apt-get install -y libxcb-shape0`. If
+`ldd` reports something else missing, this broader set covers the usual
+requirements:
+```bash
+sudo apt-get install -y libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 libxcb-cursor0 libxcb-xkb1 libxkbcommon-x11-0 libgl1 libegl1 libdbus-1-3
+```
+
+**`QStandardPaths: wrong permissions on runtime directory /run/user/1000,
+0755 instead of 0700`** -- WSL2 sometimes creates this directory with
+looser permissions than Qt requires, which can silently keep the plot
+window from ever appearing (no crash, no other error -- it just never
+shows up). Fix:
+```bash
+chmod 700 /run/user/1000
+```
+This can reset back to `0755` after a WSL restart, since WSL recreates
+that directory at boot -- if the warning comes back later, re-run the
+same command.
+
+---
+
 ## Apple Silicon
 
 Enable Rosetta emulation in Docker Desktop and increase Docker's CPU and
