@@ -22,44 +22,49 @@ docker compose up -d --build
 Check it came up clean: `docker logs lab-drone_backend_1-1 --tail 10`
 should show `Heartbeat received...` and `Connected to MQTT broker...`.
 
-**2. Take off.** Either fly manually:
-```bash
-mosquitto_pub -h localhost -t uav/1/command -m '{"type":"arm"}'
-mosquitto_pub -h localhost -t uav/1/command -m '{"type":"takeoff","alt":10}'
-```
-...or use the longer scripted flight, which gives more time for a fault
-to fire and be observed:
+**2. Fly.** Always use `test_monitor_flight.py` to fly — not individual
+low-level commands (`arm`/`takeoff`/...) sent by hand. It arms, takes off,
+flies a 40m square, returns to the launch point, and lands — all on its
+own, in its own terminal:
 ```bash
 python3 scripts/test_monitor_flight.py
 ```
+It prints progress as it goes and takes a couple of minutes end to end.
+Leave it running in this terminal; do the rest of the steps below in
+*other* terminals while it flies.
 
-**3. Watch the battery, live.** In its own terminal:
+**3. Watch the battery, live.** In a second terminal, started as soon as
+Step 2's flight begins climbing:
 ```bash
 cd lesson4/battery
 pip install -r ../requirements.txt   # first time only
 python3 battery_plot.py
 ```
 You'll see three live graphs: voltage, current draw, and remaining
-percent. Watch it for 20-30 seconds on a normal flight first — this is
-what "normal" looks like.
+percent. Watch it for 20-30 seconds first — this is what "normal" looks
+like, before anything else happens.
 
-**4. Watch the detector, live.** In another terminal, same folder:
+**4. Watch the detector, live.** In a third terminal, same folder:
 ```bash
 python3 battery_detector.py
 ```
 It should settle to `no problem` after a few seconds and stay there.
 
-**5. Inject a fault.** In a third terminal:
+**5. Inject a fault.** In a fourth terminal, any time while Step 2's
+flight is still airborne (it holds a steady cruise altitude between
+waypoints for most of the route, which is plenty of time):
 ```bash
 python3 ../../scripts/mischief_maker.py POWER-BATTERY 10 60 High
 ```
-This waits for a real takeoff (already done, so it should fire almost
-immediately), then injects a randomized-but-High-severity battery
-problem at a random moment within 10 seconds. Watch `battery_detector.py`
-flip to `problem present`, and the voltage line in `battery_plot.py` drop.
+It waits for confirmation the vehicle has actually taken off and leveled
+out (already true by this point), then injects a randomized-but-High-
+severity battery problem at a random moment within 10 seconds. Watch
+`battery_detector.py` flip to `problem present`, and the voltage line in
+`battery_plot.py` drop.
 
-**6. Clean up.** Ctrl-C `mischief_maker.py` first (it resets the
-simulated fault before exiting), then Ctrl-C the other two, then:
+**6. Let Step 2 finish landing, then clean up.** Ctrl-C
+`mischief_maker.py` first (it resets the simulated fault before exiting),
+then Ctrl-C `battery_plot.py`/`battery_detector.py`, then:
 ```bash
 cd lab && docker compose down
 ```
