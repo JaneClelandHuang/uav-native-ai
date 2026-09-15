@@ -1,8 +1,5 @@
 # Lesson 4 — Runtime Monitoring & Fault Injection
 
-> **DRAFT ONLY — not yet reviewed. Details, categories, and grading below
-> are subject to change before this is final.**
-
 ## Lesson Objectives
 
 This week moves from retrospective flight-log analysis to recognizing
