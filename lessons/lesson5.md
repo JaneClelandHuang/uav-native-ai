@@ -1,8 +1,5 @@
 # Lesson 5 — Testing Your ATC
 
-> **DRAFT ONLY — not yet reviewed. Details, categories, and grading below
-> are subject to change before this is final.**
-
 ## Lesson Objectives
 
 **GUI programming is deferred to Thursday.** Today we go back to the multi-UAV ATC you built for HW2, this time through the lens of testing.
