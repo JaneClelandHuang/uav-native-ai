@@ -134,19 +134,28 @@ and `generated-tests/integration/`. Run that suite. Read the output
 carefully -- this is where you'll likely learn something about your own
 system you didn't already know.
 
-Record what it found in `hw05/RESULTS.md`.
+Start `hw05/report.md` with what it found -- this is the evidence your
+scope declaration in Step 6 is based on.
 
 
-STEP 6 -- FIX IT, OR EXTEND IT -- THEN RE-RUN AS A REGRESSION CHECK
+STEP 6 -- DECLARE YOUR SCOPE, THEN FIX AND/OR EXTEND -- RE-RUN AS A
+REGRESSION CHECK
 ------------------------------------------------------------------------
 
-Whatever the generated suite told you, act on it: fix a real bug it
-surfaced, or build a real feature/address real technical debt if things
-were already solid. Either way, re-run the generated suite afterward
-and confirm: the thing you fixed/added now passes, AND nothing that
-passed before now fails. That second check -- did I break something
-that used to work -- is the entire point of having a suite you can
-re-run instead of a one-off script you ran once and threw away.
+Before changing any code, write a specific scope statement at the top of
+`hw05/report.md`: what you're fixing (real bugs the suite or your own
+review surfaced) and/or extending (a real feature, real technical debt
+-- not a cosmetic change). "Clean things up" isn't a scope; name the
+actual bug or feature. This is graded on its own, separately from the
+work itself.
+
+Then act on it: fix what you scoped, build what you scoped, or both.
+Either way, re-run the generated suite afterward and confirm: the thing
+you fixed/added now passes, AND nothing that passed before now fails.
+That second check -- did I break something that used to work -- is the
+entire point of having a suite you can re-run instead of a one-off
+script you ran once and threw away. Record the before/after evidence in
+`hw05/report.md`.
 
 
 A NOTE ON WHAT THIS ISN'T

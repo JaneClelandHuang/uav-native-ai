@@ -148,22 +148,28 @@ whole point is that you now own a reusable tool, not a one-time answer.
 
 ---
 
-## The assignment: fix it, or extend it — either way, prove it
+## The assignment: define your scope, then fix it and/or extend it — prove it either way
 
 Once your skill has generated a real test suite against your own ATC,
 you'll know things about your own system you may not have known before.
-Pick one:
 
-- **Something's broken.** Fix it. Use the regenerated/re-run suite to
-  show the fix actually holds, and that you didn't break anything that
-  was previously passing.
-- **It mostly works.** Extend it — a real feature, a real piece of
-  technical debt addressed, not a cosmetic change. Use the suite to show
-  the addition didn't regress existing behavior, and add tests (via your
-  skill) that cover the new behavior specifically.
+1. **State your scope before you touch the code.** Based on what the
+   generated suite — and your own review — turned up, write a clear,
+   specific list of what you're going to fix (real bugs, real technical
+   debt) and/or extend (a real new feature, not a cosmetic change).
+   "Clean things up" is not a scope; "fix the yield-priority tie-break
+   that lets two UAVs both claim right-of-way" is. This goes at the top
+   of `report.md`, and is worth 5 points on its own — a vague scope
+   doesn't earn it, regardless of how good the work behind it turns out
+   to be.
+2. **Apply the changes.** Fix what's broken, build what you scoped as
+   new — either, or both, whatever your findings actually call for.
+3. **Prove it.** Re-run the regenerated suite: the thing you fixed or
+   added now passes, and nothing that passed before now fails. Add tests
+   (via your skill) that specifically cover anything new.
 
-Either path needs real evidence: what the tests found, what you changed,
-what the tests show afterward.
+Either path needs real evidence in `report.md`: what the tests found,
+what you changed, what the tests show afterward.
 
 ---
 
@@ -177,8 +183,9 @@ Out of **100 points**.
 |---|---:|---|
 | **Skill design & quality** | 25 | The skill genuinely *generates* test code (not just descriptions of tests) for both unit and integration cases, correctly separates the two based on your system's real architecture, and is general enough to run again on a different file — not hard-coded to one target. |
 | **Validated on the small worked example first** | 10 | You ran your skill against `test_flight.py` or the battery detector *before* your own ATC, and can show the generated tests for that known target actually made sense. |
-| **Applied to your own HW2 ATC** | 30 | A real, generated test suite run against your own ATC; a real problem found-and-fixed *or* a real feature added, either way backed by before/after test evidence. |
-| **Retrospective** | 15 | Honest account: what the generated tests caught that your original ad-hoc testing didn't, what your skill still can't test, and what you'd do differently starting the skill over. |
+| **Scope clearly defined** | 5 | `report.md` states, before the fix/extend work is described, a specific list of what was fixed and/or extended — not a vague or after-the-fact description. |
+| **Applied to your own HW2 ATC** | 25 | A real, generated test suite run against your own ATC; the scoped fix and/or feature actually built, backed by before/after test evidence in `report.md`. |
+| **Reflection** | 15 | `reflection.md` — honest account of what the generated tests caught that your original ad-hoc testing didn't, what your skill still can't test, what you'd do differently starting the skill over, and your take on using Claude this way. Text, and/or a recording (include the URL). |
 | **Individual understanding** — in class | 20 | See below. |
 | **Total** | **100** | |
 
@@ -205,9 +212,12 @@ hw05/
 ├── WORKED-EXAMPLE.md      the skill validated against test_flight.py or
 │                          the battery detector, before you trusted it
 │                          on your own code
-├── RESULTS.md             what the generated suite found on your own
-│                          ATC, what you fixed/added, before-and-after
-└── REPORT.md              the retrospective
+├── report.md              your declared scope (5 pts on its own), what
+│                          you fixed and/or built, and before-and-after
+│                          test evidence
+└── reflection.md          reflection on the testing skill and/or your
+                           use of Claude this week -- text, and/or a
+                           recording (include the URL)
 ```
 
 Commit and push:
