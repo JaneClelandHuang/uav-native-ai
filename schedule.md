@@ -25,7 +25,7 @@ homework page.
 | **2** | Sept. 1–3 | Multi-UAV Air Traffic Control | AI-Assisted Programming | [Slides](https://docs.google.com/presentation/d/1Q76U49WDVPYHZkZvcUMIKAqTMzWGvo7T/edit?usp=sharing) | [HW2]({{ '/lessons/lesson2.html' \| relative_url }}) |
 | **3** | Sept. 8–10 | Flight-Log Analysis | AI-Assisted Data Analysis | [Slides](https://docs.google.com/presentation/d/12_3rZpNYCuM6_-XCJI9gbJ99ofG0Sva7/edit?usp=sharing) | [HW3]({{ '/lessons/lesson3.html' \| relative_url }}) |
 | **4** | Sept. 15–17 | Runtime Monitoring & Fault Injection | AI-Assisted Diagnosis | [Slides](https://docs.google.com/presentation/d/1C1wsksg8IW1RjED-SiDTJumMpsbQAVXV/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW4]({{ '/lessons/lesson4.html' \| relative_url }}) |
-| **5** | Sept. 22–24 | GUI Programming for UAV Systems | AI-Assisted UI Development | — | [HW5]({{ '/lessons/lesson5.html#homework' \| relative_url }}) |
+| **5** | Sept. 22–24 | Testing Your ATC (GUI deferred to Thursday) | AI-Assisted Test Generation | — | [HW5]({{ '/lessons/lesson5.html#homework' \| relative_url }}) |
 | **6** | Sept. 29–Oct. 1 | Computer Vision & Perception | Engineering an AI Component | — | [HW6]({{ '/lessons/lesson6.html#homework' \| relative_url }}) |
 | **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7]({{ '/lessons/lesson7.html#homework' \| relative_url }}) |
 | **8** | Oct. 13–15 | Team formation and project exploration | Native-AI Use Cases and Project Vision | — | Teams develop project vision and use cases |
