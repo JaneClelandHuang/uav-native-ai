@@ -4,7 +4,7 @@ title: Schedule
 
 # Schedule
 
-The semester runs in two phases: individual skill-building (Weeks 1–7), then a team project (after Fall Break through finals week). See the [Syllabus]({{ '/syllabus.html' | relative_url }}) for how each phase is structured and assessed. Assignment instructions for each week are released separately as that week approaches.
+The semester runs in two phases: individual skill-building (Weeks 1–7), then a team project (after Fall Break through finals week). See the [Syllabus](syllabus.md) for how each phase is structured and assessed. Assignment instructions for each week are released separately as that week approaches.
 
 The schedule may be adjusted as project needs and class progress become clearer. Any significant changes will be communicated in class and
 through the course site.
@@ -13,7 +13,7 @@ through the course site.
 
 Slides are posted to Google Slides closer to each lecture — the column
 below is a placeholder until those links are added. Weeks 1–7 link to that
-week's [lesson page]({{ '/lessons/' | relative_url }}) for the full
+week's [lesson page](lessons/index.md) for the full
 assignment; team-project weeks link to a deliverable below instead of a
 homework page.
 
@@ -21,13 +21,14 @@ homework page.
 
 | Week | Dates | Topic | Native AI / Project Focus | Slides | Homework |
 |---|---|---|---|---|---|
-| **1** | Aug. 25–27 | UAV Infrastructure & Architecture | AI as a Learning Partner | [Slides](https://docs.google.com/presentation/d/10LI35AFa5R1IsfC90Pu4gVsAAaklz4Ka/edit?usp=sharing) | [HW1]({{ '/lessons/lesson1.html#homework' \| relative_url }}) |
-| **2** | Sept. 1–3 | Multi-UAV Air Traffic Control | AI-Assisted Programming | [Slides](https://docs.google.com/presentation/d/1Q76U49WDVPYHZkZvcUMIKAqTMzWGvo7T/edit?usp=sharing) | [HW2]({{ '/lessons/lesson2.html' \| relative_url }}) |
-| **3** | Sept. 8–10 | Flight-Log Analysis | AI-Assisted Data Analysis | [Slides](https://docs.google.com/presentation/d/12_3rZpNYCuM6_-XCJI9gbJ99ofG0Sva7/edit?usp=sharing) | [HW3]({{ '/lessons/lesson3.html' \| relative_url }}) |
-| **4** | Sept. 15–17 | Runtime Monitoring & Fault Injection | AI-Assisted Diagnosis | [Slides](https://docs.google.com/presentation/d/1C1wsksg8IW1RjED-SiDTJumMpsbQAVXV/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW4]({{ '/lessons/lesson4.html' \| relative_url }}) |
-| **5** | Sept. 22–24 | Testing Your ATC (GUI deferred to Thursday) | AI-Assisted Test Generation | [Slides](https://docs.google.com/presentation/d/13gNEqMTwNz1n5i7zO1y9xkv72rsrnQe1/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW5]({{ '/lessons/lesson5.html#homework' \| relative_url }}) |
-| **6** | Sept. 29–Oct. 1 | Computer Vision & Perception | Engineering an AI Component | — | [HW6]({{ '/lessons/lesson6.html#homework' \| relative_url }}) |
-| **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7]({{ '/lessons/lesson7.html#homework' \| relative_url }}) |
+| **1** | Aug. 25–27 | UAV Infrastructure & Architecture | AI as a Learning Partner | [Slides](https://docs.google.com/presentation/d/10LI35AFa5R1IsfC90Pu4gVsAAaklz4Ka/edit?usp=sharing) | [HW1](lessons/lesson1.md#homework) |
+| **2** | Sept. 1–3 | Multi-UAV Air Traffic Control | AI-Assisted Programming | [Slides](https://docs.google.com/presentation/d/1Q76U49WDVPYHZkZvcUMIKAqTMzWGvo7T/edit?usp=sharing) | [HW2](lessons/lesson2.md) |
+| **3** | Sept. 8–10 | Flight-Log Analysis | AI-Assisted Data Analysis | [Slides](https://docs.google.com/presentation/d/12_3rZpNYCuM6_-XCJI9gbJ99ofG0Sva7/edit?usp=sharing) | [HW3](lessons/lesson3.md) |
+| **4** | Sept. 15–17 | Runtime Monitoring & Fault Injection | AI-Assisted Diagnosis | [Slides](https://docs.google.com/presentation/d/1C1wsksg8IW1RjED-SiDTJumMpsbQAVXV/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW4](lessons/lesson4.md) |
+| **5a** | Sept. 22 | Testing Your ATC | AI-Assisted Test Generation | [Slides](https://docs.google.com/presentation/d/13gNEqMTwNz1n5i7zO1y9xkv72rsrnQe1/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW5](lessons/lesson5.md) |
+| **5b** | Sept. 24 | Human-Drone Interactions | Interface Design | [Slides](https://docs.google.com/presentation/d/1t6kiJ7cGIqhZb8qfgcqWIiT7mW2a_uDn/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | — |
+| **6** | Sept. 29–Oct. 1 | Computer Vision & Perception | Engineering an AI Component | — | [HW6](lessons/lesson6.md#homework) |
+| **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7](lessons/lesson7.md#homework) |
 | **8** | Oct. 13–15 | Team formation and project exploration | Native-AI Use Cases and Project Vision | — | Teams develop project vision and use cases |
 | — | Oct. 17–25 | **FALL BREAK** | | | |
 | **9** | Oct. 27–29 | Project Vision Presentations; Architecture for Intelligent UAV Systems | Architecture exploration, critique, and evidence-driven design | — | **D1: Project Vision + Use Cases**; begin architecture and architectural spike |
