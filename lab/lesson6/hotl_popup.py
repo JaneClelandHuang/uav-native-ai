@@ -3,7 +3,8 @@
 
 Provided, finished and unwired: there is no planner behind it. Your planner
 talks to it over MQTT, and the topics and payloads below are the contract
-your planner must honor (see README.md, "The popup contract"). You shouldn't
+your planner must honor (see "The popup contract" in the HW6 spec:
+https://janeclelandhuang.github.io/uav-native-ai/lessons/lesson6.html#the-popup-contract). You shouldn't
 need to edit this file. If you do, say why in design.md.
 
   MissionBridge  -- paho-mqtt client. paho calls back on its own network

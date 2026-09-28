@@ -315,7 +315,8 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 
 The `mission/*` topics belong to a mission response planner, a host
 process layered *on top of* this contract: it only ever sends the
-`uav/<id>/command` vocabulary above. Payloads are in `lesson6/README.md`.
+`uav/<id>/command` vocabulary above. Payloads are in the HW6 spec, "The popup contract":
+https://janeclelandhuang.github.io/uav-native-ai/lessons/lesson6.html#the-popup-contract
 
 ```json
 // uav/1/telemetry
