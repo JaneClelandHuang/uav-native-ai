@@ -1,37 +1,19 @@
 # HW6 — Build a Human-on-the-Loop Mission Response Planner
 
-**DRAFT. Not yet released.**
+When a UAV's camera finds a person, there are several optional behaviors:  ("hover and stream", "circle and stream", "deliver the medical kit"). The
+operator picks one, and software checks against constraints and then executes (if allowed). 
+In class you designed this planner with CRC cards. This week you build **your** design.
 
-When a UAV's camera finds a person, the operator shouldn't have to fly the
-UAV to them. Instead, the system offers a short **menu of responses**
-("hover and stream", "circle and stream", "deliver the medical kit"). The
-operator picks one, and software checks it and carries it out. The operator
-stays *on* the loop, deciding what happens, not *in* it, flying the aircraft.
-
-In class you designed this planner with CRC cards. This week you build
-**your** design.
-
-**Budget around 6–8 hours**, consistent with every other assignment this
-term. If you can't finish in that time, document unfinished work as
-technical debt in `report.md`.
+**Budget around 6–8 hours**, consistent with every other assignment this term. If you can't finish in that time, document unfinished work as technical debt in `report.md`.
 
 ---
 
 ## Why this week, why now
 
-This week is about treating an AI component's output as **uncertain
-evidence**. A YOLO detection at 0.31 confidence might be a person, or it
-might be a shadow. The planner is where that uncertainty turns into
-consequences: flying a UAV away from its search route, or dropping the only
-medical kit you have.
+This week is about treating an AI component's output as **uncertain evidence**. A YOLO detection at 0.31 confidence might be a person, or it might be a shadow. The planner is where that uncertainty turns into
+consequences: flying a UAV away from its search route, or dropping the only medical kit you have.
 
-Next week (Lesson 7), the human decision-maker is replaced by an AI one. The
-rule then is *the LLM proposes, deterministic software constrains, flight
-control executes*. This week you build the structure that rule depends on:
-a fixed menu of responses, a validator that every decision passes through
-no matter who made it, and an executor that owns the flying. If your design
-has a clean seam between "who decides" and "what happens next", swapping in
-an AI next week is a small change. If it doesn't, you'll find out.
+Next week (Lesson 7), the human decision-maker is replaced by an AI one. The rule then is *the LLM proposes, deterministic software constrains, flight control executes*. This week you build the structure that rule depends on: a fixed menu of responses, a validator that every decision passes through no matter who made it, and an executor that owns the flying. If your design has a clean seam between "who decides" and "what happens next", swapping in an AI next week is a small change. If it doesn't, you'll find out.
 
 ---
 
@@ -46,10 +28,7 @@ an AI next week is a small change. If it doesn't, you'll find out.
 | `lab/lesson6/mission_config.json` | Starter config: the UAV you own, its payload, battery costs, default parameters, and a search route. Input, not a spec. Change it as you like. |
 | `lab/ARCHITECTURE.md` | The flight primitives on `uav/<id>/command` (`takeoff`, `goto`, `circle`, `interrupt`, `land`, …) and telemetry on `uav/<id>/telemetry`. Your planner flies the UAV only through these. |
 
-The live detector needs camera frames that carry a `pose` (the drone's
-position, altitude and zoom when the frame was taken). If yours don't, or
-you just want repeatable tests, use `inject_event.py`. Either way, your
-planner sees the same message.
+The live detector needs camera frames that carry a `pose` (the drone's position, altitude and zoom when the frame was taken). If yours don't, or you just want repeatable tests, use `inject_event.py`. Either way, your planner sees the same message.  (Note: Our views are all NADIR views -- top-down)
 
 ---
 
@@ -68,56 +47,37 @@ mission/events ──► YOUR PLANNER ──► mission/decision_request ──�
                       ArduPilot SITL
 ```
 
-How you divide that into classes and modules is **your design**. The
-requirements say what it must do, not how to structure it.
+How you divide that into classes and modules is **your design**. The requirements say what it must do, not how to structure it.
 
 ### Requirements
 
-**R1 World model.** Track what the planner currently believes:
-- UAV state: position, battery, payload on board, what it's doing now, and
+**R1 World model.** Track what the planner currently believes: - UAV state: position, battery, payload on board, what it's doing now, and
   its progress along its search route.
-- **Found persons only.** Location, confidence, who saw them, when, and a
-  decision status. You don't need to model where people *might* be, or
+- **Found persons only.** Location, confidence, who saw them, when, and a   decision status. You don't need to model where people *might* be, or
   which areas have been searched.
 
-**R2 Detections are uncertain evidence.** Your planner needs an explicit
-policy for low-confidence detections. For example, below some threshold
-the menu offers only responses that *verify* (hover or circle and stream),
-not one that spends the medical kit. You choose the policy and the
+**R2 Detections are uncertain evidence.** Your planner needs an explicit policy for low-confidence detections. For example, below some threshold
+the menu offers only responses that *verify* (hover or circle and stream), not one that spends the medical kit. You choose the policy and the
 threshold, and you justify both in `design.md`.
 
-**R3 One decision per person.** The detector re-announces people it keeps
-seeing, and a circling UAV sees the same person over and over. A person the
-operator has already decided about (responded to, or chose "No action" for)
-**must not** raise another popup. Treat events within ~10 m of a known
-person as that person. A person nobody decided about (the request timed out)
-may be asked about again when next seen.
+**R3 One decision per person.** The detector re-announces people it keeps seeing, and a circling UAV sees the same person over and over. A person the
+operator has already decided about (responded to, or chose "No action" for) **must not** raise another popup. Treat events within ~10 m of a known
+person as that person. A person nobody decided about (the request timed out) may be asked about again when next seen.
 
-**R4 Candidate responses.** For each person, build the menu: at least
-`hover_stream`, `circle_stream` and `deliver`. Each candidate gets its
+**R4 Candidate responses.** For each person, build the menu: at least `hover_stream`, `circle_stream` and `deliver`. Each candidate gets its
 eligible UAVs, a default UAV and default parameters (from the config).
 
-**R5 Decision loop through the popup.** Send a `decision_request`, then
-handle what comes back: an action, a dismiss ("No action"), or nothing.
-Enforce the `timeout_s` you advertised. Keep the decision-maker behind an
-interface, so that next week an AI one can replace the human one without
-touching the rest.
+**R5 Decision loop through the popup.** Send a `decision_request`, then handle what comes back: an action, a dismiss ("No action"), or nothing.
+Enforce the `timeout_s` you advertised. Keep the decision-maker behind an interface, so that next week an AI one can replace the human one without touching the rest.
 
-**R6 Validator, as its own stage.** Every action passes through it before
-anything flies, whoever chose it. At minimum:
+**R6 Validator, as its own stage.** Every action passes through it before anything flies, whoever chose it. At minimum: 
 - `deliver` needs the chosen item on board.
 - Battery must cover the reserve plus the response's cost (from the config).
 
-Report every verdict on `mission/action_result`. On a rejection, ask again
-with the reasons in `previous_rejection`, so the operator sees why.
+Report every verdict on `mission/action_result`. On a rejection, ask again with the reasons in `previous_rejection`, so the operator sees why.
 Keep the checks simple; the point is that the stage exists.
 
-**R7 Execution, then resume.** The UAV flies its search route. When an
-action is approved, it leaves the route, performs the response, and
-reports progress on `mission/behavior_status` (`PENDING`, `RUNNING`,
-`COMPLETED`, `FAILED`, `CANCELLED`). When the response finishes, it
-**resumes the route at the waypoint it was heading to**. **Cancel** from
-the popup stops the response and resumes the route too.
+**R7 Execution, then resume.** The UAV flies its search route. When an action is approved, it leaves the route, performs the response, and reports progress on `mission/behavior_status` (`PENDING`, `RUNNING`, `COMPLETED`, `FAILED`, `CANCELLED`). When the response finishes, it **resumes the route at the waypoint it was heading to**. **Cancel** from the popup stops the response and resumes the route too.
 
 What each response means in flight:
 
@@ -198,7 +158,7 @@ Before writing code, put in `design.md`:
 1. **Your CRC cards**, cleaned up: each class, its responsibilities, its
    collaborators.
 2. **One sequence diagram** (Mermaid is fine) for: event arrives → operator
-   approves `hover_stream` → UAV flies it → UAV resumes its route.
+   approves `hover_stream` → UAV flies it → UAV resumes its route.  (Handdrawn if you really don't want to use mermaid)
 3. **The seam for next week**: which class or interface an AI
    decision-maker would replace, and what it would be handed.
 4. **Your low-confidence policy** (R2), with the threshold and why. The
@@ -217,11 +177,15 @@ That's normal. Code that quietly diverges from its design isn't.
   confidence policy (R2), the candidate menu (R4), and the validator (R6).
   These are pure logic. Your HW5 test skill should handle them.
 - **Integration tests** (SITL + broker + your planner), with
-  `inject_event.py` standing in for the popup's input where it helps:
+  `inject_event.py` standing in for the popup's input where it helps.
+  Two are required:
   - event → approve `hover_stream` → `COMPLETED` → route resumes at the
     right waypoint
   - `deliver` approved, then a second `deliver` for someone else rejected,
     because the kit is gone
+
+  Two more are stretch goals. Your planner must still handle both (R3,
+  R7); automating them as integration tests is optional:
   - the same person re-announced after a decision → no second popup
   - Cancel mid-response → route resumes
 
@@ -242,7 +206,7 @@ Out of **100 points**.
 | **Candidates & decision loop** | 15 | R4–R5: the popup works against your planner, including dismiss, timeout, and re-ask after a rejection. The decision-maker is behind an interface. |
 | **Validator** | 10 | R6: a separate stage every action passes through, with verdicts reported and rejections re-asked. |
 | **Execution & resume** | 15 | R7: all three responses fly correctly, status is reported throughout, and the UAV resumes its route after completion and after Cancel. |
-| **Testing evidence** | 10 | Unit tests for the pure logic plus the integration scenarios, with real output in `report.md`. |
+| **Testing evidence** | 10 | Unit tests for the pure logic plus the two required integration scenarios, with real output in `report.md`. |
 | **Reflection** | 10 | `reflection.md`: where your design helped or got in the way, what surprised you when it flew, what you'd change before an AI starts making the decisions, and a "Lessons Learned" section about using Claude. |
 | **Individual understanding** — in class | 5 | Questions pushed to your folder, as in HW5. |
 | **Total** | **100** | |
@@ -276,7 +240,6 @@ Be ready to explain:
 
 - Where a decision goes, step by step, from the event arriving to the UAV
   moving, in terms of your own classes.
-- What stops a 0.31-confidence detection from using up the medical kit.
 - Exactly what you would change to let an AI make the decision instead of
   the operator, and what you would *not* have to change.
 - How your UAV knows which waypoint to go back to.
