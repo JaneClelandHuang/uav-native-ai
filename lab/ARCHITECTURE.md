@@ -308,6 +308,14 @@ containerized). Subscribes to `uav/<id>/home` (retained) and
 | `uav/<id>/monitor_config` | clients → backend | **yes** | Which runtime-monitoring categories to include on `monitored_data` |
 | `uav/<id>/monitored_data` | backend → clients | no | Only the currently-configured categories, published at `TELEMETRY_HZ` |
 | `uav/<id>/status_text` | backend → clients | no | Every `STATUSTEXT` the vehicle sends, relayed the instant it arrives |
+| `mission/events` | detector → planner | no (QoS 1) | Geolocated person detections (`cv/person_event_detector.py`) |
+| `mission/decision_request` / `mission/decision` | planner ↔ operator UI | no | Human-on-the-loop response choice |
+| `mission/action_result` / `mission/behavior_status` | planner → UIs | no | Validator verdicts, behavior execution state |
+| `mission/cancel` / `mission/abort` | operator UI → planner | no | Cancel a response / return to launch |
+
+The `mission/*` topics belong to a mission response planner, a host
+process layered *on top of* this contract: it only ever sends the
+`uav/<id>/command` vocabulary above. Payloads are in `lesson6/README.md`.
 
 ```json
 // uav/1/telemetry
@@ -642,6 +650,9 @@ private homework repo (which vendors this same `lab/` directory):
       detect-people.py         <- stand-alone: runs YOLO26n person detection over
                                    a folder of collected frames, saves annotated
                                    copies to <folder>/detections/
+      geolocate.py             <- nadir pixel -> lat/lon (pure math)
+      person_event_detector.py <- live YOLO on VIDEO_STREAM frames -> mission/events
+      test_person_events.py
       data/                    <- gitignored frame-collection.py output (.gitkeep
                                    only tracked file); data/<drone>-<MM-DD-YYYY>-<seq>/
                                    per collection run, see frame-collection.py docstring

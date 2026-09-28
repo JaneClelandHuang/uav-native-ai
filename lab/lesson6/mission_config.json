@@ -1,0 +1,58 @@
+{
+  "_comment": "Starter configuration for your HW6 planner. Routes are laid out around Notre Dame Stadium (the ND favorite in ../locations.json). Use it, change it, or replace it; it's input, not a spec.",
+  "owned_uavs": ["1"],
+  "payloads": {
+    "1": ["medical_kit"],
+    "2": []
+  },
+  "battery": {
+    "_comment": "battery_level in telemetry is 0.0-1.0. One simple feasibility rule: a response needs reserve + its cost.",
+    "reserve": 0.25,
+    "cost": {
+      "deliver": 0.1,
+      "circle_stream": 0.08,
+      "hover_stream": 0.05
+    }
+  },
+  "defaults": {
+    "transit_alt_m": 20,
+    "delivery_alt_m": 5,
+    "delivery_dwell_s": 5,
+    "circle_radius_m": 15,
+    "circle_speed_mps": 3,
+    "stream_duration_s": 60,
+    "hover_standoff_m": 10
+  },
+  "missions": {
+    "1": {
+      "name": "Sweep north of stadium",
+      "waypoints": [
+        [41.6990242, -86.2377769, 20],
+        [41.6990242, -86.2363331, 20],
+        [41.6992038, -86.2363331, 20],
+        [41.6992038, -86.2377769, 20],
+        [41.6993835, -86.2377769, 20],
+        [41.6993835, -86.2363331, 20],
+        [41.6995631, -86.2363331, 20],
+        [41.6995631, -86.2377769, 20],
+        [41.6997428, -86.2377769, 20],
+        [41.6997428, -86.2363331, 20]
+      ]
+    },
+    "2": {
+      "name": "Sweep south of stadium",
+      "waypoints": [
+        [41.6974072, -86.2377769, 20],
+        [41.6974072, -86.2363331, 20],
+        [41.6975869, -86.2363331, 20],
+        [41.6975869, -86.2377769, 20],
+        [41.6977665, -86.2377769, 20],
+        [41.6977665, -86.2363331, 20],
+        [41.6979462, -86.2363331, 20],
+        [41.6979462, -86.2377769, 20],
+        [41.6981258, -86.2377769, 20],
+        [41.6981258, -86.2363331, 20]
+      ]
+    }
+  }
+}
