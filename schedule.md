@@ -27,7 +27,7 @@ homework page.
 | **4** | Sept. 15–17 | Runtime Monitoring & Fault Injection | AI-Assisted Diagnosis | [Slides](https://docs.google.com/presentation/d/1C1wsksg8IW1RjED-SiDTJumMpsbQAVXV/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW4](lessons/lesson4.md) |
 | **5a** | Sept. 22 | Testing Your ATC | AI-Assisted Test Generation | [Slides](https://docs.google.com/presentation/d/13gNEqMTwNz1n5i7zO1y9xkv72rsrnQe1/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW5](lessons/lesson5.md) |
 | **5b** | Sept. 24 | Human-Drone Interactions | Interface Design | [Slides](https://docs.google.com/presentation/d/1t6kiJ7cGIqhZb8qfgcqWIiT7mW2a_uDn/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | — |
-| **6** | Sept. 29–Oct. 1 | Computer Vision & Perception | Engineering an AI Component | — | [HW6](lessons/lesson6.md#homework) |
+| **6** | Sept. 29–Oct. 1 | Computer Vision & Perception | Engineering an AI Component | [Slides](https://docs.google.com/presentation/d/1vRcoCp4qsCBsNAJoFvuHG4FFpu5H9Y4H/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW6](lessons/lesson6.md#homework) |
 | **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7](lessons/lesson7.md#homework) |
 | **8** | Oct. 13–15 | Team formation and project exploration | Native-AI Use Cases and Project Vision | — | Teams develop project vision and use cases |
 | — | Oct. 17–25 | **FALL BREAK** | | | |
