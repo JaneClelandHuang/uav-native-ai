@@ -2,9 +2,11 @@
 
 Your stages never touch the SDK. They call
 
-    backend.generate(stage, system, content, schema) -> (parsed, StageCall)
+    backend.generate(spec, system, content) -> (parsed, StageCall)
 
-and tests hand them llm_tools.FakeBackend instead. Read the "Calling Claude"
+and tests hand them llm_tools.FakeBackend instead. The backend knows nothing
+about particular stages: everything stage-specific (name, answer schema,
+effort) arrives in the StageSpec you declared in stages.py. Read the "Calling Claude"
 part of the HW7 page and the Anthropic docs it links before writing generate().
 """
 import _kit  # noqa: F401
@@ -24,22 +26,23 @@ class ClaudeBackend:
             client = anthropic.Anthropic()
         self.client = client
 
-    def generate(self, stage, system, content, schema):
-        """Send one request and return (validated `schema` instance, StageCall).
+    def generate(self, spec, system, content):
+        """Send one request and return (validated spec.schema instance, StageCall).
 
-        stage    your stage name, e.g. "describe"; use it to pick per-stage settings
+        spec     the stage's StageSpec: spec.schema (the answer's pydantic class),
+                 spec.effort (how hard the model thinks), spec.name (for the StageCall)
         system   the system prompt text
         content  the user message: a list of image and text blocks
-        schema   the pydantic class the answer must fit
 
         It must:
           - send ONE user message with `content`, `system` as the system prompt,
-            and `schema` as the structured-output format
-          - choose how much the model thinks for each stage (effort)
+            and spec.schema as the structured-output format
+          - use spec.effort as the effort setting
           - check why the response stopped before trusting it (a refusal or a
             cut-off answer can still be an HTTP 200)
           - retry once if the answer is missing, cut off, declined or invalid;
             then raise LLMError -- never return a half answer
-          - return a StageCall with model, total tokens, latency and cost (cost_usd)
+          - return a StageCall (stage=spec.name) with model, total tokens, latency
+            and cost (cost_usd)
         """
         raise NotImplementedError("TODO: implement ClaudeBackend.generate() in llm.py")

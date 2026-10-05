@@ -5,7 +5,7 @@ lab/lesson7/starter/). They need exactly two things from it:
 
     pipeline.ClueAnalyzer(backend, mission, closer_look=None, on_event=None)
         .analyze(candidate) -> contract.ClueAssessment
-    llm.ClaudeBackend(model=None)        a backend with .generate(stage, system, content, schema)
+    llm.ClaudeBackend(model=None)        a backend with .generate(spec, system, content)
 
 Use --pipeline DIR on either tool to point somewhere else.
 """

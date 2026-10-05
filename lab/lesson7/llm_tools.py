@@ -12,17 +12,18 @@ are the pieces around it:
 
 Every backend has the same method:
 
-    backend.generate(stage, system, content, schema) -> (validated schema instance, StageCall)
+    backend.generate(spec, system, content) -> (validated spec.schema instance, StageCall)
 
-stage   "describe" | "relevance" | "decide" (your stage names)
-system  the system prompt text (your prompts/<stage>.md)
+spec    a contract.StageSpec you declared in stages.py: its name, its answer
+        schema and its effort travel together, so no backend keeps a table of
+        stage names
+system  the system prompt text (your prompts/<spec.name>.md)
 content the user message content: a list of image and text blocks
-schema  your pydantic model for that stage's answer
 """
 import base64
 import os
 
-from contract import StageCall
+from contract import StageCall, StageSpec
 
 # $ per million tokens (input, output) -- Anthropic list prices, Sept 2026.
 PRICES = {
@@ -62,22 +63,26 @@ def cost_usd(model, input_tokens, output_tokens):
 
 
 class FakeBackend:
-    """Scripted answers for tests: {stage: [answer, answer, ...]} where each
-    answer is a pydantic object, a dict (validated against the stage's schema),
-    or an Exception to raise. Records every request in .requests."""
+    """Scripted answers for tests: {spec: [answer, answer, ...]} where each key
+    is one of your StageSpecs (or its name) and each answer is a pydantic
+    object, a dict (validated against spec.schema), or an Exception to raise.
+    Records every request in .requests."""
 
     def __init__(self, script):
-        self.script = {stage: list(answers) for stage, answers in script.items()}
+        self.script = {(k.name if isinstance(k, StageSpec) else k): list(v) for k, v in script.items()}
         self.requests = []
 
-    def generate(self, stage, system, content, schema):
-        self.requests.append({"stage": stage, "system": system, "content": content, "schema": schema})
-        answer = self.script[stage].pop(0)
+    def generate(self, spec, system, content):
+        self.requests.append({"stage": spec.name, "spec": spec, "system": system, "content": content})
+        answers = self.script.get(spec.name)
+        if not answers:
+            raise AssertionError(f"FakeBackend has no scripted answer left for stage {spec.name!r}")
+        answer = answers.pop(0)
         if isinstance(answer, Exception):
             raise answer
         if isinstance(answer, dict):
-            answer = schema.model_validate(answer)
-        return answer, StageCall(stage=stage, model="fake", input_tokens=0, output_tokens=0,
+            answer = spec.schema.model_validate(answer)
+        return answer, StageCall(stage=spec.name, model="fake", input_tokens=0, output_tokens=0,
                                  latency_s=0.0, cost_usd=0.0)
 
 
@@ -97,10 +102,11 @@ class TracingBackend:
         self.write = write
         self.n = 0
 
-    def generate(self, stage, system, content, schema):
+    def generate(self, spec, system, content):
         self.n += 1
         w = self.write
-        w(f"\n  ┌─ call {self.n}: {stage.upper()}  (expects {schema.__name__})")
+        stage = spec.name
+        w(f"\n  ┌─ call {self.n}: {stage.upper()}  (expects {spec.schema.__name__}, effort {spec.effort})")
         if self.show_system:
             w("  │ SYSTEM PROMPT:")
             for line in system.strip().splitlines():
@@ -118,7 +124,7 @@ class TracingBackend:
                 for line in block["text"].splitlines():
                     w(f"  │   {line}")
         try:
-            result, call = self.inner.generate(stage, system, content, schema)
+            result, call = self.inner.generate(spec, system, content)
         except Exception as exc:
             w(f"  └─ FAILED: {exc}")
             raise

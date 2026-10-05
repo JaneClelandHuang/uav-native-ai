@@ -13,7 +13,7 @@ cd hw07/clues && python -m unittest discover tests
 
 | File | What it is |
 |---|---|
-| `contract.py` | The fixed interface: `Candidate` in, `ClueAssessment` out, `StageCall`, `ACTIONS`. |
+| `contract.py` | The fixed interface: `Candidate` in, `ClueAssessment` out, `StageSpec` (how you declare a stage), `StageCall`, `ACTIONS`. |
 | `llm_tools.py` | `image_block`, `load_api_key`, `PRICES`/`cost_usd`, `LLMError`, **`FakeBackend`** (scripted answers for unit tests), **`TracingBackend`** (prints every call). |
 | `evaluate.py` | Runs YOUR pipeline on a scenario's clues without the simulator and scores it against ground truth. Traces every stage call; `--repeat N` measures agreement; reports tokens and cost. |
 | `detector.py` | Stage 1 in flight: reads camera frames over MQTT, finds objects (`--oracle`, or YOLOE), geolocates them, runs YOUR pipeline, publishes on `mission/clues`. |
@@ -35,10 +35,13 @@ class ClueAnalyzer:
     def __init__(self, backend, mission, closer_look=None, on_event=None): ...
     def analyze(self, candidate: Candidate) -> ClueAssessment: ...
 
+# your hw07/clues/stages.py -- each stage declared once
+DESCRIBE = StageSpec("describe", Description, effort="low")    # name = prompts/describe.md
+
 # your hw07/clues/llm.py
 class ClaudeBackend:
     def __init__(self, model=None, client=None): ...
-    def generate(self, stage, system, content, schema) -> (parsed, StageCall): ...
+    def generate(self, spec, system, content) -> (parsed, StageCall): ...   # uses spec.schema, spec.effort
 ```
 
 `ClueAssessment` holds your stage outputs as dicts, with any fields you design, except:

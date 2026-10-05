@@ -6,6 +6,7 @@ in between (your stage schemas, prompts, model calls) is yours to design.
 
     Candidate       -- an object Stage 1 flagged, with the pixels to look at   (given -> you)
     ClueAssessment  -- your verdict on it, published on mission/clues          (you -> given)
+    StageSpec       -- one stage of your pipeline: name, answer schema, effort (you declare)
     StageCall       -- one model call's model, tokens, latency and cost        (you -> given)
 
 ClueAssessment holds your stage outputs as plain dicts (your_model.model_dump()),
@@ -21,6 +22,7 @@ sets it; the model never writes coordinates.
 """
 import time
 import uuid
+from dataclasses import dataclass
 from typing import List, Optional
 
 from pydantic import BaseModel, Field, model_validator
@@ -74,6 +76,32 @@ class Candidate(BaseModel):
 
     def without_images(self):
         return self.model_dump(exclude={"crop_png_b64", "context_png_b64"})
+
+
+EFFORT_LEVELS = ("low", "medium", "high", "xhigh", "max")   # Anthropic's effort values
+
+
+@dataclass(frozen=True)
+class StageSpec:
+    """One stage of your pipeline, declared ONCE (in your stages.py).
+
+    Everything else -- the backend, the tracer, the fake used in tests, the
+    prompt loader -- gets what it needs from the spec, so no other code has
+    to know or spell a stage's name.
+
+        name    the stage's name; also its prompt file, prompts/<name>.md
+        schema  your pydantic model the answer must fit (structured output)
+        effort  how hard the model thinks for this stage (EFFORT_LEVELS)
+    """
+    name: str
+    schema: type
+    effort: str = "medium"
+
+    def __post_init__(self):
+        if self.effort not in EFFORT_LEVELS:
+            raise ValueError(f"{self.name}: effort must be one of {EFFORT_LEVELS}, not {self.effort!r}")
+        if not (isinstance(self.schema, type) and issubclass(self.schema, BaseModel)):
+            raise TypeError(f"{self.name}: schema must be a pydantic BaseModel class")
 
 
 class StageCall(BaseModel):
