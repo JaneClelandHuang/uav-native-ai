@@ -1,0 +1,137 @@
+{
+  "mission": {
+    "mission_id": "lost-girl-pinafore",
+    "person": {
+      "name": "Lily",
+      "summary": "5-year-old girl, small for her age, wandered away from her family's tailgate near the stadium.",
+      "age": 5,
+      "clothing": [
+        "yellow short-sleeved t-shirt",
+        "blue denim pinafore (overall dress) with yellow buttons",
+        "lime-green knit cardigan with cream buttons, worn over the pinafore",
+        "white socks",
+        "grey sneakers with pink trim"
+      ],
+      "belongings": [
+        "brown teddy bear with a red ribbon bow, about 30 cm tall, which she carries everywhere"
+      ],
+      "other": [
+        "Brown hair in two pigtails with pink hair ties; freckles",
+        "Shy with strangers; likely to sit down and wait somewhere quiet rather than call out"
+      ],
+      "reference_image": null
+    },
+    "last_known_point": {
+      "lat": 41.698575,
+      "lon": -86.237055
+    },
+    "last_seen": "30 minutes ago at the family tailgate, west side of the stadium, holding her teddy bear",
+    "search_area": [
+      {
+        "lat": 41.6958801,
+        "lon": -86.2406644
+      },
+      {
+        "lat": 41.6958801,
+        "lon": -86.2334456
+      },
+      {
+        "lat": 41.7012699,
+        "lon": -86.2334456
+      },
+      {
+        "lat": 41.7012699,
+        "lon": -86.2406644
+      }
+    ],
+    "conditions": "Clear and warm, 24 C, daylight. Busy game-day area with tailgate gear and litter."
+  },
+  "search_agl_m": 25,
+  "scene_scale": 9.0,
+  "target": {
+    "image": "people/girl-pinafores.png",
+    "lat": 41.6969,
+    "lon": -86.2396,
+    "width_m": 8.0,
+    "note": "Where Lily actually is, for the person detector. Not a clue."
+  },
+  "clues": [
+    {
+      "id": "lp01",
+      "image": "images/teddy-bear-red-bow.png",
+      "lat": 41.698,
+      "lon": -86.2382,
+      "width_m": 8.0,
+      "image_prompt": "Drawn by make_icons.py: brown teddy bear with a red ribbon bow, face up, top-down.",
+      "truth": {
+        "relevant": true,
+        "acceptable_actions": [
+          "converge_search"
+        ],
+        "rationale": "Her teddy bear: brown, red bow, child's toy she never puts down."
+      }
+    },
+    {
+      "id": "lp02",
+      "image": "images/lime-cardigan.png",
+      "lat": 41.69745,
+      "lon": -86.23905,
+      "width_m": 8.0,
+      "image_prompt": "Drawn by make_icons.py: child's lime-green knit cardigan with cream buttons, dropped flat, top-down.",
+      "truth": {
+        "relevant": true,
+        "acceptable_actions": [
+          "converge_search"
+        ],
+        "rationale": "Her lime-green cardigan with cream buttons; she took it off in the heat."
+      }
+    },
+    {
+      "id": "lp03",
+      "image": "../../decoys/mans-brown-oxford-shoe.png",
+      "lat": 41.69915,
+      "lon": -86.2363,
+      "width_m": 8.0,
+      "image_prompt": "Decoy (decoys/make_decoys.py): man's brown leather oxford shoe, ~30 cm.",
+      "truth": {
+        "relevant": false,
+        "acceptable_actions": [
+          "ignore",
+          "log_only"
+        ],
+        "rationale": "Adult man's shoe; Lily wears grey child's sneakers."
+      }
+    },
+    {
+      "id": "lp04",
+      "image": "../../decoys/doll-pink-dress.png",
+      "lat": 41.6977,
+      "lon": -86.2367,
+      "width_m": 8.0,
+      "image_prompt": "Decoy (decoys/make_decoys.py): plastic doll, blonde hair, pink dress, ~40 cm.",
+      "truth": {
+        "relevant": false,
+        "acceptable_actions": [
+          "ignore",
+          "log_only"
+        ],
+        "rationale": "A child's toy, but a doll, not her brown teddy bear."
+      }
+    },
+    {
+      "id": "lp05",
+      "image": "../../decoys/soccer-ball.png",
+      "lat": 41.6998,
+      "lon": -86.2389,
+      "width_m": 8.0,
+      "image_prompt": "Decoy (decoys/make_decoys.py): black-and-white soccer ball, ~22 cm.",
+      "truth": {
+        "relevant": false,
+        "acceptable_actions": [
+          "ignore"
+        ],
+        "rationale": "Common game-day object; nothing ties it to Lily."
+      }
+    }
+  ]
+}

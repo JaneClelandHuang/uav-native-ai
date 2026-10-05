@@ -28,8 +28,8 @@ homework page.
 | **5a** | Sept. 22 | Testing Your ATC | AI-Assisted Test Generation | [Slides](https://docs.google.com/presentation/d/13gNEqMTwNz1n5i7zO1y9xkv72rsrnQe1/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW5](lessons/lesson5.md) |
 | **5b** | Sept. 24 | Human-Drone Interactions | Interface Design | [Slides](https://docs.google.com/presentation/d/1t6kiJ7cGIqhZb8qfgcqWIiT7mW2a_uDn/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | — |
 | **6** | Sept. 29–Oct. 1 | Computer Vision & Perception | Engineering an AI Component | [Slides](https://docs.google.com/presentation/d/1vRcoCp4qsCBsNAJoFvuHG4FFpu5H9Y4H/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [HW6](lessons/lesson6.md#homework) |
-| **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7](lessons/lesson7.md#homework) |
-| **8** | Oct. 13–15 | Team formation and project exploration | Native-AI Use Cases and Project Vision | — | Teams develop project vision and use cases |
+| **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7](lessons/lesson7.md#homework) (two weeks, due Wed. Oct. 14) |
+| **8** | Oct. 13–15 | Team formation and project exploration; **HW7 presentations (Thu. Oct. 15)** | Native-AI Use Cases and Project Vision | — | No HW8. Teams develop project vision and use cases |
 | — | Oct. 17–25 | **FALL BREAK** | | | |
 | **9** | Oct. 27–29 | Project Vision Presentations; Architecture for Intelligent UAV Systems | Architecture exploration, critique, and evidence-driven design | — | **D1: Project Vision + Use Cases**; begin architecture and architectural spike |
 | **10** | Nov. 3–5 | **Intensive Team Development Sprint** | AI-accelerated implementation and integration | — | **D2: Architecture + Architectural Spike**; build initial vertical slice |

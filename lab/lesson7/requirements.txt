@@ -1,0 +1,7 @@
+# HW7 clue pipeline. Install into the course venv:  pip install -r lab/lesson7/requirements.txt
+# detector.py's YOLOE mode also needs lab/cv/requirements.txt (ultralytics; it installs CLIP on first use).
+anthropic>=1.11
+pydantic>=2
+python-dotenv
+pillow
+paho-mqtt==2.1.0
