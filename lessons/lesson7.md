@@ -1,7 +1,5 @@
 # Lesson 7 — Onboard Intelligence: Perceive → Reason → Act
 
-> **DRAFT ONLY — not yet reviewed. Details below may change before release.**
-
 ## Lesson Objectives
 
 Add a lightweight reasoning capability that takes what the UAV perceives,
