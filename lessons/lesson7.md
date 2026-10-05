@@ -34,14 +34,14 @@ software constrains. Flight control executes.*
 
 ## Readings
 
-Read before Tuesday's class:
+Optional Reading:
 
 - Cleland-Huang et al., *Cognitive Guardrails for Open-World Decision Making
   in Autonomous Drone Swarms* (arXiv:2505.23576, 2025). Read Sections 1 and 3
   and Table 1 (the clue-reasoning pipeline). Skim Section 4 (the guardrails;
   we come back to them in the project): https://arxiv.org/abs/2505.23576
 
-Skim before starting the homework (Anthropic documentation):
+Some relevant Anthropic documentation:
 
 - Vision (sending images): https://platform.claude.com/docs/en/build-with-claude/vision
 - Structured outputs: https://platform.claude.com/docs/en/build-with-claude/structured-outputs
@@ -59,7 +59,7 @@ code behind them; one real API call, line by line; what it costs and how it
 fails. Then the first results on Lily's set, including the clue the pipeline
 got wrong and how the trace showed why.
 
-**Thursday:** Test data. You start your own test set (a missing person, their
+**Test Data:** You start your own test set (a missing person, their
 clues and decoys) and swap it with a neighbor to look for clues that are too
 easy or labels you'd argue about. Then a debugging lab: given a trace with a
 wrong final action, find the first stage whose answer was wrong.
@@ -259,10 +259,9 @@ Put the commands, output and what you observed in `report.md`.
 
 **Five minutes**, slides or a live demo:
 
-1. Your missing person and test set: what makes your decoys hard.
-2. Your results table (Lily and your set): accuracy, agreement, cost.
-3. One traced failure: where it started, what you changed, before/after.
-4. One design decision you'd defend.
+1. Your integrated system
+2. Choose whatever you want to showcase from the work you've done in this half of the semester.
+3. Consider recording video snippets instead of running anything live 
 
 Put the slides (or a link) in `hw07/`.
 
@@ -282,9 +281,8 @@ Out of **150 points**.
 | **Evaluation & debugging** | 25 | R6: accuracy, agreement and cost on Lily's set and yours; one failure traced to its first wrong stage and fixed, with before/after. |
 | **Planner hookup** | 25 | R7: proposals from `mission/clues` go through your validator, verdicts are reported, `hover`/`circle` fly; both integration runs in `report.md`. |
 | **Unit tests** | 10 | R8 with `FakeBackend`. |
-| **Presentation** | 15 | Five minutes on Oct. 15, covering the four points above. |
-| **Reflection** | 10 | `reflection.md`: where the model surprised you, what you would never let it decide, and a "Lessons Learned" section about using Claude to build this. |
-| **Individual understanding** — in class | 5 | Questions pushed to your folder, as in HW5. |
+| **Presentation** | 15 | Five minutes on Oct. 15 |
+| **Reflection** | 15 | `reflection.md`: where the model surprised you, what you would never let it decide, and a "Lessons Learned" section about using Claude to build this. |
 | **Total** | **150** | |
 
 </div>
