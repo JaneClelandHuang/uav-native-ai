@@ -192,7 +192,7 @@ a few paragraphs and/or a diagram, not an essay.
 
 ## How This Is Graded
 
-Out of 100 points.
+Out of 80 points.
 
 | Component | Points | What earns the points |
 |---|---:|---|
@@ -202,17 +202,6 @@ Out of 100 points.
 | Your second detector | 20 | Same standard as GPS. |
 | Architecture sketch | 10 | Clear enough that someone else could extend it to a third category without guessing at your design. |
 | Retrospective | 10 | Honest, specific comparison to HW03's static-log experience — not a restatement of the lesson objectives. |
-| Individual understanding — in class | 20 | See below. |
-
-### Individual Understanding
-
-Same reasoning as HW03: AI helped build this, so being able to explain it
-is graded directly. In Thursday's class, be ready to answer questions
-like: why your window is the size it is; what your detector reports if
-two of your categories go wrong at once; what you'd change if
-`mischief_maker.py`'s severity levels were reversed without telling you;
-and why a runtime monitor has to make calls a retrospective log analysis
-never has to — on your own, without AI.
 
 ---
 
