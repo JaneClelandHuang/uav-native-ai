@@ -26,7 +26,7 @@ import time
 
 import _kit  # noqa: F401
 from contract import StageCall  # noqa: F401
-from llm_tools import LLMError, cost_usd, load_api_key  # noqa: F401
+from llm_tools import KEY_HELP, LLMError, cost_usd, load_api_key  # noqa: F401
 
 DEFAULT_MODEL = "claude-sonnet-5-5"
 MAX_TOKENS = 8000
@@ -39,7 +39,7 @@ class ClaudeBackend:
         if client is None:
             import anthropic
             if not load_api_key():
-                raise LLMError("ANTHROPIC_API_KEY is not set (environment or .env)")
+                raise LLMError(KEY_HELP)
             client = anthropic.Anthropic()
         self.client = client
 

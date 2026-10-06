@@ -47,14 +47,33 @@ def image_block_from_file(path):
         return image_block(base64.standard_b64encode(f.read()).decode("ascii"), media_type)
 
 
+REPO_ROOT_ENV = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".env"))
+KEY_HELP = (f"ANTHROPIC_API_KEY is not set. Put this line in {REPO_ROOT_ENV} (it is gitignored):\n"
+            f"    ANTHROPIC_API_KEY=sk-ant-...")
+
+
 def load_api_key():
+    """ANTHROPIC_API_KEY from the environment, else from a .env file.
+
+    Checked in order, stopping at the first that has the key: the repo-root
+    .env (where HW7 says to put it), the nearest .env above the current
+    folder, then ~/.env. The repo root is checked explicitly because lab/.env
+    (the drone configuration from SETUP.md) is nearer to lab/lesson7 and
+    would otherwise be the only one found.
+    """
+    if os.environ.get("ANTHROPIC_API_KEY"):
+        return os.environ["ANTHROPIC_API_KEY"]
     try:
-        from dotenv import find_dotenv, load_dotenv
-        load_dotenv(find_dotenv(usecwd=True))
-        load_dotenv(os.path.expanduser("~/.env"))
+        from dotenv import dotenv_values, find_dotenv
     except ImportError:
-        pass
-    return os.environ.get("ANTHROPIC_API_KEY")
+        return None
+    for path in (REPO_ROOT_ENV, find_dotenv(usecwd=True), os.path.expanduser("~/.env")):
+        if path and os.path.isfile(path):
+            key = dotenv_values(path).get("ANTHROPIC_API_KEY")
+            if key:
+                os.environ["ANTHROPIC_API_KEY"] = key
+                return key
+    return None
 
 
 def cost_usd(model, input_tokens, output_tokens):
