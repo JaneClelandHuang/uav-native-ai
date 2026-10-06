@@ -367,7 +367,7 @@ Out of **200 points** (the midterm).
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **Design** | 20 | `design.md`: stage contracts and schemas, a justified decision policy, your test set, and code that matches it (or says where and why it doesn't). |
+| **Design** | 10 | `design.md`: stage contracts and schemas, a justified decision policy, your test set, and code that matches it (or says where and why it doesn't). |
 | **Pipeline & LLM calls** | 35 | R1–R4: three working stages with your own schemas, prompts and per-stage effort; Describe blind to the mission; the given backend used correctly; the contract met; one closer look at most. |
 | **Test set** | 15 | R5: a well-formed set (`check_set.py` OK) with relevant clues and decoys that genuinely test the pipeline. |
 | **Evaluation & debugging** | 25 | R6: accuracy and cost on Lily's set (3 repeats, with agreement) and yours (1 run); one failure traced to its first wrong stage and fixed, with before/after. |
@@ -375,7 +375,7 @@ Out of **200 points** (the midterm).
 | **Unit tests** | 10 | The three R8 tests, with `FakeBackend`. |
 | **Pipeline questions** | 30 | R9: 15 questions in `hw07/questions.md`, 2 points each: 2–5 sentences, correct, in your own words, pointing at your own code. |
 | **Question from the hat** | 10 | Answered live during your presentation. |
-| **Presentation** | 15 | 4 minutes plus 2 minutes of Q&A on Oct. 15; slides (or a link) in `hw07/slides/`. |
+| **Presentation** | 25 | 4 minutes plus 2 minutes of Q&A on Oct. 15; slides (or a link) in `hw07/slides/`. |
 | **Reflection** | 15 | `reflection.md` (see [Reflection](#reflection)): where the model surprised you, what you'd never let it decide, "Lessons Learned" about using Claude, and anything in the code's organization you would improve. |
 | **Total** | **200** | |
 
