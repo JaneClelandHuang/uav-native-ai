@@ -351,18 +351,11 @@ answer.
 
 ### Reflection
 
-In `reflection.md`, write about what you learned building this. It can
-cover any of these, and it may **focus on the code critique**:
-
-- **Code critique.** What do you think of the design of this pipeline, both
-  the given kit (`contract.py`, `llm_tools.py`, the starter) and your own
-  code? Where is its organization clear, and where is it awkward? What would
-  you change, and why? Point at specific files, classes or lines: a
-  responsibility in the wrong place, two things that must be kept in step
-  by hand, a dependency that runs the wrong way, an interface you'd
-  redesign.
-- Where the model surprised you, and what you would never let it decide.
-- A "Lessons Learned" section about using Claude to build this.
+In `reflection.md`, reflect on building this: where the model surprised
+you, what you would never let it decide, and a "Lessons Learned" section
+about using Claude to build it. If you noticed something in the code's
+organization that you would improve (in the given kit or your own code),
+include it in the discussion.
 
 ---
 
@@ -375,7 +368,7 @@ Out of **200 points** (the midterm).
 | Component | Points | What earns the points |
 |---|---:|---|
 | **Design** | 20 | `design.md`: stage contracts and schemas, the sequence diagram, a justified decision policy, and code that matches it (or says where and why it doesn't). |
-| **Pipeline & LLM calls** | 25 | R1–R4: three working stages, Describe blind to the mission, structured output, a backend that checks stop reasons, retries once and reports cost; the contract met; one closer look at most. |
+| **Pipeline & LLM calls** | 35 | R1–R4: three working stages, Describe blind to the mission, structured output, a backend that checks stop reasons, retries once and reports cost; the contract met; one closer look at most. |
 | **Test set** | 15 | R5: a well-formed set (`check_set.py` OK) with relevant clues and decoys that genuinely test the pipeline. |
 | **Evaluation & debugging** | 25 | R6: accuracy, agreement and cost on Lily's set and yours; one failure traced to its first wrong stage and fixed, with before/after. |
 | **Part 2: end to end in the GUI** | 25 | R7: the system runs in new-gui; proposals from `mission/clues` go through your validator, verdicts are reported, `hover`/`circle` fly. Evidence: a recording or screenshots of one end-to-end run, plus the `inject_clue.py` run. The minimal-responder fallback earns full credit. |
@@ -383,7 +376,7 @@ Out of **200 points** (the midterm).
 | **Pipeline questions** | 30 | R9: 15 questions in `hw07/questions.md`, 2 points each: 2–5 sentences, correct, in your own words, pointing at your own code. |
 | **Question from the hat** | 10 | Answered live during your presentation. |
 | **Presentation** | 15 | 4 minutes plus 2 minutes of Q&A on Oct. 15; slides (or a link) in `hw07/slides/`. |
-| **Reflection** | 25 | `reflection.md` (see [Reflection](#reflection)): a specific, evidence-based code critique of the pipeline's design, and/or where the model surprised you and what you'd never let it decide; plus "Lessons Learned" about using Claude. |
+| **Reflection** | 15 | `reflection.md` (see [Reflection](#reflection)): where the model surprised you, what you'd never let it decide, "Lessons Learned" about using Claude, and anything in the code's organization you would improve. |
 | **Total** | **200** | |
 
 </div>
@@ -402,7 +395,7 @@ hw07/
 ├── report.md              evaluation tables, the traced failure, integration evidence,
 │                          where your planner hookup lives, technical debt
 ├── questions.md           your answers to the 15 questions (R9)
-├── reflection.md          code critique and reflection: text, and/or a recording (URL)
+├── reflection.md          text, and/or a recording (include the URL)
 └── slides/                your presentation (PDF/PPTX), or LINK.md with a link
 ```
 
