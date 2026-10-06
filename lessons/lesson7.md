@@ -81,11 +81,11 @@ points** and is due **Wednesday, Oct. 14**. It has two parts:
   in new-gui, your pipeline's proposals going through your planner's
   validator, and the UAV flying the response.
 
-You also answer **20 questions about how the pipeline fits together** (R9),
-and give a **4-minute presentation plus 2 minutes of Q&A** in class on
-**Thursday, Oct. 15**, where you answer one of the 20 questions drawn from a
-hat. There is no HW8. If you can't finish, document unfinished work as
-technical debt in `report.md`.
+You also answer **15 short questions about how the pipeline fits together**
+(R9), and give a **4-minute presentation plus 2 minutes of Q&A** in class on
+**Thursday, Oct. 15**, where you answer one of the 15 questions drawn from a
+hat. There is no HW8. Budget about **15–18 hours** in total. If you can't
+finish, document unfinished work as technical debt in `report.md`.
 
 Pull first (`git pull`) to get `lab/lesson7/` and the updated GUI (clue
 icons in the Scene Builder).
@@ -208,16 +208,21 @@ proposal goes through **your validator**, and the verdict is reported on
 
 Use `inject_clue.py` to develop this before your pipeline works. If your HW6
 planner doesn't fly, write a minimal responder with a validator and a
-`circle`/`hover` executor instead, and say so in `report.md`.
+`circle`/`hover` executor instead, and say so in `report.md`; **that earns
+full credit**.
+
+**Evidence for Part 2:** a short screen recording (1–2 minutes; put the link
+in `report.md`) or a few screenshots of **one** end-to-end run, plus the
+`inject_clue.py` run described under Testing.
 
 **R8 Unit tests.** With `FakeBackend`, no API key: what each stage sends
 (Describe never contains the person's details), the closer look happening at
 most once, the converge centre coming from the candidate, and how the
 pipeline handles a failed stage.
 
-**R9 Understanding the pipeline.** Answer the 20 questions below in
-`hw07/questions.md` (the file is already in your repo). See
-[Understanding the pipeline](#understanding-the-pipeline-20-questions).
+**R9 Understanding the pipeline.** Answer the 15 questions below in
+`hw07/questions.md` (the file is already in your repo), **2–5 sentences
+each**. See [Understanding the pipeline](#understanding-the-pipeline-15-questions).
 
 #### Out of scope
 
@@ -265,18 +270,20 @@ and say what changed and why.
   - `inject_clue.py` sends a `converge_search` → your validator approves →
     the UAV circles the centre → `COMPLETED`.
   - `detector.py --oracle` over **your** set in the GUI → real proposals on
-    `mission/clues` → verdicts on `mission/action_result`.
+    `mission/clues` → verdicts on `mission/action_result`. This is the run
+    to record for the Part 2 evidence.
 
 Put the commands, output and what you observed in `report.md`.
 
 ---
 
-### Understanding the pipeline (20 questions)
+### Understanding the pipeline (15 questions)
 
 You built this with AI help, so being able to explain how it fits together
-is graded directly. Answer every question in `hw07/questions.md`, **in your
-own words, from your own code**, naming the file (and line) you are
-describing. Each answer is worth 2 points.
+is graded directly. Answer every question in `hw07/questions.md` in **2–5
+sentences, in your own words, from your own code**, naming the file (and
+line) you are describing. Understanding and explaining matter more than
+length. Each answer is worth 2 points.
 
 In your presentation, **one question is drawn from a hat** and you answer it
 live, without notes (10 points).
@@ -293,43 +300,33 @@ live, without notes (10 points).
 
 **Q5. The contract.** What does `contract.py` fix that you may not change, and why does it exist? Which of its classes does your code create, and which does it only receive?
 
-**Q6. Dependencies.** Which of your files import which? Why does your `llm.py` not import `Description`, `Relevance` or `ClueDecision`?
-
 **Calling Claude**
 
-**Q7. One call, end to end.** Trace one Describe call from `evaluate.py` to `client.beta.messages.parse(...)`, listing each function and its file. Where are the prompt and the effort chosen?
+**Q6. One call, end to end.** Trace one Describe call from `evaluate.py` to `client.beta.messages.parse(...)`, listing each function and its file. Where are the prompt and the effort chosen?
 
-**Q8. System prompt and user message.** In your requests, what goes in the system prompt and what goes in the user message? Why is that split useful?
+**Q7. System prompt and user message.** In your requests, what goes in the system prompt and what goes in the user message? Why is that split useful?
 
-**Q9. Images.** How is the crop sent to Claude: what is in an image content block? What is `ground_m_per_px` for, and why is the crop upscaled before it is sent?
+**Q8. Effort, cost and the key.** What does effort control, which effort did you give each stage, and why? How is the cost of a call calculated? Where does your code get the API key, and how do you make sure it is never committed?
 
-**Q10. Effort, cost and the key.** What does effort control, which effort did you give each stage, and why? How is the cost of a call calculated? Where does your code get the API key, and how do you make sure it is never committed?
-
-**Q11. When a call fails.** Walk through what your code does if Claude refuses, cuts off, or returns an answer that doesn't fit the schema. What does the planner receive in each case?
+**Q9. When a call fails.** Walk through what your code does if Claude refuses, cuts off, or returns an answer that doesn't fit the schema. What does the planner receive in each case?
 
 **Control and safety**
 
-**Q12. The closer look.** What two things can trigger a closer look? What stops it from happening twice? What happens in flight, where `closer_look` is `None`?
+**Q10. The closer look.** What two things can trigger a closer look? What stops it from happening twice? What happens in flight, where `closer_look` is `None`?
 
-**Q13. The model's authority.** Which decisions does the model make, and which does your code make? Why does the converge-search centre come from code, and what can your validator still reject?
+**Q11. The model's authority.** Which decisions does the model make, and which does your code make? Why does the converge-search centre come from code, and what can your validator still reject?
 
-**Q14. Prompts versus code.** You want Relevance to also consider the clue's distance from the last known point. Is that a prompt change, a code change, or both? Which files?
+**Q12. Prompts versus code.** You want Relevance to also consider the clue's distance from the last known point. Is that a prompt change, a code change, or both? Which files?
 
 **Testing and evaluation**
 
-**Q15. Testing without Claude.** How does `FakeBackend` let you test a stage without an API key? Name one thing your unit tests can prove and one thing only `evaluate.py` can show.
+**Q13. Testing without Claude.** How does `FakeBackend` let you test a stage without an API key? Name one thing your unit tests can prove and one thing only `evaluate.py` can show.
 
-**Q16. Measuring.** How does `evaluate.py` decide whether a clue was handled correctly? Why run each clue three times, and what would 60% agreement tell you?
-
-**Q17. Scale.** Why are the clue icons drawn about 9 times life size in the simulator, and what does `scene_scale` correct? What went wrong for the cardigan without it?
-
-**Q18. Using the trace.** How did you use the trace from `evaluate.py` to find the first stage whose answer was wrong in your traced failure?
+**Q14. Measuring.** How does `evaluate.py` decide whether a clue was handled correctly? Why run each clue three times, and what would 60% agreement tell you?
 
 **Running end to end (Part 2)**
 
-**Q19. The running system.** List every process that must be running for your end-to-end demo in new-gui and what each one does. Which MQTT topics connect them?
-
-**Q20. Threads in the detector.** Why does `detector.py` run the LLM calls on a separate thread with a queue instead of inside the frame handler?
+**Q15. The running system.** List every process that must be running for your end-to-end demo in new-gui and what each one does. Which MQTT topics connect them?
 
 ---
 
@@ -344,7 +341,7 @@ for this homework:
    your results, a failure you traced and fixed, a design decision.
 3. Consider recording video snippets instead of running anything live.
 
-During the Q&A, one of the 20 questions is drawn from a hat for you to
+During the Q&A, one of the 15 questions is drawn from a hat for you to
 answer.
 
 **Slides:** push them to `hw07/slides/` (PDF or PPTX), or put a link in
@@ -381,12 +378,12 @@ Out of **200 points** (the midterm).
 | **Pipeline & LLM calls** | 25 | R1–R4: three working stages, Describe blind to the mission, structured output, a backend that checks stop reasons, retries once and reports cost; the contract met; one closer look at most. |
 | **Test set** | 15 | R5: a well-formed set (`check_set.py` OK) with relevant clues and decoys that genuinely test the pipeline. |
 | **Evaluation & debugging** | 25 | R6: accuracy, agreement and cost on Lily's set and yours; one failure traced to its first wrong stage and fixed, with before/after. |
-| **Part 2: end to end in the GUI** | 25 | R7: the system runs in new-gui; proposals from `mission/clues` go through your validator, verdicts are reported, `hover`/`circle` fly; both integration runs in `report.md`. |
+| **Part 2: end to end in the GUI** | 25 | R7: the system runs in new-gui; proposals from `mission/clues` go through your validator, verdicts are reported, `hover`/`circle` fly. Evidence: a recording or screenshots of one end-to-end run, plus the `inject_clue.py` run. The minimal-responder fallback earns full credit. |
 | **Unit tests** | 10 | R8 with `FakeBackend`. |
-| **Pipeline questions** | 40 | R9: 20 questions in `hw07/questions.md`, 2 points each: correct, in your own words, pointing at your own code. |
+| **Pipeline questions** | 30 | R9: 15 questions in `hw07/questions.md`, 2 points each: 2–5 sentences, correct, in your own words, pointing at your own code. |
 | **Question from the hat** | 10 | Answered live during your presentation. |
 | **Presentation** | 15 | 4 minutes plus 2 minutes of Q&A on Oct. 15; slides (or a link) in `hw07/slides/`. |
-| **Reflection** | 15 | `reflection.md` (see [Reflection](#reflection)): a specific, evidence-based code critique of the pipeline's design, and/or where the model surprised you and what you'd never let it decide; plus "Lessons Learned" about using Claude. |
+| **Reflection** | 25 | `reflection.md` (see [Reflection](#reflection)): a specific, evidence-based code critique of the pipeline's design, and/or where the model surprised you and what you'd never let it decide; plus "Lessons Learned" about using Claude. |
 | **Total** | **200** | |
 
 </div>
@@ -404,7 +401,7 @@ hw07/
 ├── design.md              stage contracts, sequence diagram, decision policy, test set
 ├── report.md              evaluation tables, the traced failure, integration evidence,
 │                          where your planner hookup lives, technical debt
-├── questions.md           your answers to the 20 questions (R9)
+├── questions.md           your answers to the 15 questions (R9)
 ├── reflection.md          code critique and reflection: text, and/or a recording (URL)
 └── slides/                your presentation (PDF/PPTX), or LINK.md with a link
 ```
