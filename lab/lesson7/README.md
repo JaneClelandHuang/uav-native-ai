@@ -25,7 +25,7 @@ cd hw07/clues && python -m unittest discover tests
 | `scenarios/lost-girl-pinafore/` | Lily's set: description, 2 relevant clues, 3 decoys, ground truth. |
 | `decoys/` | Shared decoys (man's shoe, doll, soccer ball). |
 | `clue_sets.csv` | Which clues belong to which person. |
-| `starter/` | The skeleton you copy to `hw07/clues/`. |
+| `starter/` | The skeleton you copy to `hw07/clues/`. Its `llm.py` (the Anthropic backend) is complete; the rest has `TODO`s. |
 
 ## The contract
 
@@ -38,7 +38,7 @@ class ClueAnalyzer:
 # your hw07/clues/stages.py -- each stage declared once
 DESCRIBE = StageSpec("describe", Description, effort="low")    # name = prompts/describe.md
 
-# your hw07/clues/llm.py
+# hw07/clues/llm.py -- given complete in the starter (the backend from the slides)
 class ClaudeBackend:
     def __init__(self, model=None, client=None): ...
     def generate(self, spec, system, content) -> (parsed, StageCall): ...   # uses spec.schema, spec.effort
@@ -57,7 +57,7 @@ On MQTT, `mission/clues` carries `ClueAssessment.model_dump_json()` (QoS 1).
 cd lab/lesson7
 python evaluate.py scenarios/lost-girl-pinafore                 # trace every call, then a score table
 python evaluate.py scenarios/lost-girl-pinafore --repeat 3 --quiet
-python evaluate.py ../../hw07/scenarios/<your-set> --repeat 3
+python evaluate.py ../../hw07/scenarios/<your-set> --repeat 1
 python check_set.py ../../hw07/scenarios/<your-set> --csv ../../hw07/clue_sets.csv
 
 # in the simulator (docker compose up -d in lab/, then the GUI with camera simulation on)

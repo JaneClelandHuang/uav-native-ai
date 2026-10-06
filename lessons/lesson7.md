@@ -84,7 +84,7 @@ points** and is due **Wednesday, Oct. 14**. It has two parts:
 You also answer **15 short questions about how the pipeline fits together**
 (R9), and give a **4-minute presentation plus 2 minutes of Q&A** in class on
 **Thursday, Oct. 15**, where you answer one of the 15 questions drawn from a
-hat. There is no HW8. Budget about **15–18 hours** in total. If you can't
+hat. There is no HW8. Budget about **12–15 hours** in total. If you can't
 finish, document unfinished work as technical debt in `report.md`.
 
 Pull first (`git pull`) to get `lab/lesson7/` and the updated GUI (clue
@@ -119,7 +119,7 @@ Everything is in `lab/lesson7/`; its [README](../lab/lesson7/README.md) lists ev
 | File | What it is |
 |---|---|
 | `contract.py` | The fixed interface: `Candidate` in, `ClueAssessment` out, the action menu. |
-| `starter/` | The skeleton of your pipeline. **Copy it to `hw07/clues/`.** Signatures and docstrings, with `TODO`s. |
+| `starter/` | The skeleton of your pipeline. **Copy it to `hw07/clues/`.** `llm.py` is complete; the stages, schemas, prompts and pipeline are signatures and docstrings with `TODO`s. |
 | `llm_tools.py` | Image blocks, API key loading, prices, `LLMError`, **`FakeBackend`** for unit tests, **`TracingBackend`**. |
 | `evaluate.py` | Runs your pipeline on a scenario's clues without the simulator, renders each clue the way the drone camera sees it, traces every model call, and scores the answers against ground truth. `--repeat N` measures agreement. |
 | `detector.py` | Stage 1 in flight. Finds objects in camera frames (`--oracle`: from the scenario's known clue positions), geolocates them, runs your pipeline, publishes on `mission/clues`. |
@@ -151,15 +151,15 @@ prompt in `prompts/` and its own **schema you design** in `messages.py`.
 Describe must never see who is missing. You decide what else each stage
 sees, and justify it in `design.md`.
 
-**R2 Your Anthropic backend.** Implement `ClaudeBackend.generate()` in
-`llm.py`, the only place your code calls the API. It sends the image and
-text blocks with the stage's system prompt, uses **structured output** with
-your schema, chooses an effort level per stage, checks why the response
-stopped before trusting it, retries once on a missing, cut-off, declined or
-invalid answer, and otherwise raises `LLMError`. It returns a `StageCall`
-with tokens, latency and cost. Tuesday's slides walk through an example
-`ClaudeBackend` line by line; recreate it, and make sure you can explain
-every line.
+**R2 The Anthropic backend (given).** `llm.py` in the starter is complete:
+it is the `ClaudeBackend` walked through line by line in Tuesday's slides,
+and the only place your code calls the API. It sends the image and text
+blocks with the stage's system prompt, uses **structured output** with your
+schema and the effort from your `StageSpec`, checks why the response stopped
+before trusting it, retries once on a missing, cut-off, declined or invalid
+answer, and otherwise raises `LLMError`. It returns a `StageCall` with
+tokens, latency and cost. You don't have to change it, but you must be able
+to explain every line (questions Q6–Q9).
 
 **R3 The contract.** `ClueAnalyzer.analyze()` returns a `ClueAssessment`
 (`contract.py`) with the action drawn from the fixed menu: `ignore`,
@@ -185,8 +185,8 @@ closer look in your process; an `inspect_closer` proposal goes to the planner.
   `check_set.py` must report OK.
 
 **R6 Evaluation and one traced failure.** Run `evaluate.py --repeat 3` on
-Lily's set and on yours. Report relevance accuracy, action accuracy,
-agreement across repeats and cost. Then take **one wrong answer** (yours, or
+Lily's set and `evaluate.py --repeat 1` on yours. Report relevance accuracy,
+action accuracy, agreement across repeats (Lily's set) and cost. Then take **one wrong answer** (yours, or
 one you provoke), find the **first stage** whose answer was wrong from the
 trace, fix it (prompt, schema or what the stage is shown), and show before
 and after. Your code will also be run on Lily's set and on classmates' sets.
@@ -215,10 +215,13 @@ full credit**.
 in `report.md`) or a few screenshots of **one** end-to-end run, plus the
 `inject_clue.py` run described under Testing.
 
-**R8 Unit tests.** With `FakeBackend`, no API key: what each stage sends
-(Describe never contains the person's details), the closer look happening at
-most once, the converge centre coming from the candidate, and how the
-pipeline handles a failed stage.
+**R8 Unit tests.** Exactly three tests, with `FakeBackend` and no API key:
+1. Describe's request contains the crop image and **none** of the missing
+   person's details (the starter's example test is a head start).
+2. The closer look happens **at most once**, even if Describe keeps asking
+   for one.
+3. A `converge_search` assessment's `search_center` is the **candidate's
+   position**, not anything the model wrote.
 
 **R9 Understanding the pipeline.** Answer the 15 questions below in
 `hw07/questions.md` (the file is already in your repo), **2–5 sentences
@@ -249,12 +252,9 @@ Before writing code, put in `design.md`:
 
 1. **Each stage's contract**: inputs, what it is deliberately *not* shown,
    your schema with a sentence on each field, and the field order.
-2. **One sequence diagram** (Mermaid is fine): candidate → describe → closer
-   look → relevance → decide → `mission/clues` → planner → validator →
-   flight.
-3. **Your decision policy**: which relevance leads to which action, and why
+2. **Your decision policy**: which relevance leads to which action, and why
    converge_search should be rare.
-4. **Your test set**: who, the description, and why each decoy is there.
+3. **Your test set**: who, the description, and why each decoy is there.
 
 Keep it honest as you build. If the code ends up different, update the design
 and say what changed and why.
@@ -367,12 +367,12 @@ Out of **200 points** (the midterm).
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **Design** | 20 | `design.md`: stage contracts and schemas, the sequence diagram, a justified decision policy, and code that matches it (or says where and why it doesn't). |
-| **Pipeline & LLM calls** | 35 | R1–R4: three working stages, Describe blind to the mission, structured output, a backend that checks stop reasons, retries once and reports cost; the contract met; one closer look at most. |
+| **Design** | 20 | `design.md`: stage contracts and schemas, a justified decision policy, your test set, and code that matches it (or says where and why it doesn't). |
+| **Pipeline & LLM calls** | 35 | R1–R4: three working stages with your own schemas, prompts and per-stage effort; Describe blind to the mission; the given backend used correctly; the contract met; one closer look at most. |
 | **Test set** | 15 | R5: a well-formed set (`check_set.py` OK) with relevant clues and decoys that genuinely test the pipeline. |
-| **Evaluation & debugging** | 25 | R6: accuracy, agreement and cost on Lily's set and yours; one failure traced to its first wrong stage and fixed, with before/after. |
+| **Evaluation & debugging** | 25 | R6: accuracy and cost on Lily's set (3 repeats, with agreement) and yours (1 run); one failure traced to its first wrong stage and fixed, with before/after. |
 | **Part 2: end to end in the GUI** | 25 | R7: the system runs in new-gui; proposals from `mission/clues` go through your validator, verdicts are reported, `hover`/`circle` fly. Evidence: a recording or screenshots of one end-to-end run, plus the `inject_clue.py` run. The minimal-responder fallback earns full credit. |
-| **Unit tests** | 10 | R8 with `FakeBackend`. |
+| **Unit tests** | 10 | The three R8 tests, with `FakeBackend`. |
 | **Pipeline questions** | 30 | R9: 15 questions in `hw07/questions.md`, 2 points each: 2–5 sentences, correct, in your own words, pointing at your own code. |
 | **Question from the hat** | 10 | Answered live during your presentation. |
 | **Presentation** | 15 | 4 minutes plus 2 minutes of Q&A on Oct. 15; slides (or a link) in `hw07/slides/`. |
@@ -391,7 +391,7 @@ hw07/
 │                          stages.py, pipeline.py, prompts/, tests/
 ├── scenarios/<your-set>/  scenario.json and your clue images
 ├── clue_sets.csv          your set's row
-├── design.md              stage contracts, sequence diagram, decision policy, test set
+├── design.md              stage contracts, decision policy, test set
 ├── report.md              evaluation tables, the traced failure, integration evidence,
 │                          where your planner hookup lives, technical debt
 ├── questions.md           your answers to the 15 questions (R9)
