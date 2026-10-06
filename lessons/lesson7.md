@@ -352,6 +352,23 @@ answer.
 
 ---
 
+### Reflection
+
+In `reflection.md`, write about what you learned building this. It can
+cover any of these, and it may **focus on the code critique**:
+
+- **Code critique.** What do you think of the design of this pipeline, both
+  the given kit (`contract.py`, `llm_tools.py`, the starter) and your own
+  code? Where is its organization clear, and where is it awkward? What would
+  you change, and why? Point at specific files, classes or lines: a
+  responsibility in the wrong place, two things that must be kept in step
+  by hand, a dependency that runs the wrong way, an interface you'd
+  redesign.
+- Where the model surprised you, and what you would never let it decide.
+- A "Lessons Learned" section about using Claude to build this.
+
+---
+
 ### How This Is Graded
 
 Out of **200 points** (the midterm).
@@ -369,7 +386,7 @@ Out of **200 points** (the midterm).
 | **Pipeline questions** | 40 | R9: 20 questions in `hw07/questions.md`, 2 points each: correct, in your own words, pointing at your own code. |
 | **Question from the hat** | 10 | Answered live during your presentation. |
 | **Presentation** | 15 | 4 minutes plus 2 minutes of Q&A on Oct. 15; slides (or a link) in `hw07/slides/`. |
-| **Reflection** | 15 | `reflection.md`: where the model surprised you, what you would never let it decide, and a "Lessons Learned" section about using Claude to build this. |
+| **Reflection** | 15 | `reflection.md` (see [Reflection](#reflection)): a specific, evidence-based code critique of the pipeline's design, and/or where the model surprised you and what you'd never let it decide; plus "Lessons Learned" about using Claude. |
 | **Total** | **200** | |
 
 </div>
@@ -388,7 +405,7 @@ hw07/
 ├── report.md              evaluation tables, the traced failure, integration evidence,
 │                          where your planner hookup lives, technical debt
 ├── questions.md           your answers to the 20 questions (R9)
-├── reflection.md          text, and/or a recording (include the URL)
+├── reflection.md          code critique and reflection: text, and/or a recording (URL)
 └── slides/                your presentation (PDF/PPTX), or LINK.md with a link
 ```
 
