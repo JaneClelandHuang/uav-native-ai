@@ -20,6 +20,7 @@ cd hw07/clues && python -m unittest discover tests
 | `inject_clue.py` | Publishes a fake `ClueAssessment` on `mission/clues`, for building your planner hookup (R7) without a working pipeline. |
 | `scenario.py`, `imaging.py` | Load a scenario; render each clue the way the drone camera sees it at search altitude, and 6× zoomed. |
 | `check_set.py` | Checks a test set: images, transparency, ground truth vs. `clue_sets.csv`. |
+| `testllm.py` | Checks that your API key works: asks Claude one tiny question (a fraction of a cent). |
 | `scenario_to_scene.py` | Places a scenario's clues (and the person) in the GUI's Scene Builder. |
 | `icon_kit.py` | Helpers for drawing transparent top-down icons at the people scale. |
 | `scenarios/lost-girl-pinafore/` | Lily's set: description, 2 relevant clues, 3 decoys, ground truth. |
