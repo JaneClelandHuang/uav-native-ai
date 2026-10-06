@@ -72,10 +72,20 @@ shoe. You build the pipeline that decides what each one means for *this*
 search, prove it works on test data you designed, and wire its proposals
 into your HW6 planner.
 
-**HW7 covers two weeks.** It is worth **150 points**, is due **Wednesday,
-Oct. 14**, and ends with a **5-minute presentation in class on Thursday,
-Oct. 15**. There is no HW8. Budget around **10–13 hours** in total. If you
-can't finish, document unfinished work as technical debt in `report.md`.
+**HW7 covers two weeks and counts as the midterm.** It is worth **200
+points** and is due **Wednesday, Oct. 14**. It has two parts:
+
+- **Part 1 — the pipeline** (R1–R6, R8): build, test and evaluate the clue
+  pipeline offline.
+- **Part 2 — end to end in the GUI** (R7): drones flying over your test set
+  in new-gui, your pipeline's proposals going through your planner's
+  validator, and the UAV flying the response.
+
+You also answer **20 questions about how the pipeline fits together** (R9),
+and give a **4-minute presentation plus 2 minutes of Q&A** in class on
+**Thursday, Oct. 15**, where you answer one of the 20 questions drawn from a
+hat. There is no HW8. If you can't finish, document unfinished work as
+technical debt in `report.md`.
 
 Pull first (`git pull`) to get `lab/lesson7/` and the updated GUI (clue
 icons in the Scene Builder).
@@ -181,10 +191,14 @@ one you provoke), find the **first stage** whose answer was wrong from the
 trace, fix it (prompt, schema or what the stage is shown), and show before
 and after. Your code will also be run on Lily's set and on classmates' sets.
 
-**R7 Planner hookup.** Your HW6 planner subscribes to `mission/clues` and
-turns each proposal into one of its own actions, marked as decided by the
-AI. Every proposal goes through **your validator**, and the verdict is
-reported on `mission/action_result`, as for the operator:
+**R7 Part 2: end to end in the GUI.** Get the whole system running in
+new-gui: your test set placed in the Scene Builder (`scenario_to_scene.py`),
+drones flying their search route with the camera streaming,
+`detector.py --oracle` feeding your pipeline, and your HW6 planner acting on
+what it publishes. Your planner subscribes to `mission/clues` and turns each
+proposal into one of its own actions, marked as decided by the AI. Every
+proposal goes through **your validator**, and the verdict is reported on
+`mission/action_result`, as for the operator:
 
 | Proposal | Becomes |
 |---|---|
@@ -200,6 +214,10 @@ planner doesn't fly, write a minimal responder with a validator and a
 (Describe never contains the person's details), the closer look happening at
 most once, the converge centre coming from the candidate, and how the
 pipeline handles a failed stage.
+
+**R9 Understanding the pipeline.** Answer the 20 questions below in
+`hw07/questions.md` (the file is already in your repo). See
+[Understanding the pipeline](#understanding-the-pipeline-20-questions).
 
 #### Out of scope
 
@@ -253,21 +271,90 @@ Put the commands, output and what you observed in `report.md`.
 
 ---
 
+### Understanding the pipeline (20 questions)
+
+You built this with AI help, so being able to explain how it fits together
+is graded directly. Answer every question in `hw07/questions.md`, **in your
+own words, from your own code**, naming the file (and line) you are
+describing. Each answer is worth 2 points.
+
+In your presentation, **one question is drawn from a hat** and you answer it
+live, without notes (10 points).
+
+**Data and structure**
+
+**Q1. Data in, data out.** What is a `Candidate`, and what is a `ClueAssessment`? Where does each come from, and where does each go (name the file or MQTT topic)?
+
+**Q2. Stages and their specs.** Where is each stage defined in your code, and what does its `StageSpec` hold? If you renamed a stage, which files would change?
+
+**Q3. What each stage sees.** For each of your three stages, list what goes into the request (images, text). Why must Describe never see the missing person's description?
+
+**Q4. Schemas.** What does "schema" mean for a stage, and what is a Pydantic class? What happens in your code if the model returns `relevance = "maybe"`?
+
+**Q5. The contract.** What does `contract.py` fix that you may not change, and why does it exist? Which of its classes does your code create, and which does it only receive?
+
+**Q6. Dependencies.** Which of your files import which? Why does your `llm.py` not import `Description`, `Relevance` or `ClueDecision`?
+
+**Calling Claude**
+
+**Q7. One call, end to end.** Trace one Describe call from `evaluate.py` to `client.beta.messages.parse(...)`, listing each function and its file. Where are the prompt and the effort chosen?
+
+**Q8. System prompt and user message.** In your requests, what goes in the system prompt and what goes in the user message? Why is that split useful?
+
+**Q9. Images.** How is the crop sent to Claude: what is in an image content block? What is `ground_m_per_px` for, and why is the crop upscaled before it is sent?
+
+**Q10. Effort, cost and the key.** What does effort control, which effort did you give each stage, and why? How is the cost of a call calculated? Where does your code get the API key, and how do you make sure it is never committed?
+
+**Q11. When a call fails.** Walk through what your code does if Claude refuses, cuts off, or returns an answer that doesn't fit the schema. What does the planner receive in each case?
+
+**Control and safety**
+
+**Q12. The closer look.** What two things can trigger a closer look? What stops it from happening twice? What happens in flight, where `closer_look` is `None`?
+
+**Q13. The model's authority.** Which decisions does the model make, and which does your code make? Why does the converge-search centre come from code, and what can your validator still reject?
+
+**Q14. Prompts versus code.** You want Relevance to also consider the clue's distance from the last known point. Is that a prompt change, a code change, or both? Which files?
+
+**Testing and evaluation**
+
+**Q15. Testing without Claude.** How does `FakeBackend` let you test a stage without an API key? Name one thing your unit tests can prove and one thing only `evaluate.py` can show.
+
+**Q16. Measuring.** How does `evaluate.py` decide whether a clue was handled correctly? Why run each clue three times, and what would 60% agreement tell you?
+
+**Q17. Scale.** Why are the clue icons drawn about 9 times life size in the simulator, and what does `scene_scale` correct? What went wrong for the cardigan without it?
+
+**Q18. Using the trace.** How did you use the trace from `evaluate.py` to find the first stage whose answer was wrong in your traced failure?
+
+**Running end to end (Part 2)**
+
+**Q19. The running system.** List every process that must be running for your end-to-end demo in new-gui and what each one does. Which MQTT topics connect them?
+
+**Q20. Threads in the detector.** Why does `detector.py` run the LLM calls on a separate thread with a queue instead of inside the frame handler?
+
+---
+
 ### Presentation (Thursday, Oct. 15)
 
-**Five minutes**, slides or a live demo:
+**4 minutes of presentation, then 2 minutes of Q&A**, about what you built
+for this homework:
 
-1. Your integrated system
-2. Choose whatever you want to showcase from the work you've done in this half of the semester.
-3. Consider recording video snippets instead of running anything live 
+1. Your integrated system, end to end: the GUI, your pipeline's proposals,
+   your planner's verdicts.
+2. Whatever you most want to show from your work on HW7: your test set,
+   your results, a failure you traced and fixed, a design decision.
+3. Consider recording video snippets instead of running anything live.
 
-Put the slides (or a link) in `hw07/`.
+During the Q&A, one of the 20 questions is drawn from a hat for you to
+answer.
+
+**Slides:** push them to `hw07/slides/` (PDF or PPTX), or put a link in
+`hw07/slides/LINK.md`, before class on Oct. 15.
 
 ---
 
 ### How This Is Graded
 
-Out of **150 points**.
+Out of **200 points** (the midterm).
 
 <div class="table-wrap" markdown="1">
 
@@ -277,11 +364,13 @@ Out of **150 points**.
 | **Pipeline & LLM calls** | 25 | R1–R4: three working stages, Describe blind to the mission, structured output, a backend that checks stop reasons, retries once and reports cost; the contract met; one closer look at most. |
 | **Test set** | 15 | R5: a well-formed set (`check_set.py` OK) with relevant clues and decoys that genuinely test the pipeline. |
 | **Evaluation & debugging** | 25 | R6: accuracy, agreement and cost on Lily's set and yours; one failure traced to its first wrong stage and fixed, with before/after. |
-| **Planner hookup** | 25 | R7: proposals from `mission/clues` go through your validator, verdicts are reported, `hover`/`circle` fly; both integration runs in `report.md`. |
+| **Part 2: end to end in the GUI** | 25 | R7: the system runs in new-gui; proposals from `mission/clues` go through your validator, verdicts are reported, `hover`/`circle` fly; both integration runs in `report.md`. |
 | **Unit tests** | 10 | R8 with `FakeBackend`. |
-| **Presentation** | 15 | Five minutes on Oct. 15 |
+| **Pipeline questions** | 40 | R9: 20 questions in `hw07/questions.md`, 2 points each: correct, in your own words, pointing at your own code. |
+| **Question from the hat** | 10 | Answered live during your presentation. |
+| **Presentation** | 15 | 4 minutes plus 2 minutes of Q&A on Oct. 15; slides (or a link) in `hw07/slides/`. |
 | **Reflection** | 15 | `reflection.md`: where the model surprised you, what you would never let it decide, and a "Lessons Learned" section about using Claude to build this. |
-| **Total** | **150** | |
+| **Total** | **200** | |
 
 </div>
 
@@ -298,11 +387,12 @@ hw07/
 ├── design.md              stage contracts, sequence diagram, decision policy, test set
 ├── report.md              evaluation tables, the traced failure, integration evidence,
 │                          where your planner hookup lives, technical debt
+├── questions.md           your answers to the 20 questions (R9)
 ├── reflection.md          text, and/or a recording (include the URL)
-└── slides                 your presentation, or a link
+└── slides/                your presentation (PDF/PPTX), or LINK.md with a link
 ```
 
-Your planner hookup (R7) can stay in your `hw06/` planner; say in `report.md`
+Your planner changes for Part 2 (R7) can stay in your `hw06/` planner; say in `report.md`
 which files changed.
 
 ```bash
