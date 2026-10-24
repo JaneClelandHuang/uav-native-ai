@@ -35,16 +35,21 @@ assignment; team-project weeks (PW1–PW7) link to their deliverable on the
 | **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7](lessons/lesson7.md#homework) — midterm, 200 pts (two weeks, due Wed. Oct. 14) |
 | **8** | Oct. 13–15 | Team formation and project exploration; **HW7 presentations, 4 + 2 min (Thu. Oct. 15)** | Native-AI Use Cases and Project Vision | — | No HW8. Teams develop project vision and use cases |
 | — | Oct. 17–25 | **FALL BREAK** | | | |
-| **9 · PW1** | Oct. 27–29 | Planning studio (no AI); D1 vision presentations | Thinking before generating: vision, Cockburn use case, wireframes, success criteria | — | [D1: Project Vision](project/d1.md) — presented Thu. Oct. 29, due Mon. Nov. 2 |
-| **10 · PW2** | Nov. 3–5 | Guest: Tori Huang-Brauer, *Claude in SE*; architecture sketches and spikes | AI for throwaway code, humans for the evidence | — | Spike question checked Thu. Nov. 5 |
-| **11 · PW3** | Nov. 10–12 | D2 spike gallery; vertical slices; architecture decision records | AI-assisted code review: Claude reviews, a teammate approves | — | [D2: Architecture + Spike](project/d2.md) — gallery Tue. Nov. 10, due Mon. Nov. 16 |
-| **12 · PW4** | Nov. 17–19 | Guest: Jan-Philipp Steghöfer (tentative); CI; D3 live demos | Intent is the bottleneck; testing agents | — | [D3: Working System + Review](project/d3.md) — demos Thu. Nov. 19, due Mon. Nov. 23 |
-| **13 · PW5** | Nov. 24 | **Build and test day** (UG Commons) | Building your testing agent | — | — |
-| — | Nov. 25–29 | **THANKSGIVING HOLIDAY** | | | |
-| **14 · PW6** | Dec. 1–3 | **Build and test day** (UG Commons); dress rehearsal | Trusting an agent's verdict | — | [D4: Testing Agent](project/d4.md) — due Thu. Dec. 3 (fault runs outside class) |
-| **15 · PW7** | Dec. 8 | **Final live demonstrations** | Owning the result | — | [D5: Final System](project/d5.md) — demo Tue. Dec. 8; website due Mon. Dec. 14 |
-| — | Dec. 9 | Last class day | Course wrap-up / contingency as needed | | |
-| **Finals Week** | TBD | Individual oral defenses | Live questions from your brief and your system | — | [Individual Brief + Oral Defense](project/defense.md) — brief due Mon. Dec. 14 |
+| **9 · PW1** | Tue. Oct. 27 | Project planning studio (**no AI**); team repos created | Thinking before generating: vision, Cockburn use case, wireframes, success criteria | — | — |
+| | Thu. Oct. 29 | **D1 vision presentations** (your team presents) | Partner-team questions | — | [D1: Project Vision](project/d1.md) presented; website due **Mon. Nov. 2** |
+| **10 · PW2** | Tue. Nov. 3 | Guest: Tori Huang-Brauer, *Claude in Software Engineering*; studio | — | — | — |
+| | Thu. Nov. 5 | Architecture sketches and architectural spikes | AI for throwaway code, humans for the evidence | — | Spike question checked in class; finish your spike before Tue. |
+| **11 · PW3** | Tue. Nov. 10 | **D2 spike gallery** (your team runs a station); your slice as GitHub issues | Settle with evidence what you can't settle with opinion | — | [D2: Architecture + Spike](project/d2.md) presented; website due **Mon. Nov. 16** |
+| | Thu. Nov. 12 | Reading: architecture decision records; AI-assisted code review; studio | Claude reviews, a teammate approves | — | One reviewed PR merged by the end of class |
+| **12 · PW4** | Tue. Nov. 17 | Guest: Jan-Philipp Steghöfer (tentative); intent vs. solution; continuous integration | Intent is the bottleneck | — | Add CI by PR this week |
+| | Thu. Nov. 19 | **D3 live demos** (your team demos); testing agents | The running system is the evidence | — | [D3: Working System](project/d3.md) presented; website due **Mon. Nov. 23** |
+| **13 · PW5** | Tue. Nov. 24 | **Build and test day** (UG Commons), no presentations | Building your testing agent | — | — |
+| | Thu. Nov. 26 | **THANKSGIVING — no class** | | | |
+| **14 · PW6** | Tue. Dec. 1 | **Build and test day** (UG Commons), no presentations | Trusting an agent's verdict | — | Do your three D4 fault runs this week |
+| | Thu. Dec. 3 | **Dress rehearsal** for your final demo (not graded) | Someone else drives your GUI | — | [D4: Testing Agent](project/d4.md) due **at the start of class** |
+| **15 · PW7** | Tue. Dec. 8 | **D5 final live demonstrations** (your team demos) | Owning the result | — | [D5: Final System](project/d5.md) presented; website and brief due **Mon. Dec. 14** |
+| | Wed. Dec. 9 | Last class day | Course wrap-up / contingency as needed | | |
+| **Finals Week** | TBD | **Individual oral defenses** (sign up for a slot) | Live questions from your brief and your system | — | [Individual Brief + Oral Defense](project/defense.md) |
 
 </div>
 
