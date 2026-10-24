@@ -14,8 +14,12 @@ through the course site.
 Slides are posted to Google Slides closer to each lecture — the column
 below is a placeholder until those links are added. Weeks 1–7 link to that
 week's [lesson page](lessons/index.md) for the full
-assignment; team-project weeks link to a deliverable below instead of a
-homework page.
+assignment; team-project weeks (PW1–PW7) link to their deliverable on the
+[Team Project](project/index.md) page instead of a homework page.
+
+> **DRAFT — Week 9 (Project Week 1) to the end of the semester is still
+> being finalized.** Dates, deliverables and grading may change before each
+> deliverable is released.
 
 <div class="table-wrap" markdown="1">
 
@@ -31,30 +35,33 @@ homework page.
 | **7** | Oct. 6–8 | Onboard Intelligence — Perceive → Reason → Act | Engineering an LLM Reasoning Pipeline | — | [HW7](lessons/lesson7.md#homework) — midterm, 200 pts (two weeks, due Wed. Oct. 14) |
 | **8** | Oct. 13–15 | Team formation and project exploration; **HW7 presentations, 4 + 2 min (Thu. Oct. 15)** | Native-AI Use Cases and Project Vision | — | No HW8. Teams develop project vision and use cases |
 | — | Oct. 17–25 | **FALL BREAK** | | | |
-| **9** | Oct. 27–29 | Project Vision Presentations; Architecture for Intelligent UAV Systems | Architecture exploration, critique, and evidence-driven design | — | **D1: Project Vision + Use Cases**; begin architecture and architectural spike |
-| **10** | Nov. 3–5 | **Intensive Team Development Sprint** | AI-accelerated implementation and integration | — | **D2: Architecture + Architectural Spike**; build initial vertical slice |
-| **11** | Nov. 10–12 | Architecture Review and Working-System Review | AI-generated architecture challenges; peer critique; team architecture defense | — | **D3: Working System + Architecture Review** |
-| **12** | Nov. 17–19 | Testing and Verification | Specialized Software-Engineering Agents; build and evaluate a Testing Agent | — | **D4: Testing Agent + Engineering Evidence** |
-| **13** | Nov. 24 | **Team Development Sprint** | Implementation, integration, testing, and refinement | — | Project development |
+| **9 · PW1** | Oct. 27–29 | Planning studio (no AI); D1 vision presentations | Thinking before generating: vision, Cockburn use case, wireframes, success criteria | — | [D1: Project Vision](project/d1.md) — presented Thu. Oct. 29, due Mon. Nov. 2 |
+| **10 · PW2** | Nov. 3–5 | Guest: Tori Huang-Brauer, *Claude in SE*; architecture sketches and spikes | AI for throwaway code, humans for the evidence | — | Spike question checked Thu. Nov. 5 |
+| **11 · PW3** | Nov. 10–12 | D2 spike gallery; vertical slices; architecture decision records | AI-assisted code review: Claude reviews, a teammate approves | — | [D2: Architecture + Spike](project/d2.md) — gallery Tue. Nov. 10, due Mon. Nov. 16 |
+| **12 · PW4** | Nov. 17–19 | Guest: Jan-Philipp Steghöfer (tentative); CI; D3 live demos | Intent is the bottleneck; testing agents | — | [D3: Working System + Review](project/d3.md) — demos Thu. Nov. 19, due Mon. Nov. 23 |
+| **13 · PW5** | Nov. 24 | **Build and test day** (UG Commons) | Building your testing agent | — | — |
 | — | Nov. 25–29 | **THANKSGIVING HOLIDAY** | | | |
-| **14** | Dec. 1–3 | **Team Development Sprint** | Final integration, testing, evidence collection, and demonstration preparation | — | Final project development |
-| **15** | Dec. 8 | Final Team Project Presentations | Live Physical-AI system demonstrations | — | **D5: Final Project Website + System** |
+| **14 · PW6** | Dec. 1–3 | **Build and test day** (UG Commons); dress rehearsal | Trusting an agent's verdict | — | [D4: Testing Agent](project/d4.md) — due Thu. Dec. 3 (fault runs outside class) |
+| **15 · PW7** | Dec. 8 | **Final live demonstrations** | Owning the result | — | [D5: Final System](project/d5.md) — demo Tue. Dec. 8; website due Mon. Dec. 14 |
 | — | Dec. 9 | Last class day | Course wrap-up / contingency as needed | | |
-| **Finals Week** | TBD | Individual Project Defense | Oral technical defense and discussion | — | **Individual Oral Defense** |
+| **Finals Week** | TBD | Individual oral defenses | Live questions from your brief and your system | — | [Individual Brief + Oral Defense](project/defense.md) — brief due Mon. Dec. 14 |
 
 </div>
 
 ## Project Deliverables at a Glance
 
+> **DRAFT — Weeks 9 to the end of the semester are still being finalized.**
+> See the [Team Project](project/index.md) page for every deliverable.
+
 <div class="table-wrap" markdown="1">
 
-| Deliverable | Purpose |
-|---|---|
-| **D1 — Project Vision + Native-AI Use Cases** | Define the problem, intended system behavior, major capabilities, and final demonstration vision. |
-| **D2 — Architecture + Architectural Spike** | Design a credible architecture and gather empirical evidence about a consequential architectural uncertainty. |
-| **D3 — Working System + Architecture Review** | Demonstrate an initial end-to-end vertical slice and critically evaluate how the architecture is surviving implementation. |
-| **D4 — Testing Agent + Engineering Evidence** | Build and evaluate a specialized testing agent and begin assembling evidence that important system behaviors work. |
-| **D5 — Final Project Website + System** | Complete, demonstrate, and provide an engineering case for the final Physical AI system. |
-| **Individual Oral Defense** | Demonstrate individual understanding of the system, engineering decisions, evidence, AI usage, and personal contributions. |
+| Deliverable | Points | Purpose |
+|---|---:|---|
+| **D1 — Project Vision** | 40 | Define the problem, the system's behavior, one fully dressed use case, wireframes and success criteria. |
+| **D2 — Architecture + Architectural Spike** | 60 | Design a credible architecture and gather evidence about its riskiest decision. |
+| **D3 — Working System + Architecture Review** | 70 | Demonstrate a vertical slice live and show how the architecture survived implementation. |
+| **D4 — Testing Agent + Engineering Evidence** | 80 | Build a testing agent whose oracles come from your intent, and test it against injected faults. |
+| **D5 — Final System + Website** | 250 | Demonstrate the final system live (150) and make the engineering case for it on your website (100). |
+| **Individual Brief + Oral Defense** | 100 | Show your own decisions and your understanding of the whole system. |
 
 </div>
