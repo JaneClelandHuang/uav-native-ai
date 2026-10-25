@@ -38,7 +38,7 @@ no direct commits to `main`.
 | [D4 — Testing Agent + Engineering Evidence](d4.md) | 80 | — (fault runs outside class) | Thu. Dec. 3, start of class |
 | [D5 — Final System + Live Demo](d5.md) | 150 | Final demos, Tue. Dec. 8 | — |
 | [D5 — Final Website](d5.md) | 100 | — | Mon. Dec. 14 |
-| [Individual Brief + Oral Defense](defense.md) | 100 | Oral defense, finals week | Brief: Mon. Dec. 14 |
+| [Individual Safety Case + Oral Defense](defense.md) | 100 | Oral defense, finals week | Safety case: Mon. Dec. 14 |
 
 </div>
 
@@ -52,7 +52,7 @@ no direct commits to `main`.
 |---|---|---|
 | **1** (Oct. 27–29) | Planning studio, no AI: vision, use case, wireframes, success criteria. Team repos created. | **D1 vision presentations** |
 | **2** (Nov. 3–5) | Guest: Tori Huang-Brauer, *Claude in Software Engineering* | Architecture sketches and architectural spikes; spike questions checked |
-| **3** (Nov. 10–12) | **D2 spike gallery**; your slice as GitHub issues | Reading: architecture decision records; AI-assisted code review; studio |
+| **3** (Nov. 10–12) | **D2 spike gallery**; your slice as GitHub issues | Architecture decision records; **hazard analysis (FMECA) and safety cases**; AI code review; studio |
 | **4** (Nov. 17–19) | Guest: Jan-Philipp Steghöfer (tentative); intent vs. solution; CI | **D3 live demos**; testing agents |
 | **5** (Nov. 24) | **Build and test**, UG Commons | Thanksgiving |
 | **6** (Dec. 1–3) | **Build and test**, UG Commons | **Team meetings** with the instructor, UG Commons |

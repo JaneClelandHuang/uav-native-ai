@@ -1,65 +1,106 @@
-# Individual Engineering Brief + Oral Defense
+# Individual Safety Case + Oral Defense
 
 > **DRAFT ONLY — not yet reviewed. Details, dates, and grading below
 > are subject to change before this is final.**
 
 ## Objectives
 
-Your team built the system together, often in pairs. This part is yours
-alone: what you decided, what you understand, and where your judgment
-mattered.
+Your team built a system that flies. This part is yours alone: where can
+it hurt someone or fail its mission, what does your system already do
+about it, and what is still technical debt?
 
-Worth **100 points**, separate from the team grade: **20** for the brief
-and **80** for the oral defense. Strong team work doesn't substitute for
-individual understanding, and a weak team result doesn't cap it.
+Worth **100 points**, separate from the team grade: **30** for your safety
+case and **70** for the oral defense. Strong team work doesn't substitute
+for individual understanding, and a weak team result doesn't cap it.
 
 ---
 
-## The Individual Engineering Brief
+## The Individual Safety Case
 
-About **2 pages**, written by you, due **11:59 PM Monday, Dec. 14**, as
-`docs/briefs/<your-netid>.md` in your team repo. Write it whenever suits
-you during the project; it's easier while things are fresh.
+Due **11:59 PM Monday, Dec. 14**, in your team repo under
+`docs/safety/<your-netid>/`. Do it **individually**. You may analyze any
+part of your team's system, at any level of the stack; teammates may pick
+the same part.
 
-### 1. Contribution map
+### 1. Your own failure modes first
 
-Your issues, PRs and reviews, grouped by component, with links. For each
-group, one line on **what you decided**. Paired work is fine: say so, and
-say what you drove ("paired with Sam on the validator; I designed the
-timeout").
+Before you ask AI anything, list the ways you think your system could fail
+or cause harm: as many as you can, in a few words each. **Commit that list**
+as `my-first-list.md`. It's the baseline for step 4.
 
-### 2. Two decisions you'd defend, one you'd reverse
+### 2. FMECA: ten rows
 
-Three engineering decisions you made or shaped. For the two you'd defend:
-what you decided, what you weighed, and the evidence that it was right.
-For the one you'd reverse: what you'd do now, and what taught you.
+A spreadsheet (`fmeca.csv` or `.xlsx`) with **10 failure modes**, one per
+row:
 
-### 3. One AI episode
+| Column | What goes in it |
+|---|---|
+| Item | The function or component |
+| Failure mode | How it fails |
+| Effect | What happens to the mission, the drones or people |
+| Cause | Why it could happen |
+| Severity (S) | 1–10 |
+| Occurrence (O) | 1–10 |
+| Detection (D) | 1–10: how hard it is to notice before harm (10 = undetectable) |
+| RPN | S × O × D |
+| Mitigation | What your system does about it, and **where in the code** |
+| Status | **Handled**, **partly handled**, or **technical debt** |
+| Evidence | A test, D4 oracle, fault run, or PR that shows it |
+| Source | **Me**, **AI**, or **both** |
 
-One specific time AI was wrong and you caught it, or a decision you
-deliberately kept for yourself. Link the PR or commit. What happened, how
-you knew, and what you'd do differently.
+At least **2 rows** must involve the **AI component** (a wrong, slow or
+missing answer) or the **person on the loop** (a missed alert, a wrong
+approval, an operator who isn't there). Check every row against your real
+code, including the ones AI suggested.
 
-### 4. Optional: a Physical AI limitation
+### 3. One safety assurance case
 
-If you want to go further: one paper or article on a Physical AI problem
-your system has (perception under uncertainty, LLM reasoning in physical
-systems, guardrails, human trust, sim-to-real, autonomy and
-accountability), with a link, and what it would change in your system.
+Pick the most important safety claim for your system, for example *"a
+drone is never sent toward a location the validator rejected"* or *"the
+operator is never shown a stale drone as live."* Argue it, in a diagram
+and about a page of text:
 
-**Write it yourself.** AI may critique a draft; it doesn't write the
-brief. Your defense starts from it.
+- **Claim:** the top-level safety claim.
+- **Argument:** how you'll show it holds (for example, by covering each
+  hazard that could break it).
+- **Sub-claims:** what must be true for the argument to work.
+- **Evidence:** for each sub-claim, the test, oracle, fault run or code
+  that supports it.
 
-### How the brief is graded
+Any sub-claim **without evidence is marked undeveloped**: that's technical
+debt, and saying so honestly is part of the grade.
+
+### 4. What AI suggested, and what you thought
+
+About half a page. Compare your first list with what AI suggested:
+
+- Which of AI's suggestions were good, and which were wrong or generic for
+  *your* system?
+- What did AI miss that you had thought of?
+- What angles did it raise that you hadn't considered?
+- What does that tell you about using AI for safety analysis?
+
+### 5. Contribution map
+
+About half a page: your issues, PRs and reviews, grouped by component,
+with links, and one line on what you decided in each. Paired work is fine:
+say so, and say what you drove.
+
+**Write it yourself.** AI may suggest failure modes and critique a draft;
+the analysis, the judgments and the writing are yours. Your defense starts
+from it.
+
+### How the safety case is graded
 
 <div class="table-wrap" markdown="1">
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **Contribution map** | 6 | Complete, linked, honest about pairing, clear about what you decided. |
-| **Decisions** | 8 | Real decisions, real trade-offs, evidence; a reversal you've genuinely learned from. |
-| **AI episode** | 6 | Specific, linked, and showing your judgment. |
-| **Total** | **20** | The optional section can make up for a weaker section, not exceed 20. |
+| **FMECA** | 10 | Ten real failure modes, sensible ratings, mitigations located in the code, honest status, evidence linked, at least 2 rows on the AI component or the person on the loop. |
+| **Assurance case** | 10 | A clear claim, a sound argument, evidence linked to each sub-claim, and undeveloped sub-claims marked as technical debt. |
+| **AI vs. your thinking** | 5 | A first list committed before using AI, and a specific, honest comparison. |
+| **Contribution map** | 5 | Complete, linked, honest about pairing, clear about what you decided. |
+| **Total** | **30** | |
 
 </div>
 
@@ -68,18 +109,18 @@ brief. Your defense starts from it.
 ## The Oral Defense (finals week)
 
 About **15 minutes**, one student at a time, with the instructor. No
-slides, no AI, no notes beyond your brief. Your team's repo, website and
-running system are available to point at. Sign up for a slot (times to
+slides, no AI, no notes beyond your safety case. Your team's repo, website
+and running system are available to point at. Sign up for a slot (times to
 follow).
 
-It is a **conversation**, built from your brief and your team's system:
+It is a **conversation**, built from your safety case and your team's
+system:
 
-1. **Your brief** (about 4 minutes): we start from it. "Walk me through
-   the decision you'd reverse."
-2. **The system** (about 5 minutes): explain an important part of your
-   team's system, including parts you didn't build. Where does this
-   message go? Why is this component here?
-3. **A scenario** (about 4 minutes): you reason through something that
+1. **Your safety case** (about 4 minutes): "Walk me through your
+   highest-RPN row, and show me where it's handled."
+2. **The system** (about 4 minutes): explain an important part of your
+   team's system, including parts you didn't build.
+3. **A scenario** (about 5 minutes): you reason through something that
    goes wrong. "A drone goes silent mid-approval. What does your system
    do, and how would you know?"
 4. **AI and judgment** (about 2 minutes): where AI helped, where it
@@ -91,13 +132,13 @@ It is a **conversation**, built from your brief and your team's system:
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **Your contributions and decisions** | 20 | You explain what you did and why, consistent with your brief and your commits. |
-| **System understanding** | 25 | You explain the team's system beyond your own part, accurately. |
-| **Reasoning through a scenario** | 20 | You reason from how the system actually works to what it would do, and how you'd find out. |
+| **Your contributions and decisions** | 15 | You explain what you did and why, consistent with your contribution map and your commits. |
+| **System understanding** | 20 | You explain the team's system beyond your own part, accurately. |
+| **Safety reasoning** | 20 | You reason from how the system actually works to what it would do when something fails, and what your safety case does and doesn't cover. |
 | **AI and engineering judgment** | 15 | Specific, honest examples of where AI helped, failed, and where you decided. |
-| **Total** | **80** | |
+| **Total** | **70** | |
 
 </div>
 
-> **Be able to explain why your system works the way it does, and what you
-> decided.**
+> **Know how your system can fail, and what stands between that failure and
+> harm.**

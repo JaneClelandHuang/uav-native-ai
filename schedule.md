@@ -40,16 +40,16 @@ assignment; team-project weeks (PW1–PW7) link to their deliverable on the
 | **10 · PW2** | Tue. Nov. 3 | Guest: Tori Huang-Brauer, *Claude in Software Engineering*; studio | — | — | — |
 | | Thu. Nov. 5 | Architecture sketches and architectural spikes | AI for throwaway code, humans for the evidence | — | Spike question checked in class; finish your spike before Tue. |
 | **11 · PW3** | Tue. Nov. 10 | **D2 spike gallery** (your team runs a station); your slice as GitHub issues | Settle with evidence what you can't settle with opinion | — | [D2: Architecture + Spike](project/d2.md) presented; website due **Mon. Nov. 16** |
-| | Thu. Nov. 12 | Reading: architecture decision records; AI-assisted code review; studio | Claude reviews, a teammate approves | — | One reviewed PR merged by the end of class |
+| | Thu. Nov. 12 | Architecture decision records; **hazard analysis (FMECA) and safety assurance cases**; AI code review; studio | Claude reviews, a teammate approves; safety is designed in, not added | — | One reviewed PR merged by the end of class; start your [individual safety case](project/defense.md) |
 | **12 · PW4** | Tue. Nov. 17 | Guest: Jan-Philipp Steghöfer (tentative); intent vs. solution; continuous integration | Intent is the bottleneck | — | Add CI by PR this week |
 | | Thu. Nov. 19 | **D3 live demos** (your team demos); testing agents | The running system is the evidence | — | [D3: Working System](project/d3.md) presented; website due **Mon. Nov. 23** |
 | **13 · PW5** | Tue. Nov. 24 | **Build and test day** (UG Commons), no presentations | Building your testing agent | — | — |
 | | Thu. Nov. 26 | **THANKSGIVING — no class** | | | |
 | **14 · PW6** | Tue. Dec. 1 | **Build and test day** (UG Commons), no presentations | Trusting an agent's verdict | — | Do your three D4 fault runs this week |
 | | Thu. Dec. 3 | **Team meetings** with the instructor (UG Commons): what's done, what isn't, the plan for Dec. 8 | Owning the scope | — | [D4: Testing Agent](project/d4.md) due **at the start of class** |
-| **15 · PW7** | Tue. Dec. 8 | **D5 final live demonstrations** (your team demos) | Owning the result | — | [D5: Final System](project/d5.md) presented; website and brief due **Mon. Dec. 14** |
+| **15 · PW7** | Tue. Dec. 8 | **D5 final live demonstrations** (your team demos) | Owning the result | — | [D5: Final System](project/d5.md) presented; website and individual safety case due **Mon. Dec. 14** |
 | | Wed. Dec. 9 | Last class day | Course wrap-up / contingency as needed | | |
-| **Finals Week** | TBD | **Individual oral defenses** (sign up for a slot) | Live questions from your brief and your system | — | [Individual Brief + Oral Defense](project/defense.md) |
+| **Finals Week** | TBD | **Individual oral defenses** (sign up for a slot) | Live questions from your safety case and your system | — | [Individual Safety Case + Oral Defense](project/defense.md) |
 
 </div>
 
@@ -67,6 +67,6 @@ assignment; team-project weeks (PW1–PW7) link to their deliverable on the
 | **D3 — Working System + Architecture Review** | 70 | Demonstrate a vertical slice live and show how the architecture survived implementation. |
 | **D4 — Testing Agent + Engineering Evidence** | 80 | Build a testing agent whose oracles come from your intent, and test it against injected faults. |
 | **D5 — Final System + Website** | 250 | Demonstrate the final system live (150) and make the engineering case for it on your website (100). |
-| **Individual Brief + Oral Defense** | 100 | Show your own decisions and your understanding of the whole system. |
+| **Individual Safety Case + Oral Defense** | 100 | Analyze how your system can fail (FMECA) and argue one safety claim (30); defend it and the whole system live (70). |
 
 </div>
