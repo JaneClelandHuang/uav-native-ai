@@ -270,7 +270,7 @@ Put the evidence in `report.md`: commands, output, and what you observed.
 
 ### How This Is Graded
 
-Out of **100 points**.
+Out of ~~100~~ **95 points**.
 
 <div class="table-wrap" markdown="1">
 
@@ -283,8 +283,8 @@ Out of **100 points**.
 | **Execution & resume** | 15 | R7: all three responses fly correctly, status is reported throughout, and the UAV resumes its route after completion and after Cancel. |
 | **Testing evidence** | 10 | Unit tests for the pure logic plus the two required integration scenarios, with real output in `report.md`. |
 | **Reflection** | 10 | `reflection.md`: where your design helped or got in the way, what surprised you when it flew, what you'd change before an AI starts making the decisions, and a "Lessons Learned" section about using Claude. |
-| **Individual understanding** — in class | 5 | Questions pushed to your folder, as in HW5. |
-| **Total** | **100** | |
+| ~~**Individual understanding** — in class~~ | ~~5~~ | ~~Questions pushed to your folder, as in HW5.~~ Removed for HW6. |
+| **Total** | ~~100~~ **95** | |
 
 </div>
 
