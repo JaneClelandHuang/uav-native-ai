@@ -70,8 +70,10 @@ confirmed.
 
 Each team gets a fresh repo from the team template: the course simulation
 environment (`lab/`), the multi-vehicle GUI (`gui/`), a website skeleton
-(`docs/`), a PR template and team rules for Claude (`CLAUDE.md`). Your team
-chooses how to host the website; its link goes at the top of your README.
+(`docs/`), a PR template and team rules for Claude (`CLAUDE.md`). Your repo
+and website stay **private** during the semester (your team and the
+instructor); at the end your team can choose to make them public, or to
+stage a separate public showcase site (see [D5](d5.md)).
 Each project week adds one step:
 
 | Project week | Step |
