@@ -55,7 +55,7 @@ no direct commits to `main`.
 | **3** (Nov. 10–12) | **D2 spike gallery**; your slice as GitHub issues | Reading: architecture decision records; AI-assisted code review; studio |
 | **4** (Nov. 17–19) | Guest: Jan-Philipp Steghöfer (tentative); intent vs. solution; CI | **D3 live demos**; testing agents |
 | **5** (Nov. 24) | **Build and test**, UG Commons | Thanksgiving |
-| **6** (Dec. 1–3) | **Build and test**, UG Commons | **Dress rehearsal** for the final demo |
+| **6** (Dec. 1–3) | **Build and test**, UG Commons | **Team meetings** with the instructor, UG Commons |
 | **7** (Dec. 8) | **D5 final live demonstrations** | — |
 | **Finals week** | **Individual oral defenses** | |
 

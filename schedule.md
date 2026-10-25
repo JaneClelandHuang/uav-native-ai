@@ -46,7 +46,7 @@ assignment; team-project weeks (PW1–PW7) link to their deliverable on the
 | **13 · PW5** | Tue. Nov. 24 | **Build and test day** (UG Commons), no presentations | Building your testing agent | — | — |
 | | Thu. Nov. 26 | **THANKSGIVING — no class** | | | |
 | **14 · PW6** | Tue. Dec. 1 | **Build and test day** (UG Commons), no presentations | Trusting an agent's verdict | — | Do your three D4 fault runs this week |
-| | Thu. Dec. 3 | **Dress rehearsal** for your final demo (not graded) | Someone else drives your GUI | — | [D4: Testing Agent](project/d4.md) due **at the start of class** |
+| | Thu. Dec. 3 | **Team meetings** with the instructor (UG Commons): what's done, what isn't, the plan for Dec. 8 | Owning the scope | — | [D4: Testing Agent](project/d4.md) due **at the start of class** |
 | **15 · PW7** | Tue. Dec. 8 | **D5 final live demonstrations** (your team demos) | Owning the result | — | [D5: Final System](project/d5.md) presented; website and brief due **Mon. Dec. 14** |
 | | Wed. Dec. 9 | Last class day | Course wrap-up / contingency as needed | | |
 | **Finals Week** | TBD | **Individual oral defenses** (sign up for a slot) | Live questions from your brief and your system | — | [Individual Brief + Oral Defense](project/defense.md) |
