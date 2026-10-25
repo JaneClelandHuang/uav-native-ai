@@ -26,9 +26,9 @@ Each week also develops a complementary **Native AI software-engineering skill**
 
 ### Phase II — Team Physical-AI Project
 
-During the second half of the semester, students work in teams to design, build, test, and demonstrate a swarm-based Physical AI system addressing a meaningful disaster-relief problem.
+During the second half of the semester, students work in teams to design, build, test, and demonstrate a swarm-based Physical AI system addressing a meaningful real-world problem.
 
-Projects may address any aspect of disaster relief or emergency response, from mission-level planning and swarm coordination to focused hazards, finding resources, or delivering medicine.
+Teams choose their own problem: for example disaster response, environmental surveillance (agriculture, pollution), medical delivery, a future transportation system, or terrain modeling and mapping. Within a problem, projects may focus on any level, from mission-level planning and swarm coordination to focused hazards, finding resources, or delivering medicine.
 
 Every project must implement an operational Physical AI loop:
 
@@ -128,11 +128,11 @@ implementation or analysis.
 
 ## Team Project
 
-The second half of the course centers on a team project in which students design and build a swarm-based Physical AI system for disaster relief.
+The second half of the course centers on a team project in which students design and build a swarm-based Physical AI system for a real-world mission of their choice.
 
 Every project must incorporate:
 
-- a meaningful disaster-relief or emergency-response mission;
+- a meaningful real-world mission (disaster response, environmental surveillance, medical delivery, transportation, mapping, or another the team proposes);
 - multiple coordinated UAVs;
 - the required Perceive → Reason → Act loop (see above);
 - AI-supported autonomy;

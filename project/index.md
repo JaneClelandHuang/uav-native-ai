@@ -10,8 +10,8 @@ title: Team Project
 > page says when it's final.
 
 From Fall Break to finals week, you work in a team to design, build, test
-and demonstrate a swarm-based Physical AI system for a disaster-response
-problem of your choice. Every project implements an operational
+and demonstrate a swarm-based Physical AI system for a real-world problem
+of your choice: for example disaster response, environmental surveillance (agriculture, pollution), medical delivery, a future transportation system, or terrain modeling and mapping. Every project implements an operational
 **Perceive → Reason → Act** loop, keeps a person meaningfully in the loop
 through a GUI, and is backed by engineering evidence. See the
 [Syllabus]({{ '/syllabus.html' | relative_url }}) for how the project is
@@ -84,5 +84,5 @@ Each project week adds one step:
 | 4 | CI: your unit tests on every PR |
 | 5–6 | Your testing agent; demo discipline |
 
-**Resources:** [disaster scenes](disaster-areas.md) ·
+**Resources:** [disaster scenes](disaster-areas.md) (for disaster-response projects) ·
 [`mischief_d4.py`](tools/mischief_d4.py) (for D4's fault runs)
