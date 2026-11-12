@@ -36,7 +36,7 @@ no direct commits to `main`.
 | [D2 — Architecture + Architectural Spike](d2.md) | 60 | Spike gallery, Tue. Nov. 10 | Mon. Nov. 16 |
 | [D3 — Working System + Architecture Review](d3.md) | 70 | Live demos, Tue. Nov. 24 | Mon. Nov. 30 |
 | [D4 — Testing Agent + Engineering Evidence](d4.md) | 80 | — (fault runs outside class) | Thu. Dec. 3, start of class |
-| [D5 — Final Working System (including Safety Cases) + Live Demo](d5.md) | 150 | Final demos, Tue. Dec. 8 | — |
+| [D5 — Final System + Live Demo](d5.md) | 150 | Final demos, Tue. Dec. 8 | — |
 | [D5 — Final Website](d5.md) | 100 | — | Mon. Dec. 14 |
 | [Safety Analysis — FMECA + Safety Cases](safety.md) | 40 | Started in class, Thu. Nov. 12 | Mon. Nov. 23 |
 | Individual Oral Defense | — | Finals week; details to follow | — |
