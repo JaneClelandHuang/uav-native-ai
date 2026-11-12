@@ -18,7 +18,7 @@ By the deadline, your team will have:
   each arguing one safety claim down to evidence, with gaps marked as
   undeveloped.
 
-Worth **14 of D3's 70 points** (20%), a team grade. Due in your team repo by
+Worth **10 of D3's 70 points**, a team grade. Due in your team repo by
 **11:59 PM Monday, Nov. 23**.
 
 ---
@@ -90,9 +90,9 @@ your real code, and record it in the Source column.
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **FMECA** | 5 | Ten real failure modes for your system, sensible ratings, mitigations located in the code, honest status, at least 2 rows on the AI component or the person on the loop. |
-| **Safety cases** | 9 | 3 each: a clear claim linked to your FMECA, a sound strategy, evidence linked to each sub-goal, and undeveloped goals marked. |
-| **Total** | **14** | |
+| **FMECA** | 4 | Ten real failure modes for your system, sensible ratings, mitigations located in the code, honest status, at least 2 rows on the AI component or the person on the loop. |
+| **Safety cases** | 6 | 2 each: a clear claim linked to your FMECA, a sound strategy, evidence linked to each sub-goal, and undeveloped goals marked. |
+| **Total** | **10** | |
 
 </div>
 
