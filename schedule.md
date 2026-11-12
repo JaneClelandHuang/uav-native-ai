@@ -40,10 +40,10 @@ assignment; team-project weeks (PW1–PW7) link to their deliverable on the
 | **10 · PW2** | Tue. Nov. 3 | Guest: Tori Huang-Brauer, *Claude in Software Engineering*; studio | — | — | — |
 | | Thu. Nov. 5 | Architecture sketches and architectural spikes | AI for throwaway code, humans for the evidence | [Slides](https://docs.google.com/presentation/d/1bmV0wNAs4uQmr3T1mglRBqfukzrX7gUq/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | Spike question checked in class; finish your spike before Tue. |
 | **11 · PW3** | Tue. Nov. 10 | **D2 spike gallery** (your team runs a station); your slice as GitHub issues | Settle with evidence what you can't settle with opinion | [Slides](https://docs.google.com/presentation/d/1vR7TI9qSxUCDd4cV22lZ1XSbE51QlM0q/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [D2: Architecture + Spike](project/d2.md) presented; website due **Mon. Nov. 16** |
-| | Thu. Nov. 12 | **Hazard analysis (FMECA) and safety assurance cases (GSN)**; your team starts its safety analysis in class | Safety is designed in, not added | — | [Safety Analysis](project/safety.md) started in class; due **Mon. Nov. 23** |
-| **12 · PW4** | Tue. Nov. 17 | **Intensive project sprint** (UG Commons): team meetings with the instructor, no presentations | Build the slice | — | Add CI by PR this week |
-| | Thu. Nov. 19 | **Intensive project sprint** (UG Commons): team meetings with the instructor, no presentations | Build the slice | — | [Safety analysis](project/safety.md) due **Mon. Nov. 23** |
-| **13 · PW5** | Tue. Nov. 24 | **D3 live demos** (your team demos); testing agents | The running system is the evidence | — | [D3: Working System](project/d3.md) presented; website due **Mon. Nov. 30** |
+| | Thu. Nov. 12 | **Hazard analysis (FMECA) and safety assurance cases (GSN)**; your team starts its safety analysis in class | Safety is designed in, not added | — | [Safety analysis](project/safety.md) started in class; part of D3 |
+| **12 · PW4** | Tue. Nov. 17 | **Intensive project sprint** (UG Commons): team meetings with the instructor, no presentations | Make substantial progress | — | — |
+| | Thu. Nov. 19 | **Intensive project sprint** (UG Commons): team meetings with the instructor, no presentations | Make substantial progress | — | [D3](project/d3.md) progress and safety cases in your repo by **Mon. Nov. 23** |
+| **13 · PW5** | Tue. Nov. 24 | **D3 team presentations** (8 min + 5 min questions); testing agents | The running system is the evidence | — | [D3: Sprint Progress + Safety Cases](project/d3.md) presented |
 | | Thu. Nov. 26 | **THANKSGIVING — no class** | | | |
 | **14 · PW6** | Tue. Dec. 1 | **Build and test day** (UG Commons), no presentations | Trusting an agent's verdict | — | Do your three D4 fault runs this week |
 | | Thu. Dec. 3 | **Team meetings** with the instructor (UG Commons): what's done, what isn't, the plan for Dec. 8 | Owning the scope | [Slides](https://docs.google.com/presentation/d/1GeGOggdKeOwMS23XH_vZl3ff2qr1ijaJ/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) | [D4: Testing Agent](project/d4.md) due **at the start of class** |
@@ -64,10 +64,9 @@ assignment; team-project weeks (PW1–PW7) link to their deliverable on the
 |---|---:|---|
 | **D1 — Project Vision** | 40 | Define the problem, the system's behavior, one fully dressed use case, wireframes and success criteria. |
 | **D2 — Architecture + Architectural Spike** | 60 | Design a credible architecture and gather evidence about its riskiest decision. |
-| **D3 — Working System + Architecture Review** | 70 | Demonstrate a vertical slice live and show how the architecture survived implementation. |
+| **D3 — Sprint Progress + Safety Cases** | 70 | Make substantial progress during the sprint and present it; add your FMECA and three GSN safety cases to your repo. |
 | **D4 — Testing Agent + Engineering Evidence** | 80 | Build a testing agent whose oracles come from your intent, and test it against injected faults. |
 | **D5 — Final System + Website** | 250 | Demonstrate the final system live (150) and make the engineering case for it on your website (100). |
-| **Safety Analysis — FMECA + Safety Cases** | 40 | As a team, analyze how your system can fail (FMECA) and argue three safety claims in GSN. |
 | **Individual Oral Defense** | — | Finals week; details to follow. |
 
 </div>

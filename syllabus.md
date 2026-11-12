@@ -176,7 +176,7 @@ Generative AI use is expected on these assignments. Assignment grades therefore 
 |---|---:|
 | D1 — Project Vision + Native-AI Use Cases | 40 |
 | D2 — Architecture + Architectural Spike | 60 |
-| D3 — Working System + Architecture Review | 70 |
+| D3 — Sprint Progress + Safety Cases | 70 |
 | D4 — Testing Agent + Engineering Evidence | 80 |
 | **Subtotal** | **250** |
 

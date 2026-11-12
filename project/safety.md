@@ -6,8 +6,8 @@ A team safety analysis of your system: how it can fail or cause harm, what
 stands between each failure and its effect, and which safety claims are
 supported by evidence rather than assumed.
 
-This is an **intermediate deliverable**. You started it in class on
-Thursday, Nov. 12; finish it alongside your project work.
+This is **part of [D3](d3.md)**. You started it in class on Thursday,
+Nov. 12; finish it alongside your project work.
 
 By the deadline, your team will have:
 
@@ -18,7 +18,8 @@ By the deadline, your team will have:
   each arguing one safety claim down to evidence, with gaps marked as
   undeveloped.
 
-Worth **40 points**, a team grade. Due **11:59 PM Monday, Nov. 23**.
+Worth **14 of D3's 70 points** (20%), a team grade. Due in your team repo by
+**11:59 PM Monday, Nov. 23**.
 
 ---
 
@@ -89,9 +90,9 @@ your real code, and record it in the Source column.
 
 | Component | Points | What earns the points |
 |---|---:|---|
-| **FMECA** | 16 | Ten real failure modes for your system, sensible ratings, mitigations located in the code, honest status, at least 2 rows on the AI component or the person on the loop. |
-| **Safety cases** | 24 | 8 each: a clear claim linked to your FMECA, a sound strategy, evidence linked to each sub-goal, and undeveloped goals marked. |
-| **Total** | **40** | |
+| **FMECA** | 5 | Ten real failure modes for your system, sensible ratings, mitigations located in the code, honest status, at least 2 rows on the AI component or the person on the loop. |
+| **Safety cases** | 9 | 3 each: a clear claim linked to your FMECA, a sound strategy, evidence linked to each sub-goal, and undeveloped goals marked. |
+| **Total** | **14** | |
 
 </div>
 
