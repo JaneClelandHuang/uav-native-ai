@@ -34,11 +34,12 @@ no direct commits to `main`.
 |---|---:|---|---|
 | [D1 — Project Vision](d1.md) | 40 | Vision presentations, Thu. Oct. 29 | Mon. Nov. 2 |
 | [D2 — Architecture + Architectural Spike](d2.md) | 60 | Spike gallery, Tue. Nov. 10 | Mon. Nov. 16 |
-| [D3 — Working System + Architecture Review](d3.md) | 70 | Live demos, Thu. Nov. 19 | Mon. Nov. 23 |
+| [D3 — Working System + Architecture Review](d3.md) | 70 | Live demos, Tue. Nov. 24 | Mon. Nov. 30 |
 | [D4 — Testing Agent + Engineering Evidence](d4.md) | 80 | — (fault runs outside class) | Thu. Dec. 3, start of class |
 | [D5 — Final System + Live Demo](d5.md) | 150 | Final demos, Tue. Dec. 8 | — |
 | [D5 — Final Website](d5.md) | 100 | — | Mon. Dec. 14 |
-| [Individual Safety Case + Oral Defense](defense.md) | 100 | Oral defense, finals week | Safety case: Mon. Dec. 14 |
+| [Safety Analysis — FMECA + Safety Cases](safety.md) | 40 | Started in class, Thu. Nov. 12 | Mon. Nov. 23 |
+| Individual Oral Defense | — | Finals week; details to follow | — |
 
 </div>
 
@@ -52,12 +53,12 @@ no direct commits to `main`.
 |---|---|---|---|
 | **1** (Oct. 27–29) | Planning studio, no AI: vision, use case, wireframes, success criteria. Team repos created. | **D1 vision presentations** | [Slides](https://docs.google.com/presentation/d/1gxFPWLLjOif5asEbWuhkR2hT5mXYHcxc/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
 | **2** (Nov. 3–5) | Guest: Tori Huang-Brauer, *Claude in Software Engineering* | Architecture sketches and architectural spikes; spike questions checked | [Slides](https://docs.google.com/presentation/d/1bmV0wNAs4uQmr3T1mglRBqfukzrX7gUq/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
-| **3** (Nov. 10–12) | **D2 spike gallery**; your slice as GitHub issues | Architecture decision records; **hazard analysis (FMECA) and safety cases**; AI code review; studio | [Slides](https://docs.google.com/presentation/d/1vR7TI9qSxUCDd4cV22lZ1XSbE51QlM0q/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
-| **4** (Nov. 17–19) | Guest: Jan-Philipp Steghöfer (tentative); intent vs. solution; CI | **D3 live demos**; testing agents | [Slides](https://docs.google.com/presentation/d/1vydUll0Xi45Qx9yLQIrim6FCvADW9NXx/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
-| **5** (Nov. 24) | **Build and test**, UG Commons | Thanksgiving | — |
+| **3** (Nov. 10–12) | **D2 spike gallery**; your slice as GitHub issues | **Hazard analysis (FMECA) and safety assurance cases (GSN)**; team safety analysis started in class | [Slides](https://docs.google.com/presentation/d/1vR7TI9qSxUCDd4cV22lZ1XSbE51QlM0q/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
+| **4** (Nov. 17–19) | **Project sprint**, UG Commons: team meetings with the instructor | **Project sprint**, UG Commons: team meetings with the instructor | [Slides](https://docs.google.com/presentation/d/1vydUll0Xi45Qx9yLQIrim6FCvADW9NXx/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
+| **5** (Nov. 24) | **D3 live demos**; testing agents | Thanksgiving | — |
 | **6** (Dec. 1–3) | **Build and test**, UG Commons | **Team meetings** with the instructor, UG Commons | [Slides](https://docs.google.com/presentation/d/1GeGOggdKeOwMS23XH_vZl3ff2qr1ijaJ/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
 | **7** (Dec. 8) | **D5 final live demonstrations** | — | [Slides](https://docs.google.com/presentation/d/1ESybdMY81YVPf76XXeFk13-zGI6O59Ac/edit?usp=sharing&ouid=104709123702489306200&rtpof=true&sd=true) |
-| **Finals week** | **Individual oral defenses** | | — |
+| **Finals week** | **Individual oral meetings / defense** (details to follow) | | — |
 
 </div>
 
